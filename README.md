@@ -5,6 +5,7 @@ Installation
 ----------
 * Create local config in `./local.py`.
     * The three attributes required in this file are specified in `./local.py.example`.
+* Copy local keymap shortcut from `./keymap.yml.example` to `./keymap.yml`.
 * Set crontab entries.
     * Crontab examples for setting up recurring automatic sends are located in `./crontab.example`.
     * Currently I use python from a virtualenv, thus the `.virtualenv` path invocation of the python binary.

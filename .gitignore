@@ -1,4 +1,5 @@
 *.pyc
 /local.py
+/keymap.yml
 /input/*
 !/input/README

@@ -19,6 +19,7 @@ DATE_FORMAT = '%B %d, %Y'
 TIME_FORMAT = '%I:%M %p'
 KEYMAP_FILE = 'keymap.yml'
 REPLY_TO_KEY = 'reply-to'
+VERBOSE = False
 
 
 class Error(Exception):
@@ -68,7 +69,8 @@ def format_and_send(send, sender, group, templates, sections, context, people,
     for person in group:
         if not person.has_valid_email():
             continue
-        print('Formatting email for {}.'.format(str(person)))
+        if VERBOSE:
+            print('Formatting email for {}.'.format(str(person)))
         body = generate_body(templates, sections, context, people, person.name)
         message = models.Message()
         message.sender = sender
@@ -77,17 +79,22 @@ def format_and_send(send, sender, group, templates, sections, context, people,
         message.html = body
         message.reply_to = reply_to
         messages.append(message)
-    print('Sending all emails.')
+    if VERBOSE:
+        print('Sending all emails.')
     send(messages)
 
 
 def run(args):
+    global VERBOSE
+    VERBOSE = VERBOSE or args.verbose
+
     template_date = None
     if args.date:
         template_date = utils.parse_date(args.date)
 
     from local import PASSWORD, SENDER, REPLY_TO, ME
-    print('Logging into server as {}.'.format(str(SENDER)))
+    if VERBOSE:
+        print('Logging into server as {}.'.format(str(SENDER)))
     server = models.Gmail(user=SENDER.email, password=PASSWORD)
 
     loader = None
@@ -119,7 +126,8 @@ def run(args):
             if date_data:
                 break
     if date_data:
-        print('Sending email for {}.'.format(today.strftime(DATE_FORMAT)))
+        if VERBOSE:
+            print('Sending email for {}.'.format(today.strftime(DATE_FORMAT)))
         context = default_context.copy()
         utils.update_if_not_none(context, date_data[data.CONTEXT])
         section_list = date_data[data.SECTIONS]
@@ -130,7 +138,8 @@ def run(args):
                 if recipient in people:
                     group.append(people[recipient])
                 else:
-                    print('Cannot find {} in people.'.format(recipient))
+                    print('Cannot find {} in people {}.'.format(
+                        recipient, args.to))
         elif args.test:
             group = [ME]
             context['prefix'] = 'TEST - '
@@ -150,7 +159,7 @@ def run(args):
             context=context,
             people=people,
             reply_to=reply_to)
-    else:
+    elif VERBOSE:
         print('No template found for {}.'.format(today.strftime(DATE_FORMAT)))
 
 
@@ -165,6 +174,7 @@ def main():
     data_group.add_argument('-k', '--key', default='kitchener')
     parser.add_argument('--to', nargs='*')
     parser.add_argument('--date')
+    parser.add_argument('-v', '--verbose', action='store_true')
     run(parser.parse_args())
 
 
