@@ -1,0 +1,14 @@
+people:
+  T1:
+    - Test One
+    - 1@t.ca
+  T2:
+    - Test Two
+    - 2@t.ca
+  T3:
+    - Test Three
+    - 3@t.ca
+groups:
+  all: ~
+  one: [T1]
+  two: [T1, T3]

@@ -1,0 +1,16 @@
+1991-01-02:
+  sections:
+    - Section1
+    - Section2
+    - Section3
+  context:
+    v1: 5
+    v2: ~
+1991-01-01:
+  sections:
+    - Section1
+    - Section2
+  context:
+    v1: 2
+    v2: 3
+    v3: 4

@@ -1,0 +1,4 @@
+# Dryrun
+00 12 * * * cd /PATH/email && /home/USER/.virtualenvs/email/bin/python /PATH/email/main.py -n -k example-group
+# Send emails
+00 12 * * * cd /PATH/email && /home/USER/.virtualenvs/email/bin/python /PATH/email/main.py -c -k example-group
