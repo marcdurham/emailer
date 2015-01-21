@@ -6,6 +6,8 @@ import re
 import smtplib
 from email.mime import multipart
 from email.mime import text
+from email.message import EmailMessage
+from email.headerregistry import Address
 
 
 CHARSET = 'UTF-8'
@@ -17,6 +19,8 @@ class Person(object):
     def __init__(self, *, name, email):
         self.name = name
         self.email = email
+        if email:
+            self.username, self.domain = email.split('@')
 
     @classmethod
     def create(cls, attr_list):
@@ -27,6 +31,9 @@ class Person(object):
         if self.email and re.match(r'.+@.+\..+', self.email):
             return True
         return False
+
+    def get_address(self):
+        return Address(self.name, self.username, self.domain)
 
     def __str__(self):
         return '{name} <{email}>'.format(name=self.name, email=self.email)
@@ -43,17 +50,15 @@ class Message(object):
         self.html = html
         self.charset = charset
 
-    def __str__(self):
-        body = multipart.MIMEMultipart('alternative')
-        if self.text:
-            body.attach(text.MIMEText(self.text, 'plain', self.charset))
-        if self.html:
-            body.attach(text.MIMEText(self.html, 'html', self.charset))
-        body['from'] = str(self.sender)
-        body['reply-to'] = str(self.reply_to)
-        body['to'] = str(self.recipient)
-        body['subject'] = self.subject
-        return str(body)
+    def get_message(self):
+        email = EmailMessage()
+        email['Subject'] = self.subject
+        email['From'] = self.sender.get_address()
+        email['To'] = self.recipient.get_address()
+        email['Reply-To'] = self.reply_to.get_address()
+        email.set_content(self.html);
+        email.set_type('text/html')
+        return email
 
 
 class Server(object):
@@ -73,10 +78,8 @@ class Server(object):
                 server.ehlo()
             server.login(self.user, self.password)
         for message in messages:
-            server.sendmail(
-                    message.sender.email,
-                    message.recipient.email,
-                    str(message))
+            server.send_message(
+                    message.get_message())
         server.quit()
 
 
