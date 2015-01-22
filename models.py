@@ -4,6 +4,7 @@ Models for messages that are sent with servers.
 
 import re
 import smtplib
+import email.policy
 from email.mime import multipart
 from email.mime import text
 from email.message import EmailMessage
@@ -51,41 +52,35 @@ class Message(object):
         self.charset = charset
 
     def get_message(self):
-        email = EmailMessage()
-        email['Subject'] = self.subject
-        email['From'] = self.sender.get_address()
-        email['To'] = self.recipient.get_address()
-        email['Reply-To'] = self.reply_to.get_address()
-        email.set_content(self.html);
-        email.set_type('text/html')
-        return email
+        message = EmailMessage(email.policy.SMTP)
+        message['Subject'] = self.subject
+        message['From'] = self.sender.get_address()
+        message['To'] = self.recipient.get_address()
+        message['Reply-To'] = self.reply_to.get_address()
+        message.set_content(self.html, subtype='html', cte='quoted-printable');
+        return message
 
 
 class Server(object):
-    def __init__(self, *, host, port, use_tls, user, password):
+    def __init__(self, *, host, port, user, password):
         self.host = host
         self.port = port
-        self.use_tls = use_tls
         self.user = user
         self.password = password
 
     def send(self, messages):
         server = smtplib.SMTP(self.host, self.port)
         if self.user and self.password:
-            if self.use_tls:
-                server.ehlo()
-                server.starttls()
-                server.ehlo()
+            server.starttls()
             server.login(self.user, self.password)
         for message in messages:
-            server.send_message(
-                    message.get_message())
+            server.send_message(message.get_message())
         server.quit()
 
 
 class Gmail(Server):
     '''Simple to use, simply supply user and password of any gmail account.'''
     def __init__(self, *, user, password):
-        super().__init__(host='smtp.gmail.com', port=587, use_tls=True,
-                         user=user, password=password)
+        super().__init__(host='smtp.gmail.com', port=587, user=user,
+                         password=password)
 
