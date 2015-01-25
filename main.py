@@ -51,7 +51,7 @@ def format_value(value, people, highlight=None):
         ret = value
 
     if highlight:
-        return ret.replace(highlight, '<strong>' + highlight + '</strong>')
+        return ret.replace(highlight, '<strong style="background-color: yellow">' + highlight + '</strong>')
     return ret
 
 
