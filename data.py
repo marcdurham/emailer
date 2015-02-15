@@ -20,9 +20,12 @@ DATE_FORMAT = '%d/%m/%Y'
 
 class GSpreadLoader(object):
 
-    def __init__(self, username, password, key):
+    def __init__(self, username, password, key=None, name=None):
         self.client = gspread.login(username, password)
-        self.spreadsheet = self.client.open_by_key(key)
+        if key:
+            self.spreadsheet = self.client.open_by_key(key)
+        elif name:
+            self.spreadsheet = self.client.open(name)
         self.people_sheet = self.spreadsheet.worksheet('People')
         self.templates_sheet = self.spreadsheet.worksheet('Templates')
         self.sections_sheet = self.spreadsheet.worksheet('Sections')

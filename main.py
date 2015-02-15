@@ -100,13 +100,19 @@ def run(args):
     loader = None
     if args.directory:
         loader = data.YAMLLoader(directory=args.directory)
-    elif args.key:
+    else:
+        index = args.key or args.name
         with open(KEYMAP_FILE, 'r') as keymap_file:
             keymap = yaml.load(keymap_file)
-            if args.key in keymap:
-                args.key = keymap[args.key]
-        loader = data.GSpreadLoader(
-            username=SENDER.email, password=PASSWORD, key=args.key)
+            assert index in keymap, 'Key or Name not found in keymap file.'
+            value = keymap[index]
+        if args.key:
+            loader = data.GSpreadLoader(
+                username=SENDER.email, password=PASSWORD, key=value)
+        elif args.name:
+            loader = data.GSpreadLoader(
+                username=SENDER.email, password=PASSWORD, name=value)
+
     assert loader is not None, 'Loader cannot be set up.'
 
     people = loader.fetch_people()
@@ -171,7 +177,8 @@ def main():
     action_group.add_argument('-c', '--cron', action='store_true')
     data_group = parser.add_mutually_exclusive_group()
     data_group.add_argument('-d', '--directory')
-    data_group.add_argument('-k', '--key', default='kitchener')
+    data_group.add_argument('-k', '--key')
+    data_group.add_argument('-m', '--name')
     parser.add_argument('--to', nargs='*')
     parser.add_argument('--date')
     parser.add_argument('-v', '--verbose', action='store_true')
