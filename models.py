@@ -4,6 +4,7 @@ Models for messages that are sent with servers.
 
 import re
 import smtplib
+import time
 import email.policy
 from email.mime import multipart
 from email.mime import text
@@ -12,6 +13,7 @@ from email.headerregistry import Address
 
 
 CHARSET = 'UTF-8'
+SECONDS_BETWEEN_EMAILS = 5
 
 
 class Person(object):
@@ -75,6 +77,7 @@ class Server(object):
             server.login(self.user, self.password)
         for message in messages:
             server.send_message(message.get_message())
+            time.sleep(SECONDS_BETWEEN_EMAILS)
         server.quit()
 
 
