@@ -87,7 +87,7 @@ class GSpreadLoader(object):
             return self.templates
         except AttributeError:
             self.templates = {
-                name: template
+                name.strip(): template.strip()
                 for name, template in self.templates_data[1:]}
             return self.templates
 
