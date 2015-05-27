@@ -6,7 +6,9 @@ Current plans to support Google Spreadsheet and YAML.
 import os
 
 import gspread
+import json
 import yaml
+from oauth2client.client import SignedJwtAssertionCredentials
 
 import models
 import utils
@@ -21,7 +23,12 @@ DATE_FORMAT = '%d/%m/%Y'
 class GSpreadLoader(object):
 
     def __init__(self, username, password, key=None, name=None):
-        self.client = gspread.login(username, password)
+        json_key = json.load(open('private.json'))
+        scope = ['https://spreadsheets.google.com/feeds']
+        credentials = SignedJwtAssertionCredentials(
+                json_key['client_email'], bytes(json_key['private_key'], 'UTF-8'), scope)
+        self.client = gspread.authorize(credentials)
+        #self.client = gspread.login(username, password)
         if key:
             self.spreadsheet = self.client.open_by_key(key)
         elif name:

@@ -11,6 +11,7 @@ Installation
     * Currently I use python from a virtualenv, thus the `.virtualenv` path invocation of the python binary.
 * Install python requirements (recommended in virtualenv).
     * `pip install -r requirements.txt`
+* Set up private.json according to [gspread's guide](http://gspread.readthedocs.org/en/latest/oauth2.html).
 
 Style
 ----------

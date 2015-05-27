@@ -3,3 +3,4 @@
 /keymap.yml
 /input/*
 !/input/README
+/private.json
