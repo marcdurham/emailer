@@ -13,7 +13,7 @@ from email.headerregistry import Address
 
 
 CHARSET = 'UTF-8'
-SECONDS_BETWEEN_EMAILS = 5
+SECONDS_BETWEEN_EMAILS = 10
 
 
 class Person(object):

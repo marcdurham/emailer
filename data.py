@@ -49,6 +49,7 @@ class GSpreadLoader(object):
         self.group_map = {idx: name for idx, name in enumerate(group_names)}
         for i in range(1, len(self.people_data)):
             abbreviation, name, email, *groups = self.people_data[i]
+            abbreviation = abbreviation.strip()
             person = models.Person(name=name, email=email)
             self.people[abbreviation] = person
             for idx, value in enumerate(groups):
