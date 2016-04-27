@@ -38,7 +38,7 @@ class Person(object):
     def get_address(self):
         return Address(self.name, self.username, self.domain)
 
-    def __str__(self):
+    def __repr__(self):
         return '{name} <{email}>'.format(name=self.name, email=self.email)
 
 

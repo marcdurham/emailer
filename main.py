@@ -14,6 +14,8 @@ import data
 import models
 import utils
 
+from pprint import pprint
+
 
 DATE_FORMAT = '%B %d, %Y'
 TIME_FORMAT = '%I:%M %p'
@@ -66,9 +68,18 @@ def format_and_send(send, sender, group, templates, sections, context, people,
     assert 'subject' in templates, 'Missing "subject" template.'
     subject = format_template(templates['subject'], context, people)
     messages = []
+    speaker = context['speaker']
+    if speaker in people:
+        group.append(people[speaker])
+    sent_already = set()
     for person in group:
         if not person.has_valid_email():
             continue
+        if person.email in sent_already:
+            if VERBOSE:
+                print('Already sent to ' + str(person))
+            continue
+        sent_already.add(person.email)
         if VERBOSE:
             print('Formatting email for {}.'.format(str(person)))
         body = generate_body(templates, sections, context, people, person.name)
@@ -81,6 +92,7 @@ def format_and_send(send, sender, group, templates, sections, context, people,
         messages.append(message)
     if VERBOSE:
         print('Sending all emails.')
+        pprint(len(messages))
     send(messages)
 
 

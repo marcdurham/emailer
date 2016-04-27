@@ -28,7 +28,6 @@ class GSpreadLoader(object):
         credentials = SignedJwtAssertionCredentials(
                 json_key['client_email'], bytes(json_key['private_key'], 'UTF-8'), scope)
         self.client = gspread.authorize(credentials)
-        #self.client = gspread.login(username, password)
         if key:
             self.spreadsheet = self.client.open_by_key(key)
         elif name:
@@ -51,7 +50,10 @@ class GSpreadLoader(object):
             abbreviation, name, email, *groups = self.people_data[i]
             abbreviation = abbreviation.strip()
             person = models.Person(name=name, email=email)
-            self.people[abbreviation] = person
+            if abbreviation:
+                self.people[abbreviation] = person
+            else:
+                self.people[name] = person
             for idx, value in enumerate(groups):
                 if value:
                     group_name = self.group_map[idx]
