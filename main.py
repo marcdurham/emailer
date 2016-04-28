@@ -21,6 +21,7 @@ DATE_FORMAT = '%B %d, %Y'
 TIME_FORMAT = '%I:%M %p'
 KEYMAP_FILE = 'keymap.yml'
 REPLY_TO_KEY = 'reply-to'
+SPEAKER_KEY = 'speaker'
 VERBOSE = False
 
 
@@ -68,9 +69,10 @@ def format_and_send(send, sender, group, templates, sections, context, people,
     assert 'subject' in templates, 'Missing "subject" template.'
     subject = format_template(templates['subject'], context, people)
     messages = []
-    speaker = context['speaker']
-    if speaker in people and official:
-        group.append(people[speaker])
+    if SPEAKER_KEY in context and official:
+        speaker = context['speaker']
+        if speaker in people:
+            group.append(people[speaker])
     sent_already = set()
     for person in group:
         if not person.has_valid_email():
