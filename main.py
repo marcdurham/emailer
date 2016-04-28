@@ -64,12 +64,12 @@ def format_template(template, context, people, highlight=None):
 
 
 def format_and_send(send, sender, group, templates, sections, context, people,
-                    reply_to=None):
+                    reply_to=None, official=None):
     assert 'subject' in templates, 'Missing "subject" template.'
     subject = format_template(templates['subject'], context, people)
     messages = []
     speaker = context['speaker']
-    if speaker in people:
+    if speaker in people and official:
         group.append(people[speaker])
     sent_already = set()
     for person in group:
@@ -150,6 +150,7 @@ def run(args):
         utils.update_if_not_none(context, date_data[data.CONTEXT])
         section_list = date_data[data.SECTIONS]
         group = groups[context['group']]
+        official = True
         if args.to:
             group = []
             for recipient in args.to:
@@ -161,9 +162,11 @@ def run(args):
         elif args.test:
             group = [ME]
             context['prefix'] = 'TEST - '
+            official = False
         elif args.dryrun:
             group = groups['dryrun']
             context['prefix'] = 'DRYRUN - '
+            official = False
         if REPLY_TO_KEY in context:
             reply_to = people[context[REPLY_TO_KEY]]
         else:
@@ -176,7 +179,8 @@ def run(args):
             sections=section_list,
             context=context,
             people=people,
-            reply_to=reply_to)
+            reply_to=reply_to,
+            official=official)
     elif VERBOSE:
         print('No template found for {}.'.format(today.strftime(DATE_FORMAT)))
 
