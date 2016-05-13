@@ -11,18 +11,29 @@ import unittest
 import data
 import models
 import utils
-from local import PASSWORD, SENDER
+from local import URL
 
+
+DEFAULT_URL = 'https://docs.google.com/spreadsheets/d/165AL8z-z5MlMrLyOEY8yJbNbLcqcKAcdvSeo-D5GSLE/edit'
 
 class TestDataInterface(unittest.TestCase):
     '''Ensures that the data interface returns well-formatted data.'''
 
     @classmethod
     def setUpClass(cls):
-        cls.yaml = data.YAMLLoader()
-        cls.gspread = data.GSpreadLoader(
-            username=SENDER.email, password=PASSWORD,
-            key='0AgHj5VJNRiEIdEZLR2FLZ1Y2MmtUaE1NblVCb29QWkE')
+        try:
+            cls.yaml = data.YAMLLoader()
+            url = DEFAULT_URL
+            if URL:
+                url = URL
+            cls.gspread = data.GSpreadLoader(url=url)
+        except Exception as e:
+            print('Could not load the fixture spreadsheet. Try creating a '
+                  'copy of the spreadsheet at ' + DEFAULT_URL + ' and sharing '
+                  'it with the client_email address in your private.json '
+                  "file. Don't forget to update your local.py with the new "
+                  'URL.')
+            raise e
 
     def test_fetch_people(self):
         self.people_test(self.yaml.fetch_people())
@@ -120,7 +131,7 @@ class TestDataInterface(unittest.TestCase):
 
 class TestModels(unittest.TestCase):
     def test_create_person(self):
-        name, email = 'Name', 'Email'
+        name, email = 'Name', 'Email@Domain'
         person = models.Person.create([name, email])
         self.assertEqual(name, person.name)
         self.assertEqual(email, person.email)

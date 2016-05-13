@@ -16,3 +16,6 @@ ME = SENDER
 #ME = models.Person(
 #        name='Giskard Relentlov',
 #        email='replyToXXXX@gmail.com')
+
+# For tests.py
+URL = None

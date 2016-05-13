@@ -22,16 +22,19 @@ DATE_FORMAT = '%d/%m/%Y'
 
 class GSpreadLoader(object):
 
-    def __init__(self, username, password, key=None, name=None):
-        json_key = json.load(open('private.json'))
-        scope = ['https://spreadsheets.google.com/feeds']
-        credentials = SignedJwtAssertionCredentials(
-                json_key['client_email'], bytes(json_key['private_key'], 'UTF-8'), scope)
-        self.client = gspread.authorize(credentials)
+    def __init__(self, key=None, name=None, url=None):
+        with open('private.json') as private_key_file:
+            json_key = json.load(private_key_file)
+            scope = ['https://spreadsheets.google.com/feeds']
+            credentials = SignedJwtAssertionCredentials(
+                    json_key['client_email'], bytes(json_key['private_key'], 'UTF-8'), scope)
+            self.client = gspread.authorize(credentials)
         if key:
             self.spreadsheet = self.client.open_by_key(key)
         elif name:
             self.spreadsheet = self.client.open(name)
+        elif url:
+            self.spreadsheet = self.client.open_by_url(url)
         self.people_sheet = self.spreadsheet.worksheet('People')
         self.templates_sheet = self.spreadsheet.worksheet('Templates')
         self.sections_sheet = self.spreadsheet.worksheet('Sections')

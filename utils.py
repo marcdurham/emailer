@@ -6,7 +6,7 @@ import dateutil.parser
 
 
 def parse_date(date_string):
-    return dateutil.parser.parse(date_string, dayfirst=True).date()
+    return dateutil.parser.parse(date_string).date()
 
 
 def convert_empty_to_none(dictionary):

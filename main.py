@@ -121,11 +121,9 @@ def run(args):
             assert index in keymap, 'Key or Name not found in keymap file.'
             value = keymap[index]
         if args.key:
-            loader = data.GSpreadLoader(
-                username=SENDER.email, password=PASSWORD, key=value)
+            loader = data.GSpreadLoader(key=value)
         elif args.name:
-            loader = data.GSpreadLoader(
-                username=SENDER.email, password=PASSWORD, name=value)
+            loader = data.GSpreadLoader(name=value)
 
     assert loader is not None, 'Loader cannot be set up.'
 

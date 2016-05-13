@@ -1,5 +1,5 @@
 PyYAML==3.11
-gspread==0.2.2
-python-dateutil==2.3
-six==1.8.0
-pyOpenSSL==0.15.1
+gspread==0.3.0
+python-dateutil==2.5.3
+six==1.10.0
+pyOpenSSL==16.0.0
