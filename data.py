@@ -8,7 +8,7 @@ import os
 import gspread
 import json
 import yaml
-from oauth2client.client import SignedJwtAssertionCredentials
+from oauth2client.service_account import ServiceAccountCredentials
 
 import models
 import utils
@@ -23,12 +23,9 @@ DATE_FORMAT = '%d/%m/%Y'
 class GSpreadLoader(object):
 
     def __init__(self, key=None, name=None, url=None):
-        with open('private.json') as private_key_file:
-            json_key = json.load(private_key_file)
-            scope = ['https://spreadsheets.google.com/feeds']
-            credentials = SignedJwtAssertionCredentials(
-                    json_key['client_email'], bytes(json_key['private_key'], 'UTF-8'), scope)
-            self.client = gspread.authorize(credentials)
+        scope = ['https://spreadsheets.google.com/feeds']
+        credentials = ServiceAccountCredentials.from_json_keyfile_name('private.json', scope)
+        self.client = gspread.authorize(credentials)
         if key:
             self.spreadsheet = self.client.open_by_key(key)
         elif name:
