@@ -59,9 +59,17 @@ def format_value(value, people, highlight=None):
 
 
 def format_template(template, context, people, highlight=None):
-    return template.format_map({
+    template_values = {
         name: format_value(value, people, highlight)
-        for name, value in context.items()})
+        for name, value in context.items()
+    }
+    # Format twice in case template is used in value.
+    while True:
+        new_value = template.format_map(template_values)
+        if new_value == template:
+            break
+        template = new_value
+    return template
 
 
 def format_and_send(send, sender, group, templates, sections, context, people,
