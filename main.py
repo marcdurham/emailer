@@ -35,9 +35,9 @@ def generate_body(templates, sections, context, people, highlight=None):
         for name in sections])
 
 
-def format_value(value, people, highlight=None):
-    if value is None:
-        ret = ''
+    def format_value(value, people, highlight=None):
+        if value is None:
+            ret = ''
     elif isinstance(value, int):
         ret = str(value)
     elif isinstance(value, datetime.date):
@@ -60,9 +60,9 @@ def format_value(value, people, highlight=None):
 
 def format_template(template, context, people, highlight=None):
     template_values = {
-        name: format_value(value, people, highlight)
-        for name, value in context.items()
-    }
+            name: format_value(value, people, highlight)
+            for name, value in context.items()
+            }
     # Format twice in case template is used in value.
     while True:
         new_value = template.format_map(template_values)
@@ -73,7 +73,7 @@ def format_template(template, context, people, highlight=None):
 
 
 def format_and_send(send, sender, group, templates, sections, context, people,
-                    reply_to=None, official=None):
+        reply_to=None, official=None):
     assert 'subject' in templates, 'Missing "subject" template.'
     subject = format_template(templates['subject'], context, people)
     messages = []
@@ -98,7 +98,8 @@ def format_and_send(send, sender, group, templates, sections, context, people,
         message.recipient = person
         message.subject = subject
         message.html = body
-        message.reply_to = reply_to
+        if reply_to:
+            message.reply_to = reply_to
         messages.append(message)
     if VERBOSE:
         print('Sending all emails.')
@@ -106,35 +107,7 @@ def format_and_send(send, sender, group, templates, sections, context, people,
     send(messages)
 
 
-def run(args):
-    global VERBOSE
-    VERBOSE = VERBOSE or args.verbose
-
-    template_date = None
-    if args.date:
-        template_date = utils.parse_date(args.date)
-
-    from local import PASSWORD, SENDER, REPLY_TO, ME
-    if VERBOSE:
-        print('Logging into server as {}.'.format(str(SENDER)))
-    server = models.Gmail(user=SENDER.email, password=PASSWORD)
-
-    loader = None
-    if args.directory:
-        loader = data.YAMLLoader(directory=args.directory)
-    else:
-        index = args.key or args.name
-        with open(KEYMAP_FILE, 'r') as keymap_file:
-            keymap = yaml.load(keymap_file)
-            assert index in keymap, 'Key or Name not found in keymap file.'
-            value = keymap[index]
-        if args.key:
-            loader = data.GSpreadLoader(key=value)
-        elif args.name:
-            loader = data.GSpreadLoader(name=value)
-
-    assert loader is not None, 'Loader cannot be set up.'
-
+def run_template(loader, sender, template_date, args, server):
     people = loader.fetch_people()
     groups = loader.fetch_groups()
     templates = loader.fetch_templates()
@@ -168,6 +141,7 @@ def run(args):
                     print('Cannot find {} in people {}.'.format(
                         recipient, args.to))
         elif args.test:
+            from local import ME
             group = [ME]
             context['prefix'] = 'TEST - '
             official = False
@@ -178,19 +152,61 @@ def run(args):
         if REPLY_TO_KEY in context:
             reply_to = people[context[REPLY_TO_KEY]]
         else:
-            reply_to = REPLY_TO
+            reply_to = None
         format_and_send(
-            send=server.send,
-            sender=SENDER,
-            group=group,
-            templates=templates,
-            sections=section_list,
-            context=context,
-            people=people,
-            reply_to=reply_to,
-            official=official)
+                send=server.send,
+                sender=sender,
+                group=group,
+                templates=templates,
+                sections=section_list,
+                context=context,
+                people=people,
+                reply_to=reply_to,
+                official=official)
     elif VERBOSE:
         print('No template found for {}.'.format(today.strftime(DATE_FORMAT)))
+
+
+def run(args):
+    global VERBOSE
+    VERBOSE = VERBOSE or args.verbose
+
+    template_date = None
+    if args.date:
+        template_date = utils.parse_date(args.date)
+
+    if args.gmail:
+        from local import GMAIL
+        server = models.Gmail(
+                user=GMAIL['sender'].email, password=GMAIL['password'])
+        sender = GMAIL['sender']
+    else:
+        from local import MAILGUN
+        server = models.MailGun(
+                host=MAILGUN['host'], api_key=MAILGUN['api_key'])
+        sender = MAILGUN['sender']
+    if VERBOSE:
+        print('Logging into server as {}.'.format(str(sender)))
+
+    loaders = []
+    if args.directory:
+        for directory in args.directory:
+            loaders.append(data.YAMLLoader(directory=directory))
+    else:
+        indexes = args.key or args.name
+        for index in indexes:
+            with open(KEYMAP_FILE, 'r') as keymap_file:
+                keymap = yaml.load(keymap_file)
+                assert index in keymap, 'Key or Name not found in keymap file.'
+                value = keymap[index]
+            if args.key:
+                loader = data.GSpreadLoader(key=value)
+            elif args.name:
+                loader = data.GSpreadLoader(name=value)
+            loaders.append(loader)
+
+    for loader in loaders:
+        run_template(loader, sender, template_date, args, server)
 
 
 def main():
@@ -200,12 +216,14 @@ def main():
     action_group.add_argument('-t', '--test', action='store_true')
     action_group.add_argument('-c', '--cron', action='store_true')
     data_group = parser.add_mutually_exclusive_group()
-    data_group.add_argument('-d', '--directory')
-    data_group.add_argument('-k', '--key')
-    data_group.add_argument('-m', '--name')
+    data_group.add_argument('-d', '--directory', nargs='+')
+    data_group.add_argument('-k', '--key', nargs='+')
+    data_group.add_argument('-m', '--name', nargs='+')
     parser.add_argument('--to', nargs='*')
     parser.add_argument('--date')
     parser.add_argument('-v', '--verbose', action='store_true')
+    #parser.add_argument('--mailgun', action='store_true')
+    parser.add_argument('--gmail', action='store_true')
     run(parser.parse_args())
 
 
