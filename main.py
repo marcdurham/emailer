@@ -25,19 +25,30 @@ SPEAKER_KEY = 'speaker'
 VERBOSE = False
 
 
-class Error(Exception):
-    pass
-
-
 def generate_body(templates, sections, context, people, highlight=None):
     return '\n'.join([
-        format_template(templates[name], context, people, highlight)
+        format_template(templates[name], templates, context, people, highlight)
         for name in sections])
 
 
-    def format_value(value, people, highlight=None):
-        if value is None:
-            ret = ''
+def format_template(template, templates, context, people, highlight=None):
+    values = templates.copy()
+    values.update({
+        name: format_value(value, people, highlight)
+        for name, value in context.items()
+    })
+    # Format twice in case template is used in value.
+    while True:
+        new_value = template.format_map(values)
+        if new_value == template:
+            break
+        template = new_value
+    return template
+
+
+def format_value(value, people, highlight=None):
+    if value is None:
+        ret = ''
     elif isinstance(value, int):
         ret = str(value)
     elif isinstance(value, datetime.date):
@@ -54,29 +65,19 @@ def generate_body(templates, sections, context, people, highlight=None):
         ret = value
 
     if highlight:
-        return ret.replace(highlight, '<strong style="background-color: yellow">' + highlight + '</strong>')
+        return ret.replace(
+                highlight,
+                '<strong style="background-color: yellow">{}</strong>'.format(
+                        highlight))
     return ret
-
-
-def format_template(template, context, people, highlight=None):
-    template_values = {
-            name: format_value(value, people, highlight)
-            for name, value in context.items()
-            }
-    # Format twice in case template is used in value.
-    while True:
-        new_value = template.format_map(template_values)
-        if new_value == template:
-            break
-        template = new_value
-    return template
 
 
 def format_and_send(send, sender, group, templates, sections, context, people,
         reply_to=None, official=None):
     assert 'subject' in templates, 'Missing "subject" template.'
-    subject = format_template(templates['subject'], context, people)
+    subject = format_template(templates['subject'], templates, context, people)
     messages = []
+    # Special case for sending email to visiting speakers
     if SPEAKER_KEY in context and official:
         speaker = context['speaker']
         if speaker in people:
