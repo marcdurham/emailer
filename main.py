@@ -165,8 +165,6 @@ def run_template(loader, sender, template_date, args, server):
                 people=people,
                 reply_to=reply_to,
                 official=official)
-    elif VERBOSE:
-        print('No template found for {}.'.format(today.strftime(DATE_FORMAT)))
 
 
 def run(args):
@@ -187,8 +185,6 @@ def run(args):
         server = models.MailGun(
                 host=MAILGUN['host'], api_key=MAILGUN['api_key'])
         sender = MAILGUN['sender']
-    if VERBOSE:
-        print('Logging into server as {}.'.format(str(sender)))
 
     loaders = []
     if args.directory:
