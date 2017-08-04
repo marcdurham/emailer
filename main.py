@@ -25,27 +25,6 @@ SPEAKER_KEY = 'speaker'
 VERBOSE = False
 
 
-def generate_body(templates, sections, context, people, highlight=None):
-    return '\n'.join([
-        format_template(templates[name], templates, context, people, highlight)
-        for name in sections])
-
-
-def format_template(template, templates, context, people, highlight=None):
-    values = templates.copy()
-    values.update({
-        name: format_value(value, people, highlight)
-        for name, value in context.items()
-    })
-    # Format twice in case template is used in value.
-    while True:
-        new_value = template.format_map(values)
-        if new_value == template:
-            break
-        template = new_value
-    return template
-
-
 def format_value(value, people, highlight=None):
     if value is None:
         ret = ''
@@ -70,6 +49,28 @@ def format_value(value, people, highlight=None):
                 '<strong style="background-color: yellow">{}</strong>'.format(
                         highlight))
     return ret
+
+
+def format_template(template, templates, context, people, highlight=None):
+    values = templates.copy()
+    values.update({
+        name: format_value(value, people, highlight)
+        for name, value in context.items()
+    })
+    # Format twice in case template is used in value.
+    while True:
+        new_value = template.format_map(values)
+        if new_value == template:
+            break
+        template = new_value
+    return template
+
+
+def generate_body(templates, sections, context, people, highlight=None):
+    return '\n'.join([
+        format_template(templates.get(name, name), templates, context, people,
+                        highlight)
+        for name in sections])
 
 
 def format_and_send(send, sender, group, templates, sections, context, people,
@@ -194,17 +195,16 @@ def run(args):
         for directory in args.directory:
             loaders.append(data.YAMLLoader(directory=directory))
     else:
-        indexes = args.key or args.name
-        for index in indexes:
-            with open(KEYMAP_FILE, 'r') as keymap_file:
-                keymap = yaml.load(keymap_file)
+        with open(KEYMAP_FILE, 'r') as keymap_file:
+            keymap = yaml.load(keymap_file)
+            indexes = args.key or args.name
+            for index in indexes:
                 assert index in keymap, 'Key or Name not found in keymap file.'
                 value = keymap[index]
-            if args.key:
-                loader = data.GSpreadLoader(key=value)
-            elif args.name:
-                loader = data.GSpreadLoader(name=value)
-            loaders.append(loader)
+                if args.key:
+                    loaders.append(data.GSpreadLoader(key=value))
+                elif args.name:
+                    loaders.append(data.GSpreadLoader(name=value))
 
     for loader in loaders:
         run_template(loader, sender, template_date, args, server)
@@ -216,14 +216,13 @@ def main():
     action_group.add_argument('-n', '--dryrun', action='store_true')
     action_group.add_argument('-t', '--test', action='store_true')
     action_group.add_argument('-c', '--cron', action='store_true')
-    data_group = parser.add_mutually_exclusive_group()
+    data_group = parser.add_mutually_exclusive_group(required=True)
     data_group.add_argument('-d', '--directory', nargs='+')
     data_group.add_argument('-k', '--key', nargs='+')
     data_group.add_argument('-m', '--name', nargs='+')
     parser.add_argument('--to', nargs='*')
     parser.add_argument('--date')
     parser.add_argument('-v', '--verbose', action='store_true')
-    #parser.add_argument('--mailgun', action='store_true')
     parser.add_argument('--gmail', action='store_true')
     run(parser.parse_args())
 
