@@ -57,7 +57,7 @@ def format_template(template, templates, context, people, highlight=None):
         name: format_value(value, people, highlight)
         for name, value in context.items()
     })
-    # Format twice in case template is used in value.
+    # Format many times when template is used in value.
     while True:
         new_value = template.format_map(values)
         if new_value == template:
@@ -94,7 +94,10 @@ def format_and_send(send, sender, group, templates, sections, context, people,
         sent_already.add(person.email)
         if VERBOSE:
             print('Formatting email for {}.'.format(str(person)))
-        body = generate_body(templates, sections, context, people, person.name)
+        highlight = None
+        if official:
+            highlight = person.name
+        body = generate_body(templates, sections, context, people, highlight)
         message = models.Message()
         message.sender = sender
         message.recipient = person
