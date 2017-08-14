@@ -57,12 +57,19 @@ def format_template(template, templates, context, people, highlight=None):
         name: format_value(value, people, highlight)
         for name, value in context.items()
     })
+    saved = None
+    if 'css' in values:
+        saved = values['css']
+        values['css'] = '{css}'
     # Format many times when template is used in value.
     while True:
         new_value = template.format_map(values)
         if new_value == template:
             break
         template = new_value
+    if saved:
+        values['css'] = saved
+        return template.format_map(values)
     return template
 
 
@@ -146,8 +153,11 @@ def run_template(loader, sender, template_date, args, server):
                     print('Cannot find {} in people {}.'.format(
                         recipient, args.to))
         elif args.test:
-            from local import ME
-            group = [ME]
+            if 'test' in groups:
+                group = groups['test']
+            else:
+                from local import ME
+                group = [ME]
             context['prefix'] = 'TEST - '
             official = False
         elif args.dryrun:
