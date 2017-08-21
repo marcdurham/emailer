@@ -8,6 +8,7 @@ import datetime
 import re
 import sys
 
+import premailer
 import yaml
 
 import data
@@ -105,6 +106,7 @@ def format_and_send(send, sender, group, templates, sections, context, people,
         if official:
             highlight = person.name
         body = generate_body(templates, sections, context, people, highlight)
+        body = premailer.transform(body)
         message = models.Message()
         message.sender = sender
         message.recipient = person
