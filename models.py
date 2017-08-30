@@ -24,6 +24,7 @@ class Person(object):
         self.email = email
         if email:
             self.username, self.domain = email.split('@')
+        self.highlight = None
 
     @classmethod
     def create(cls, attr_list):

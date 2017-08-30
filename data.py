@@ -57,7 +57,10 @@ class GSpreadLoader(object):
             for idx, value in enumerate(groups):
                 if value:
                     group_name = self.group_map[idx]
-                    self.groups[group_name].append(person)
+                    if group_name == 'Highlight':
+                        person.highlight = value
+                    else:
+                        self.groups[group_name].append(person)
 
     def parse_context_and_sections(self):
         self.default_context = utils.convert_empty_to_none(

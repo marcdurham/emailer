@@ -23,7 +23,13 @@ TIME_FORMAT = '%I:%M %p'
 KEYMAP_FILE = 'keymap.yml'
 REPLY_TO_KEY = 'reply-to'
 SPEAKER_KEY = 'speaker'
+HIGHLIGHT = '<strong style="background-color: yellow">{}</strong>'
 VERBOSE = False
+
+
+class LiteralDefault(dict):
+    def __missing__(self, key):
+        return '{' + key + '}'
 
 
 def format_value(value, people, highlight=None):
@@ -45,32 +51,33 @@ def format_value(value, people, highlight=None):
         ret = value
 
     if highlight:
-        return ret.replace(
-                highlight,
-                '<strong style="background-color: yellow">{}</strong>'.format(
-                        highlight))
+        for h in highlight:
+            ret = ret.replace(h, HIGHLIGHT.format(h))
     return ret
 
 
 def format_template(template, templates, context, people, highlight=None):
-    values = templates.copy()
+    values = LiteralDefault(templates)
+    values.update({abbrev: person.name for abbrev, person in people.items()})
     values.update({
         name: format_value(value, people, highlight)
         for name, value in context.items()
     })
-    saved = None
-    if 'css' in values:
-        saved = values['css']
-        values['css'] = '{css}'
+    literals = {}
+    for key, value in values.items():
+        if key.endswith('-literal'):
+            literals[key] = value
+            values[key] = '{' + key + '}'
     # Format many times when template is used in value.
     while True:
         new_value = template.format_map(values)
         if new_value == template:
             break
         template = new_value
-    if saved:
-        values['css'] = saved
-        return template.format_map(values)
+    if literals:
+        for key, value in literals.items():
+            values[key] = value
+        template = template.format_map(values)
     return template
 
 
@@ -82,7 +89,7 @@ def generate_body(templates, sections, context, people, highlight=None):
 
 
 def format_and_send(send, sender, group, templates, sections, context, people,
-        reply_to=None, official=None):
+        reply_to=None, official=None, highlight=None):
     assert 'subject' in templates, 'Missing "subject" template.'
     subject = format_template(templates['subject'], templates, context, people)
     messages = []
@@ -102,10 +109,13 @@ def format_and_send(send, sender, group, templates, sections, context, people,
         sent_already.add(person.email)
         if VERBOSE:
             print('Formatting email for {}.'.format(str(person)))
-        highlight = None
-        if official:
-            highlight = person.name
-        body = generate_body(templates, sections, context, people, highlight)
+        to_highlight = []
+        if highlight:
+            to_highlight.append(person.name)
+        if person.highlight:
+            to_highlight.append(format_value(person.highlight, people))
+        body = generate_body(
+                templates, sections, context, people, to_highlight)
         body = premailer.transform(body)
         message = models.Message()
         message.sender = sender
@@ -146,6 +156,7 @@ def run_template(loader, sender, template_date, args, server):
         section_list = date_data[data.SECTIONS]
         group = groups[context['group']]
         official = True
+        highlight = True
         if args.to:
             group = []
             for recipient in args.to:
@@ -166,6 +177,7 @@ def run_template(loader, sender, template_date, args, server):
             group = groups['dryrun']
             context['prefix'] = 'DRYRUN - '
             official = False
+            highlight = False
         if REPLY_TO_KEY in context:
             reply_to = people[context[REPLY_TO_KEY]]
         else:
@@ -179,7 +191,8 @@ def run_template(loader, sender, template_date, args, server):
                 context=context,
                 people=people,
                 reply_to=reply_to,
-                official=official)
+                official=official,
+                highlight=highlight)
 
 
 def run(args):
