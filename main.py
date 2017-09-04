@@ -32,7 +32,7 @@ class LiteralDefault(dict):
         return '{' + key + '}'
 
 
-def format_value(value, people, highlight=None):
+def format_value(value, people):
     if value is None:
         ret = ''
     elif isinstance(value, int):
@@ -49,10 +49,6 @@ def format_value(value, people, highlight=None):
         ret = people[value].name
     else:
         ret = value
-
-    if highlight:
-        for h in highlight:
-            ret = ret.replace(h, HIGHLIGHT.format(h))
     return ret
 
 
@@ -60,7 +56,7 @@ def format_template(template, templates, context, people, highlight=None):
     values = LiteralDefault(templates)
     values.update({abbrev: person.name for abbrev, person in people.items()})
     values.update({
-        name: format_value(value, people, highlight)
+        name: format_value(value, people)
         for name, value in context.items()
     })
     literals = {}
@@ -74,6 +70,11 @@ def format_template(template, templates, context, people, highlight=None):
         if new_value == template:
             break
         template = new_value
+
+    if highlight:
+        for h in highlight:
+            template = template.replace(h, HIGHLIGHT.format(h))
+
     if literals:
         for key, value in literals.items():
             values[key] = value
