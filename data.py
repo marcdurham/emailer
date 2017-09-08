@@ -4,6 +4,7 @@ Current plans to support Google Spreadsheet and YAML.
 '''
 
 import os
+import time
 
 import gspread
 import json
@@ -23,6 +24,23 @@ DATE_FORMAT = '%d/%m/%Y'
 class GSpreadLoader(object):
 
     def __init__(self, key=None, name=None, url=None):
+        try:
+            self._authorize()
+        except Exception as e:
+            print('Exception: {}'.format(e))
+            print('Retrying in 1 minute')
+            time.sleep(60)
+            self._authorize()
+        self.people_sheet = self.spreadsheet.worksheet('People')
+        self.templates_sheet = self.spreadsheet.worksheet('Templates')
+        self.sections_sheet = self.spreadsheet.worksheet('Sections')
+        self.context_sheet = self.spreadsheet.worksheet('Context')
+        self.people_data = self.people_sheet.get_all_values()
+        self.templates_data = self.templates_sheet.get_all_values()
+        self.sections_data = self.sections_sheet.get_all_values()
+        self.context_data = self.context_sheet.get_all_records()
+
+    def _authorize(self):
         scope = ['https://spreadsheets.google.com/feeds']
         credentials = ServiceAccountCredentials.from_json_keyfile_name('private.json', scope)
         self.client = gspread.authorize(credentials)
@@ -32,14 +50,6 @@ class GSpreadLoader(object):
             self.spreadsheet = self.client.open(name)
         elif url:
             self.spreadsheet = self.client.open_by_url(url)
-        self.people_sheet = self.spreadsheet.worksheet('People')
-        self.templates_sheet = self.spreadsheet.worksheet('Templates')
-        self.sections_sheet = self.spreadsheet.worksheet('Sections')
-        self.context_sheet = self.spreadsheet.worksheet('Context')
-        self.people_data = self.people_sheet.get_all_values()
-        self.templates_data = self.templates_sheet.get_all_values()
-        self.sections_data = self.sections_sheet.get_all_values()
-        self.context_data = self.context_sheet.get_all_records()
 
     def parse_people_and_groups(self):
         self.people = {}
