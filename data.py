@@ -24,13 +24,22 @@ DATE_FORMAT = '%d/%m/%Y'
 class GSpreadLoader(object):
 
     def __init__(self, key=None, name=None, url=None):
+        self.key = key
+        self.name = name
+        self.url = url
         try:
             self._authorize()
         except Exception as e:
             print('Exception: {}'.format(e))
             print('Retrying in 1 minute')
             time.sleep(60)
-            self._authorize()
+            try:
+                self._authorize()
+            except Exception as e2:
+                print('Another Exception: {}'.format(e))
+                print('Retrying in 10 minutes')
+                time.sleep(600)
+                self._authorize()
         self.people_sheet = self.spreadsheet.worksheet('People')
         self.templates_sheet = self.spreadsheet.worksheet('Templates')
         self.sections_sheet = self.spreadsheet.worksheet('Sections')
@@ -44,12 +53,12 @@ class GSpreadLoader(object):
         scope = ['https://spreadsheets.google.com/feeds']
         credentials = ServiceAccountCredentials.from_json_keyfile_name('private.json', scope)
         self.client = gspread.authorize(credentials)
-        if key:
-            self.spreadsheet = self.client.open_by_key(key)
-        elif name:
-            self.spreadsheet = self.client.open(name)
-        elif url:
-            self.spreadsheet = self.client.open_by_url(url)
+        if self.key:
+            self.spreadsheet = self.client.open_by_key(self.key)
+        elif self.name:
+            self.spreadsheet = self.client.open(self.name)
+        elif self.url:
+            self.spreadsheet = self.client.open_by_url(self.url)
 
     def parse_people_and_groups(self):
         self.people = {}
