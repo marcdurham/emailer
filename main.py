@@ -52,7 +52,7 @@ def format_value(value, people):
     return ret
 
 
-def format_template(template, templates, context, people, highlight=None):
+def format_template(template, templates, context, people, highlights=None):
     values = LiteralDefault(templates)
     values.update({abbrev: person.name for abbrev, person in people.items()})
     values.update({
@@ -71,8 +71,8 @@ def format_template(template, templates, context, people, highlight=None):
             break
         template = new_value
 
-    if highlight:
-        for h in highlight:
+    if highlights:
+        for h in highlights:
             template = template.replace(h, HIGHLIGHT.format(h))
 
     if literals:
@@ -82,10 +82,10 @@ def format_template(template, templates, context, people, highlight=None):
     return template
 
 
-def generate_body(templates, sections, context, people, highlight=None):
+def generate_body(templates, sections, context, people, highlights=None):
     return '\n'.join([
         format_template(templates.get(name, name), templates, context, people,
-                        highlight)
+                        highlights)
         for name in sections])
 
 
@@ -110,13 +110,12 @@ def format_and_send(send, sender, group, templates, sections, context, people,
         sent_already.add(person.email)
         if VERBOSE:
             print('Formatting email for {}.'.format(str(person)))
-        to_highlight = []
         if highlight:
-            to_highlight.append(person.name)
-        if person.highlight:
-            to_highlight.append(format_value(person.highlight, people))
+            highlights = [format_value(h, people) for h in person.highlights]
+        else:
+            highlights = None
         body = generate_body(
-                templates, sections, context, people, to_highlight)
+                templates, sections, context, people, highlights)
         body = premailer.transform(body)
         message = models.Message()
         message.sender = sender

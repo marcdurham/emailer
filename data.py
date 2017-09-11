@@ -76,8 +76,8 @@ class GSpreadLoader(object):
             for idx, value in enumerate(groups):
                 if value:
                     group_name = self.group_map[idx]
-                    if group_name == 'Highlight':
-                        person.highlight = value
+                    if group_name.startswith('highlight-'):
+                        person.highlights.append(value)
                     else:
                         self.groups[group_name].append(person)
 
