@@ -135,7 +135,7 @@ def get_datedata(loader, template_date, dryrun, test):
     today = template_date or datetime.date.today()
     one_day = datetime.timedelta(days=1)
     if dryrun:
-        return [loader.fetch_date(today), loader.fetch_date(today + one_day)]
+        return loader.fetch_date(today + one_day)
     datedata = loader.fetch_date(today)
     if test and not datedata:
         new_day = today
@@ -143,14 +143,14 @@ def get_datedata(loader, template_date, dryrun, test):
             new_day -= one_day
             datedata = loader.fetch_date(new_day)
             if datedata:
-                return [datedata]
+                return datedata
         new_day = today
         for i in range(10):
             new_day += one_day
             datedata = loader.fetch_date(new_day)
             if datedata:
-                return [datedata]
-    return [datedata]
+                return datedata
+    return datedata
 
 
 def run_template(loader, sender, server, datedata, dryrun, test, to):
@@ -243,11 +243,9 @@ def run(args):
                     loaders.append(data.GSpreadLoader(name=value))
 
     for loader in loaders:
-        all_datedata = get_datedata(loader, template_date, args.dryrun,
-                                    args.test)
-        for datedata in all_datedata:
-            run_template(loader, sender, server, datedata, args.dryrun,
-                         args.test, args.to)
+        datedata = get_datedata(loader, template_date, args.dryrun, args.test)
+        run_template(loader, sender, server, datedata, args.dryrun, args.test,
+                     args.to)
 
 
 def main():
