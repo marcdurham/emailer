@@ -1,14 +1,11 @@
 '''
 Data API.
-Current plans to support Google Spreadsheet and YAML.
+Current plans to support Google Spreadsheet only.
 '''
 
-import os
 import time
 
 import gspread
-import json
-import yaml
 from oauth2client.service_account import ServiceAccountCredentials
 
 import models
@@ -138,71 +135,3 @@ class GSpreadLoader(object):
             return self.fetch_date(date)
         except KeyError:
             return None
-
-
-class YAMLLoader(object):
-
-    def __init__(self, directory=None, people_file=None, templates_file=None,
-                 dates_file=None, defaults_file=None):
-        directory = directory or 'fixture'
-        people_file = (
-            people_file or os.path.join(directory, 'people.yml'))
-        templates_file = (
-            templates_file or os.path.join(directory, 'templates.yml'))
-        dates_file = (
-            dates_file or os.path.join(directory, 'dates.yml'))
-        defaults_file = (
-            defaults_file or os.path.join(directory, 'defaults.yml'))
-        with open(people_file, 'r') as people_data_stream:
-            self.people_data = yaml.load(people_data_stream)
-        with open(templates_file, 'r') as templates_data_stream:
-            self.templates_data = yaml.load(templates_data_stream)
-        with open(dates_file, 'r') as dates_data_stream:
-            self.dates_data = yaml.load(dates_data_stream)
-        with open(defaults_file, 'r') as defaults_data_stream:
-            self.defaults_data = yaml.load(defaults_data_stream)
-
-    def fetch_date(self, date):
-        try:
-            return self.dates_data[date]
-        except KeyError:
-            return None
-
-    def fetch_default_context(self):
-        return self.defaults_data
-
-    def fetch_templates(self):
-        return self.templates_data
-
-    def fetch_groups(self):
-        try:
-            return self.groups
-        except AttributeError:
-            people = self.fetch_people()
-            self.groups = {}
-            def fill_group(name, abbreviation_list):
-                group = []
-                for abbreviation in abbreviation_list:
-                    assert abbreviation in people, (
-                        'No abbreviation {} for group {}'.format(
-                            abbreviation, name))
-                    group.append(people[abbreviation])
-                return group
-
-            for name, abbreviation_list in self.people_data['groups'].items():
-                if abbreviation_list is None:
-                    self.groups[name] = list(people.values())
-                else:
-                    self.groups[name] = fill_group(name, abbreviation_list)
-            return self.groups
-
-    def fetch_people(self):
-        try:
-            return self.people
-        except AttributeError:
-            self.people = {}
-            people_dict = self.people_data['people']
-            for abbreviation, person_data in people_dict.items():
-                person = models.Person.create(person_data)
-                self.people[abbreviation] = person
-            return self.people
