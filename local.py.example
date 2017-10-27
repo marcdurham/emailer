@@ -1,25 +1,15 @@
 import models
 
-
 # The account the emails will be sent from.
-SENDER = models.Person(
-        name='FirstName LastName',
-        email='senderXXXX@gmail.com')
-# Preferably use an app-specific gmail password, for the sending account.
-PASSWORD = 'XXXXXXXXXXXXXXX'
+MAILGUN = {
+  'host': 'XXXXX.com',
+  'api_key': 'key-XXXXXXX',
+  'sender': models.Person(
+      name='Full Name',
+      email='sender@XXXXX.com'),
+}
 
-REPLY_TO = SENDER
-# If you want a different email address to receive replies.
-# This can be overridden in the spreadsheet, see usage of REPLY_TO_KEY in main.py.
-#REPLY_TO = models.Person(
-#        name='Giskard Relentlov',
-#        email='replyToXXXX@gmail.com')
-
-ME = SENDER
-# If you want a different email address to receive tests.
-#ME = models.Person(
-#        name='Giskard Relentlov',
-#        email='replyToXXXX@gmail.com')
-
-# For tests.py
-URL = None
+# Your own account for testing
+ME = models.Person(
+    name='Full Name 2',
+    email='personal@gmail.com')
