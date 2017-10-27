@@ -20,8 +20,9 @@ Installation
 Usage
 ----------
 ```
-usage: main.py [-h] (-n | -t | -c) [-d DIRECTORY | -k KEY | -m NAME]
-               [--to [TO [TO ...]]] [--date DATE] [-v]
+usage: main.py [-h] (-n | -t | -c)
+               (-d DIRECTORY [DIRECTORY ...] | -k KEY [KEY ...] | -m NAME [NAME ...])
+               [--to [TO [TO ...]]] [--date DATE] [-v] [--gmail]
 
 Send emails
 
@@ -30,12 +31,13 @@ optional arguments:
   -n, --dryrun
   -t, --test
   -c, --cron
-  -d DIRECTORY, --directory DIRECTORY
-  -k KEY, --key KEY
-  -m NAME, --name NAME
+  -d DIRECTORY [DIRECTORY ...], --directory DIRECTORY [DIRECTORY ...]
+  -k KEY [KEY ...], --key KEY [KEY ...]
+  -m NAME [NAME ...], --name NAME [NAME ...]
   --to [TO [TO ...]]
   --date DATE
   -v, --verbose
+  --gmail
 ```
 * The most used command is likely `./main.py -t -m example-group`, this sends a test email to `local.ME`.
 
