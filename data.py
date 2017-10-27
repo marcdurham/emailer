@@ -14,6 +14,7 @@ import utils
 
 SECTIONS = 'sections'
 CONTEXT = 'context'
+DATE = 'date'
 ID = 'ID'
 DATE_FORMAT = '%d/%m/%Y'
 
@@ -95,6 +96,7 @@ class GSpreadLoader(object):
                 self.dates[date] = {
                     SECTIONS: sections,
                     CONTEXT: context,
+                    DATE: date,
                 }
 
     def fetch_people(self):

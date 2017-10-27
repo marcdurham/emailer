@@ -131,68 +131,80 @@ def format_and_send(send, sender, group, templates, sections, context, people,
     send(messages)
 
 
-def run_template(loader, sender, template_date, args, server):
+def get_datedata(loader, template_date, dryrun, test):
+    today = template_date or datetime.date.today()
+    one_day = datetime.timedelta(days=1)
+    if dryrun:
+        return [loader.fetch_date(today), loader.fetch_date(today + one_day)]
+    datedata = loader.fetch_date(today)
+    if test and not datedata:
+        new_day = today
+        for i in range(10):
+            new_day -= one_day
+            datedata = loader.fetch_date(new_day)
+            if datedata:
+                return [datedata]
+        new_day = today
+        for i in range(10):
+            new_day += one_day
+            datedata = loader.fetch_date(new_day)
+            if datedata:
+                return [datedata]
+    return [datedata]
+
+
+def run_template(loader, sender, server, datedata, dryrun, test, to):
+    if not datedata:
+        return
     people = loader.fetch_people()
     groups = loader.fetch_groups()
     templates = loader.fetch_templates()
     default_context = loader.fetch_default_context()
-
-    today = template_date or datetime.date.today()
-    one_day = datetime.timedelta(days=1)
-    if args.dryrun:
-        today += one_day
-    date_data = loader.fetch_date(today)
-    if args.test and not date_data:
-        for i in range(10):
-            today -= one_day
-            date_data = loader.fetch_date(today)
-            if date_data:
-                break
-    if date_data:
-        if VERBOSE:
-            print('Sending email for {}.'.format(today.strftime(DATE_FORMAT)))
-        context = default_context.copy()
-        utils.update_if_not_none(context, date_data[data.CONTEXT])
-        section_list = date_data[data.SECTIONS]
-        group = groups[context['group']]
-        official = True
-        highlight = True
-        if args.to:
-            group = []
-            for recipient in args.to:
-                if recipient in people:
-                    group.append(people[recipient])
-                else:
-                    print('Cannot find {} in people {}.'.format(
-                        recipient, args.to))
-        elif args.test:
-            if 'test' in groups:
-                group = groups['test']
+    if VERBOSE:
+        print('Sending email for {}.'.format(
+                datedata[data.DATE].strftime(DATE_FORMAT)))
+    context = default_context.copy()
+    utils.update_if_not_none(context, datedata[data.CONTEXT])
+    section_list = datedata[data.SECTIONS]
+    group = groups[context['group']]
+    official = True
+    highlight = True
+    if to:
+        group = []
+        for recipient in to:
+            if recipient in people:
+                group.append(people[recipient])
             else:
-                from local import ME
-                group = [ME]
-            context['prefix'] = 'TEST - '
-            official = False
-        elif args.dryrun:
-            group = groups['dryrun']
-            context['prefix'] = 'DRYRUN - '
-            official = False
-            highlight = False
-        if REPLY_TO_KEY in context:
-            reply_to = people[context[REPLY_TO_KEY]]
+                print('Cannot find {} in people {}.'.format(
+                    recipient, to))
+    elif test:
+        if 'test' in groups:
+            group = groups['test']
         else:
-            reply_to = None
-        format_and_send(
-                send=server.send,
-                sender=sender,
-                group=group,
-                templates=templates,
-                sections=section_list,
-                context=context,
-                people=people,
-                reply_to=reply_to,
-                official=official,
-                highlight=highlight)
+            from local import ME
+            group = [ME]
+        context['prefix'] = 'TEST - '
+        official = False
+    elif dryrun:
+        group = groups['dryrun']
+        context['prefix'] = 'DRYRUN - '
+        official = False
+        highlight = False
+    if REPLY_TO_KEY in context:
+        reply_to = people[context[REPLY_TO_KEY]]
+    else:
+        reply_to = None
+    format_and_send(
+            send=server.send,
+            sender=sender,
+            group=group,
+            templates=templates,
+            sections=section_list,
+            context=context,
+            people=people,
+            reply_to=reply_to,
+            official=official,
+            highlight=highlight)
 
 
 def run(args):
@@ -231,7 +243,11 @@ def run(args):
                     loaders.append(data.GSpreadLoader(name=value))
 
     for loader in loaders:
-        run_template(loader, sender, template_date, args, server)
+        all_datedata = get_datedata(loader, template_date, args.dryrun,
+                                    args.test)
+        for datedata in all_datedata:
+            run_template(loader, sender, server, datedata, args.dryrun,
+                         args.test, args.to)
 
 
 def main():
