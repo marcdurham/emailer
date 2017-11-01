@@ -1,3 +1,5 @@
+build/
+emailer.egg-info/
 *.pyc
 /local.py
 /keymap.yml
