@@ -8,8 +8,7 @@ import time
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 
-import models
-import utils
+from . import models, utils
 
 
 SECTIONS = 'sections'

@@ -11,9 +11,7 @@ import sys
 import premailer
 import yaml
 
-import data
-import models
-import utils
+from . import data, models, utils
 
 from pprint import pprint
 
