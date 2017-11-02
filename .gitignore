@@ -1,5 +1,4 @@
 build/
-dist/
 emailer.egg-info/
 *.pyc
 /config.yml

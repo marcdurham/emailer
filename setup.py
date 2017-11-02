@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-'''./setup.py sdist bdist_wheel && twine upload dist/*'''
 
 from setuptools import setup
 from os import path
