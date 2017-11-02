@@ -1,28 +1,9 @@
-Auto Emailer
+Emailer
 =============
 
-Installation
---------------
-* Create local config in `./local.py`.
-    * The three attributes required in this file are specified in `./local.py.example`.
-* Copy local keymap shortcut from `./keymap.yml.example` to `./keymap.yml`.
-    * You can set up keymap.yml's entries to be the actual id of the Google spreadsheet file, or the file name.
-    * The id is the long entry in the URL: `https://docs.google.com/spreadsheets/d<key>/edit`
-    * The name can simply be the exact name of the spreadsheet.
-    * This depends on the argument you pass into `./main.py`.
-* Set crontab entries.
-    * Crontab examples for setting up recurring automatic sends are located in `./crontab.example`.
-    * Currently I use python from a virtualenv, thus the `.virtualenv` path invocation of the python binary.
-* Install python requirements (recommended in virtualenv).
-    * `pip install -r requirements.txt`
-* Set up private.json according to [gspread's guide](http://gspread.readthedocs.org/en/latest/oauth2.html).
-
-Usage
-----------
 ```
-usage: main.py [-h] (-n | -t | -c)
-               (-d DIRECTORY [DIRECTORY ...] | -k KEY [KEY ...] | -m NAME [NAME ...])
-               [--to [TO [TO ...]]] [--date DATE] [-v] [--gmail]
+usage: email [-h] [-n] [-t] [-a] [-k KEY [KEY ...]] --config CONFIG --auth
+             AUTH [--date DATE] [-v]
 
 Send emails
 
@@ -30,16 +11,17 @@ optional arguments:
   -h, --help            show this help message and exit
   -n, --dryrun
   -t, --test
-  -c, --cron
-  -d DIRECTORY [DIRECTORY ...], --directory DIRECTORY [DIRECTORY ...]
+  -a, --all
   -k KEY [KEY ...], --key KEY [KEY ...]
-  -m NAME [NAME ...], --name NAME [NAME ...]
-  --to [TO [TO ...]]
-  --date DATE
+  --config CONFIG       config.yml file
+  --auth AUTH           private.json file
+  --date DATE           Run as if this was today
   -v, --verbose
-  --gmail
 ```
-* The most used command is likely `./main.py -t -m example-group`, this sends a test email to `local.ME`.
+* Create local config in `./config.yml` from `./config.yml.example`.
+    * The key is the long entry in the URL: `https://docs.google.com/spreadsheets/<key>/edit`
+* Set up auth.json according to [gspread's guide](http://gspread.readthedocs.org/en/latest/oauth2.html).
+* The most used command is likely `./main.py -t -k example-group`, this sends a test email to sender.
 
 Style
 ----------

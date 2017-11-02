@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+'''./setup.py sdist bdist_wheel && twine upload dist/*'''
 
 from setuptools import setup
 from os import path
@@ -9,7 +10,7 @@ with open(path.join(HERE, 'README.md')) as f:
 
 setup(
   name='emailer',
-  version='0.1.1',
+  version='0.1.2',
   description='Send scheduled emails',
   long_description=long_description,
   url='https://github.com/WhiteHalmos/emailer',

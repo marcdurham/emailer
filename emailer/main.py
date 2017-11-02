@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 '''
 Desperately needs a new meaning in life other than 'everything'.
 '''
@@ -23,6 +22,9 @@ REPLY_TO_KEY = 'reply-to'
 SPEAKER_KEY = 'speaker'
 HIGHLIGHT = '<strong style="background-color: yellow">{}</strong>'
 VERBOSE = False
+ALL = 'all'
+DRYRUN = 'dryrun'
+TEST = 'test'
 
 
 class LiteralDefault(dict):
@@ -129,13 +131,13 @@ def format_and_send(send, sender, group, templates, sections, context, people,
     send(messages)
 
 
-def get_datedata(loader, template_date, dryrun, test):
+def get_datedata(loader, template_date, email_type):
     today = template_date or datetime.date.today()
     one_day = datetime.timedelta(days=1)
-    if dryrun:
+    if email_type == DRYRUN:
         return loader.fetch_date(today + one_day)
     datedata = loader.fetch_date(today)
-    if test and not datedata:
+    if email_type == TEST and not datedata:
         new_day = today
         for i in range(10):
             new_day -= one_day
@@ -151,7 +153,7 @@ def get_datedata(loader, template_date, dryrun, test):
     return datedata
 
 
-def run_template(loader, sender, server, datedata, dryrun, test, to):
+def run_template(loader, sender, server, datedata, email_type):
     if not datedata:
         return
     people = loader.fetch_people()
@@ -167,23 +169,14 @@ def run_template(loader, sender, server, datedata, dryrun, test, to):
     group = groups[context['group']]
     official = True
     highlight = True
-    if to:
-        group = []
-        for recipient in to:
-            if recipient in people:
-                group.append(people[recipient])
-            else:
-                print('Cannot find {} in people {}.'.format(
-                    recipient, to))
-    elif test:
+    if email_type == TEST:
         if 'test' in groups:
             group = groups['test']
         else:
-            from local import ME
-            group = [ME]
+            group = [sender]
         context['prefix'] = 'TEST - '
         official = False
-    elif dryrun:
+    elif email_type == DRYRUN:
         group = groups['dryrun']
         context['prefix'] = 'DRYRUN - '
         official = False
@@ -208,61 +201,40 @@ def run_template(loader, sender, server, datedata, dryrun, test, to):
 def run(args):
     global VERBOSE
     VERBOSE = VERBOSE or args.verbose
-
+    assert args.all or args.dryrun or args.test, (
+            'At least one action is needed')
     template_date = None
     if args.date:
         template_date = utils.parse_date(args.date)
-
-    if args.gmail:
-        from local import GMAIL
-        server = models.Gmail(
-                user=GMAIL['sender'].email, password=GMAIL['password'])
-        sender = GMAIL['sender']
-    else:
-        from local import MAILGUN
-        server = models.MailGun(
-                host=MAILGUN['host'], api_key=MAILGUN['api_key'])
-        sender = MAILGUN['sender']
-
-    loaders = []
-    if args.directory:
-        for directory in args.directory:
-            loaders.append(data.YAMLLoader(directory=directory))
-    else:
-        with open(KEYMAP_FILE, 'r') as keymap_file:
-            keymap = yaml.load(keymap_file)
-            indexes = args.key or args.name
-            for index in indexes:
-                assert index in keymap, 'Key or Name not found in keymap file.'
-                value = keymap[index]
-                if args.key:
-                    loaders.append(data.GSpreadLoader(key=value))
-                elif args.name:
-                    loaders.append(data.GSpreadLoader(name=value))
-
+    with open(args.config, 'r') as config_file:
+        config = yaml.load(config_file)
+    server = models.MailGun(host=config['mailgun']['host'],
+                            api_key=config['mailgun']['api_key'])
+    sender = models.Person(name=config['sender']['name'],
+                           email=config['sender']['email'])
+    keys = args.key or config['keys'].keys()
+    loaders = [data.GSpreadLoader(key=config['keys'][key], auth=args.auth)
+               for key in keys]
+    types = {}
+    types[ALL] = args.all
+    types[DRYRUN] = args.dryrun
+    types[TEST] = args.test
     for loader in loaders:
-        datedata = get_datedata(loader, template_date, args.dryrun, args.test)
-        run_template(loader, sender, server, datedata, args.dryrun, args.test,
-                     args.to)
+        for email_type, should_run in types.items():
+            if not should_run:
+                continue
+            datedata = get_datedata(loader, template_date, email_type)
+            run_template(loader, sender, server, datedata, email_type)
 
 
 def main():
     parser = argparse.ArgumentParser(description='Send emails')
-    action_group = parser.add_mutually_exclusive_group(required=True)
-    action_group.add_argument('-n', '--dryrun', action='store_true')
-    action_group.add_argument('-t', '--test', action='store_true')
-    action_group.add_argument('-c', '--cron', action='store_true')
-    data_group = parser.add_mutually_exclusive_group(required=True)
-    data_group.add_argument('-d', '--directory', nargs='+')
-    data_group.add_argument('-k', '--key', nargs='+')
-    data_group.add_argument('-m', '--name', nargs='+')
-    parser.add_argument('--to', nargs='*')
-    parser.add_argument('--date')
+    parser.add_argument('-n', '--dryrun', action='store_true')
+    parser.add_argument('-t', '--test', action='store_true')
+    parser.add_argument('-a', '--all', action='store_true')
+    parser.add_argument('-k', '--key', nargs='+')
+    parser.add_argument('--config', required=True, help='config.yml file')
+    parser.add_argument('--auth', required=True, help='private.json file')
+    parser.add_argument('--date', help='Run as if this was today')
     parser.add_argument('-v', '--verbose', action='store_true')
-    parser.add_argument('--gmail', action='store_true')
     run(parser.parse_args())
-
-
-if __name__ == '__main__':
-    main()
-

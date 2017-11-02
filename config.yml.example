@@ -1,0 +1,9 @@
+keys:
+  name1: 'GOOGLESPREADSHEETIDXXXXXXXXXXXXXXXXXXXXXXXXX'
+  name2: 'GOOGLESPREADSHEETIDXXXXXXXXXXXXXXXXXXXXXXXXX'
+mailgun:
+  host: 'sample.com'
+  api_key: 'key-XXXXXXXXXXXXXXXXXXXXXXXXX'
+sender:
+  name: 'Your Name'
+  email: 'you@sample.com'

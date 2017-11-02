@@ -4,10 +4,8 @@ Current plans to support Google Spreadsheet only.
 '''
 
 import time
-
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
-
 from . import models, utils
 
 
@@ -19,22 +17,18 @@ DATE_FORMAT = '%d/%m/%Y'
 
 
 class GSpreadLoader(object):
-
-    def __init__(self, key=None, name=None, url=None):
+    def __init__(self, *, key, auth):
         self.key = key
-        self.name = name
-        self.url = url
+        self.auth = auth 
         try:
             self._authorize()
         except Exception as e:
             print('Exception: {}'.format(e))
-            print('Retrying in 1 minute')
             time.sleep(60)
             try:
                 self._authorize()
             except Exception as e2:
                 print('Another Exception: {}'.format(e))
-                print('Retrying in 10 minutes')
                 time.sleep(600)
                 self._authorize()
         self.people_sheet = self.spreadsheet.worksheet('People')
@@ -48,14 +42,10 @@ class GSpreadLoader(object):
 
     def _authorize(self):
         scope = ['https://spreadsheets.google.com/feeds']
-        credentials = ServiceAccountCredentials.from_json_keyfile_name('private.json', scope)
+        credentials = ServiceAccountCredentials.from_json_keyfile_name(
+                self.auth, scope)
         self.client = gspread.authorize(credentials)
-        if self.key:
-            self.spreadsheet = self.client.open_by_key(self.key)
-        elif self.name:
-            self.spreadsheet = self.client.open(self.name)
-        elif self.url:
-            self.spreadsheet = self.client.open_by_url(self.url)
+        self.spreadsheet = self.client.open_by_key(self.key)
 
     def parse_people_and_groups(self):
         self.people = {}

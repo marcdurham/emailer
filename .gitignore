@@ -1,6 +1,6 @@
 build/
+dist/
 emailer.egg-info/
 *.pyc
-/local.py
-/keymap.yml
-/private.json
+/config.yml
+/auth.json
