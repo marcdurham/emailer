@@ -13,8 +13,6 @@ import yaml
 
 from . import data, models, utils
 
-from pprint import pprint
-
 
 DATE_FORMAT = '%B %d, %Y'
 TIME_FORMAT = '%I:%M %p'
@@ -129,8 +127,6 @@ def format_and_send(send, sender, group, templates, sections, context, people,
     if VERBOSE:
         print('Sending all emails.')
         print(len(messages))
-        if messages:
-            pprint(messages[0].html)
     send(messages)
 
 
