@@ -5,7 +5,7 @@ from setuptools import setup
 from os import path
 
 HERE = path.abspath(path.dirname(__file__))
-with open(path.join(HERE, 'README.md')) as f:
+with open(path.join(HERE, 'README.rst')) as f:
   long_description = f.read()
 
 setup(
