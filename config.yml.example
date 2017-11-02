@@ -7,3 +7,9 @@ mailgun:
 sender:
   name: 'Your Name'
   email: 'you@sample.com'
+auth:
+  private_key_id: "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+  private_key: "-----BEGIN PRIVATE KEY-----XXXXXXXXXXXXXXX-----END PRIVATE KEY-----\n"
+  client_email: "XXXXXXXXXXXXXXXX@developer.gserviceaccount.com"
+  client_id: "XXXXXXXXXXXXXX.apps.googleusercontent.com"
+  type: "service_account"

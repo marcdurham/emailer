@@ -42,7 +42,7 @@ class GSpreadLoader(object):
 
     def _authorize(self):
         scope = ['https://spreadsheets.google.com/feeds']
-        credentials = ServiceAccountCredentials.from_json_keyfile_name(
+        credentials = ServiceAccountCredentials.from_json_keyfile_dict(
                 self.auth, scope)
         self.client = gspread.authorize(credentials)
         self.spreadsheet = self.client.open_by_key(self.key)

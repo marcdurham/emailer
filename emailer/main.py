@@ -4,6 +4,7 @@ Desperately needs a new meaning in life other than 'everything'.
 
 import argparse
 import datetime
+import os
 import re
 import sys
 
@@ -127,12 +128,13 @@ def format_and_send(send, sender, group, templates, sections, context, people,
         messages.append(message)
     if VERBOSE:
         print('Sending all emails.')
-        pprint(len(messages))
+        print(len(messages))
+        if messages:
+            pprint(messages[0].html)
     send(messages)
 
 
-def get_datedata(loader, template_date, email_type):
-    today = template_date or datetime.date.today()
+def get_datedata(loader, today, email_type):
     one_day = datetime.timedelta(days=1)
     if email_type == DRYRUN:
         return loader.fetch_date(today + one_day)
@@ -198,43 +200,52 @@ def run_template(loader, sender, server, datedata, email_type):
             highlight=highlight)
 
 
-def run(args):
-    global VERBOSE
-    VERBOSE = VERBOSE or args.verbose
-    assert args.all or args.dryrun or args.test, (
-            'At least one action is needed')
-    template_date = None
-    if args.date:
-        template_date = utils.parse_date(args.date)
-    with open(args.config, 'r') as config_file:
-        config = yaml.load(config_file)
+def run(types, today, config):
     server = models.MailGun(host=config['mailgun']['host'],
                             api_key=config['mailgun']['api_key'])
     sender = models.Person(name=config['sender']['name'],
                            email=config['sender']['email'])
-    keys = args.key or config['keys'].keys()
-    loaders = [data.GSpreadLoader(key=config['keys'][key], auth=args.auth)
+    keys = config['keys'].keys()
+    loaders = [data.GSpreadLoader(key=config['keys'][key], auth=config['auth'])
                for key in keys]
-    types = {}
-    types[ALL] = args.all
-    types[DRYRUN] = args.dryrun
-    types[TEST] = args.test
     for loader in loaders:
         for email_type, should_run in types.items():
             if not should_run:
                 continue
-            datedata = get_datedata(loader, template_date, email_type)
+            datedata = get_datedata(loader, today, email_type)
             run_template(loader, sender, server, datedata, email_type)
 
 
-def main():
+def get_parser():
     parser = argparse.ArgumentParser(description='Send emails')
     parser.add_argument('-n', '--dryrun', action='store_true')
     parser.add_argument('-t', '--test', action='store_true')
     parser.add_argument('-a', '--all', action='store_true')
     parser.add_argument('-k', '--key', nargs='+')
-    parser.add_argument('--config', required=True, help='config.yml file')
-    parser.add_argument('--auth', required=True, help='private.json file')
+    parser.add_argument('--config', help='config.yml file')
     parser.add_argument('--date', help='Run as if this was today')
     parser.add_argument('-v', '--verbose', action='store_true')
-    run(parser.parse_args())
+    return parser
+
+
+def main():
+    global VERBOSE
+    options = get_parser().parse_args()
+    assert options.all or options.dryrun or options.test, (
+            'At least one action is needed')
+    VERBOSE = VERBOSE or options.verbose
+    types = {}
+    types[ALL] = options.all
+    types[DRYRUN] = options.dryrun
+    types[TEST] = options.test
+    if options.date:
+        today = utils.parse_date(args.date)
+    else:
+        today = datetime.date.today()
+    if not options.config:
+        options.config = os.path.expanduser('~/.emailer/config.yml')
+    with open(options.config, 'r') as config_file:
+        config = yaml.load(config_file)
+    if options.key:
+        config['keys'] = {k: config['keys'][k] for k in options.key}
+    run(types, today, config)
