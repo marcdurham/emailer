@@ -221,8 +221,9 @@ def get_parser():
     parser.add_argument('-n', '--dryrun', action='store_true')
     parser.add_argument('-t', '--test', action='store_true')
     parser.add_argument('-a', '--all', action='store_true')
-    parser.add_argument('-k', '--key', nargs='+')
-    parser.add_argument('--config', help='config.yml file')
+    parser.add_argument('-k', '--key', nargs='+', help='Default is all keys')
+    parser.add_argument('--config',
+            help='The config.yml file, default at ~/.emailer/config.yml')
     parser.add_argument('--date', help='Run as if this was today')
     parser.add_argument('-v', '--verbose', action='store_true')
     return parser
