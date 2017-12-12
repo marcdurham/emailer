@@ -108,7 +108,7 @@ class GSpreadLoader(object):
         except AttributeError:
             self.templates = {
                 name.strip(): template.strip()
-                for name, template in self.templates_data[1:]}
+                for name, template, *rest in self.templates_data[1:]}
             return self.templates
 
     def fetch_default_context(self):

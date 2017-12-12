@@ -4,4 +4,7 @@ setup:
 clean:
 	rm dist/*
 
+dev:
+	pip install -e .
+
 upload: setup clean
