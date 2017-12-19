@@ -3,11 +3,13 @@ Data API.
 Current plans to support Google Spreadsheet only.
 '''
 
+import sys
 import time
+
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
-from . import models, utils
 
+from . import models, utils
 
 SECTIONS = 'sections'
 CONTEXT = 'context'
@@ -19,9 +21,12 @@ DATE_FORMAT = '%d/%m/%Y'
 class GSpreadLoader(object):
     def __init__(self, *, key, auth):
         self.key = key
-        self.auth = auth 
+        self.auth = auth
         try:
             self._authorize()
+        except gspread.SpreadsheetNotFound:
+            print('Config key "{}" was not found or is not a Spreadsheet ID.'.format(key))
+            sys.exit(-1)
         except Exception as e:
             print('Exception: {}'.format(e))
             time.sleep(60)
