@@ -7,7 +7,6 @@ import email.message
 import email.policy
 import re
 import requests
-import time
 
 
 class Person(object):
@@ -55,7 +54,7 @@ class Message(object):
         message['To'] = self.recipient.get_address()
         if self.reply_to:
             message['Reply-To'] = self.reply_to.get_address()
-        message.set_content(self.html, subtype='html', cte='quoted-printable');
+        message.set_content(self.html, subtype='html', cte='quoted-printable')
         return message
 
 

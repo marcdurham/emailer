@@ -6,7 +6,6 @@ import argparse
 import datetime
 import os
 import re
-import sys
 
 import premailer
 import yaml
@@ -236,7 +235,7 @@ def main():
     types[DRYRUN] = options.dryrun
     types[TEST] = options.test
     if options.date:
-        today = utils.parse_date(args.date)
+        today = utils.parse_date(options.date)
     else:
         today = datetime.date.today()
     if not options.config:
