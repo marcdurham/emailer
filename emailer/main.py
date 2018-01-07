@@ -196,8 +196,14 @@ def run_template(loader, sender, server, datedata, email_type):
 
 
 def run(types, today, config):
-    server = models.MailGun(host=config['mailgun']['host'],
-                            api_key=config['mailgun']['api_key'])
+    if 'mailgun' in config:
+        server = models.MailGun(host=config['mailgun']['host'],
+                                api_key=config['mailgun']['api_key'])
+    elif 'gmail' in config:
+        server = models.Gmail(user=config['gmail']['user'],
+                              password=config['gmail']['password'])
+    else:
+        raise Exception('No valid authentication protocol in config file')
     sender = models.Person(name=config['sender']['name'],
                            email=config['sender']['email'])
     keys = config['keys'].keys()

@@ -7,6 +7,8 @@ import email.message
 import email.policy
 import re
 import requests
+import smtplib
+import time
 
 
 class Person(object):
@@ -56,6 +58,32 @@ class Message(object):
             message['Reply-To'] = self.reply_to.get_address()
         message.set_content(self.html, subtype='html', cte='quoted-printable')
         return message
+
+
+class Server(object):
+    SECONDS_BETWEEN_EMAILS = 1
+    def __init__(self, *, host, port, user, password):
+        self.host = host
+        self.port = port
+        self.user = user
+        self.password = password
+
+    def send(self, messages):
+        server = smtplib.SMTP(self.host, self.port)
+        if self.user and self.password:
+            server.starttls()
+            server.login(self.user, self.password)
+        for message in messages:
+            server.send_message(message.get_message())
+            time.sleep(self.SECONDS_BETWEEN_EMAILS)
+        server.quit()
+
+
+class Gmail(Server):
+    '''Simple to use, simply supply user and password of any gmail account.'''
+    def __init__(self, *, user, password):
+        super().__init__(host='smtp.gmail.com', port=587, user=user,
+                         password=password)
 
 
 class MailGun(object):
