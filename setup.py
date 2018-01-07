@@ -9,7 +9,7 @@ with open(path.join(HERE, 'README.md')) as f:
 
 setup(
   name='emailer',
-  version='0.2.4',
+  version='0.3.0',
   description='Send scheduled emails',
   long_description=long_description,
   url='https://github.com/WhiteHalmos/emailer',
