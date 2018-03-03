@@ -207,7 +207,10 @@ def run(types, today, config):
     sender = models.Person(name=config['sender']['name'],
                            email=config['sender']['email'])
     keys = config['keys'].keys()
-    loaders = [data.GSpreadLoader(key=config['keys'][key], auth=config['auth'])
+    options = config.get('options', dict())
+    loaders = [data.GSpreadLoader(key=config['keys'][key],
+                                  auth=config['auth'],
+                                  newline_to_br=options.get('newline-to-br'))
                for key in keys]
     for loader in loaders:
         for email_type, should_run in types.items():

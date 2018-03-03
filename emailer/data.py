@@ -19,9 +19,10 @@ DATE_FORMAT = '%d/%m/%Y'
 
 
 class GSpreadLoader(object):
-    def __init__(self, *, key, auth):
+    def __init__(self, *, key, auth, newline_to_br=None):
         self.key = key
         self.auth = auth
+        self.newline_to_br = newline_to_br
         try:
             self._authorize()
         except gspread.SpreadsheetNotFound:
@@ -75,12 +76,12 @@ class GSpreadLoader(object):
 
     def parse_context_and_sections(self):
         self.default_context = utils.convert_empty_to_none(
-            self.context_data[0])
+            self.context_data[0], self.newline_to_br)
         self.dates = {}
         context_by_id = {}
         for context in self.context_data[1:]:
             context_by_id[str(context[ID])] = utils.convert_empty_to_none(
-                context)
+                context, self.newline_to_br)
         for entry in self.sections_data[1:]:
             date_string, context_id, *template_names = entry
             if date_string and context_id in context_by_id:

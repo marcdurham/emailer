@@ -9,12 +9,14 @@ def parse_date(date_string):
     return dateutil.parser.parse(date_string).date()
 
 
-def convert_empty_to_none(dictionary):
+def convert_empty_to_none(dictionary, newline_to_br=None):
     new_dict = {}
     for name, value in dictionary.items():
         if value == '':
             new_dict[name] = None
         else:
+            if newline_to_br and isinstance(value, str):
+                value = value.replace('\n', '<br>')
             new_dict[name] = value
     return new_dict
 
