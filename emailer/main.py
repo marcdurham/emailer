@@ -195,13 +195,15 @@ def run_template(loader, sender, server, datedata, email_type):
             highlight=highlight)
 
 
-def run(types, today, config):
+def run(types, today, config, skip_send):
     if 'mailgun' in config:
         server = models.MailGun(host=config['mailgun']['host'],
-                                api_key=config['mailgun']['api_key'])
+                                api_key=config['mailgun']['api_key'],
+                                skip_send=skip_send)
     elif 'gmail' in config:
         server = models.Gmail(user=config['gmail']['user'],
-                              password=config['gmail']['password'])
+                              password=config['gmail']['password'],
+                              skip_send=skip_send)
     else:
         raise Exception('No valid authentication protocol in config file')
     sender = models.Person(name=config['sender']['name'],
@@ -230,6 +232,8 @@ def get_parser():
             help='The config.yml file, default at ~/.emailer/config.yml')
     parser.add_argument('--date', help='Run as if this was today')
     parser.add_argument('-v', '--verbose', action='store_true')
+    parser.add_argument('-s', '--skip-send', action='store_true',
+            help='Test everything except actually sending emails')
     return parser
 
 
@@ -253,4 +257,4 @@ def main():
         config = yaml.load(config_file)
     if options.key:
         config['keys'] = {k: config['keys'][k] for k in options.key}
-    run(types, today, config)
+    run(types, today, config, skip_send=options.skip_send)

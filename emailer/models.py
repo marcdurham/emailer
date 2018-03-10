@@ -62,11 +62,12 @@ class Message(object):
 
 class Server(object):
     SECONDS_BETWEEN_EMAILS = 1
-    def __init__(self, *, host, port, user, password):
+    def __init__(self, *, host, port, user, password, skip_send):
         self.host = host
         self.port = port
         self.user = user
         self.password = password
+        self.skip_send = skip_send
 
     def send(self, messages):
         server = smtplib.SMTP(self.host, self.port)
@@ -74,30 +75,33 @@ class Server(object):
             server.starttls()
             server.login(self.user, self.password)
         for message in messages:
-            server.send_message(message.get_message())
-            time.sleep(self.SECONDS_BETWEEN_EMAILS)
+            if not self.skip_send:
+                server.send_message(message.get_message())
+                time.sleep(self.SECONDS_BETWEEN_EMAILS)
         server.quit()
 
 
 class Gmail(Server):
     '''Simple to use, simply supply user and password of any gmail account.'''
-    def __init__(self, *, user, password):
+    def __init__(self, *, user, password, skip_send):
         super().__init__(host='smtp.gmail.com', port=587, user=user,
-                         password=password)
+                         password=password, skip_send=skip_send)
 
 
 class MailGun(object):
     API_V3 = 'https://api.mailgun.net/v3/{}/messages.mime'
 
-    def __init__(self, *, host, api_key):
+    def __init__(self, *, host, api_key, skip_send):
         self.host = host
         self.api_key = api_key
+        self.skip_send = skip_send
 
     def send(self, messages):
         for message in messages:
-            requests.post(
-                    self.API_V3.format(self.host),
-                    auth=('api', self.api_key),
-                    data={'to': message.recipient.get_address()},
-                    files={'message': bytes(message.get_message())})
+            if not self.skip_send:
+                requests.post(
+                        self.API_V3.format(self.host),
+                        auth=('api', self.api_key),
+                        data={'to': message.recipient.get_address()},
+                        files={'message': bytes(message.get_message())})
 
