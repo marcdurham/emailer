@@ -8,10 +8,7 @@ import collections
 import datetime
 import unittest
 
-import data
-import models
-import utils
-from local import URL
+from emailer import data, models, utils
 
 
 DEFAULT_URL = 'https://docs.google.com/spreadsheets/d/165AL8z-z5MlMrLyOEY8yJbNbLcqcKAcdvSeo-D5GSLE/edit'
@@ -24,8 +21,6 @@ class TestDataInterface(unittest.TestCase):
         try:
             cls.yaml = data.YAMLLoader()
             url = DEFAULT_URL
-            if URL:
-                url = URL
             cls.gspread = data.GSpreadLoader(url=url)
         except Exception as e:
             print('Could not load the fixture spreadsheet. Try creating a '
