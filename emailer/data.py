@@ -37,14 +37,17 @@ class GSpreadLoader(object):
                 print('Another Exception: {}'.format(e))
                 time.sleep(600)
                 self._authorize()
-        self.people_sheet = self.spreadsheet.worksheet('People')
-        self.templates_sheet = self.spreadsheet.worksheet('Templates')
-        self.sections_sheet = self.spreadsheet.worksheet('Sections')
-        self.context_sheet = self.spreadsheet.worksheet('Context')
-        self.people_data = self.people_sheet.get_all_values()
-        self.templates_data = self.templates_sheet.get_all_values()
-        self.sections_data = self.sections_sheet.get_all_values()
-        self.context_data = self.context_sheet.get_all_records()
+        people_sheet = self.spreadsheet.worksheet('People')
+        self.people_data = people_sheet.get_all_values()
+        templates_sheet = self.spreadsheet.worksheet('Templates')
+        self.templates_data = templates_sheet.get_all_values()
+        try:
+            sections_sheet = self.spreadsheet.worksheet('Sections')
+            self.sections_data = sections_sheet.get_all_values()
+        except gspread.exceptions.WorksheetNotFound:
+            self.sections_data = None
+        context_sheet = self.spreadsheet.worksheet('Context')
+        self.context_data = context_sheet.get_all_records()
 
     def _authorize(self):
         scope = ['https://spreadsheets.google.com/feeds']
