@@ -6,26 +6,14 @@ import dateutil.parser
 
 
 def parse_date(date_string):
-    return dateutil.parser.parse(date_string).date()
+  return dateutil.parser.parse(date_string).date()
 
 
-def convert_empty_to_none(dictionary, newline_to_br=None):
-    new_dict = {}
-    for name, value in dictionary.items():
-        if value == '':
-            new_dict[name] = None
-        else:
-            if newline_to_br and isinstance(value, str):
-                value = value.replace('\n', '<br>')
-            new_dict[name] = value
-    return new_dict
+def merge_with_default(d, default):
+  return {k: default[k] if v is None else v
+          for k, v in d.items()}
 
 
-def update_if_not_none(dict1, dict2):
-    '''
-    Updates dict1 by dict2's (key, value) pair if and only if dic2's value
-    is not None.
-    '''
-    for key, value in dict2.items():
-        if value is not None:
-            dict1[key] = value
+def newline_to_br(d):
+  return {k: v.replace('\n', '<br>') if isinstance(v, str) else v
+          for k, v in d.items()}
