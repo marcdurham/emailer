@@ -233,6 +233,13 @@ def get_parser():
   return parser
 
 
+def load_config(config=None):
+  if not config:
+    config = os.path.expanduser('~/.emailer/config.yml')
+  with open(config, 'r') as config_file:
+    return yaml.load(config_file)
+
+
 def main():
   global VERBOSE
   options = get_parser().parse_args()
@@ -247,10 +254,7 @@ def main():
     today = utils.parse_date(options.date)
   else:
     today = datetime.date.today()
-  if not options.config:
-    options.config = os.path.expanduser('~/.emailer/config.yml')
-  with open(options.config, 'r') as config_file:
-    config = yaml.load(config_file)
+  config = load_config(options.config)
   if options.key:
     config['keys'] = {k: config['keys'][k] for k in options.key}
   run(types, today, config, skip_send=options.skip_send)

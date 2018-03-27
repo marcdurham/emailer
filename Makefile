@@ -1,6 +1,9 @@
 dev:
 	pip install -e .
 
+test:
+	tests/tests.py
+
 upload: setup clean
 
 setup:
