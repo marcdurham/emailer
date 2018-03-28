@@ -10,19 +10,20 @@ import re
 import premailer
 import yaml
 
-from . import data, models, utils
+from . import data, models, utils, __version__ as emailer_version
 
 
-DATE_FORMAT = '%B %d, %Y'
-TIME_FORMAT = '%I:%M %p'
-KEYMAP_FILE = 'keymap.yml'
-REPLY_TO_KEY = 'reply-to'
-SPEAKER_KEY = 'speaker'
-HIGHLIGHT = '<strong style="background-color: yellow">{}</strong>'
-VERBOSE = False
-ALL = 'all'
-DRYRUN = 'dryrun'
-TEST = 'test'
+_DATE_FORMAT = '%B %d, %Y'
+_TIME_FORMAT = '%I:%M %p'
+_REPLY_TO_KEY = 'reply-to'
+_SPEAKER_KEY = 'speaker'
+_HIGHLIGHT = '<strong style="background-color: yellow">{}</strong>'
+_VERBOSE = False
+_ALL = 'all'
+_DRYRUN = 'dryrun'
+_TEST = 'test'
+_SOURCE_DIR = os.path.dirname(__file__)
+_SAMPLE_CONFIG_FILE = os.path.join(_SOURCE_DIR, 'sample-config.yml')
 
 
 class LiteralDefault(dict):
@@ -36,11 +37,11 @@ def format_value(value, people):
   elif isinstance(value, int):
     ret = str(value)
   elif isinstance(value, datetime.date):
-    ret = datetime.date.strftime(value, DATE_FORMAT)
+    ret = datetime.date.strftime(value, _DATE_FORMAT)
   elif re.match(r'\d{2}/\d{2}/\d{4}', value):
     digits = map(int, value.split(':'))
     ctime = datetime.time(*digits)
-    ret = datetime.time.strftime(ctime, TIME_FORMAT)
+    ret = datetime.time.strftime(ctime, _TIME_FORMAT)
   elif value in people:
     ret = people[value].name
   else:
@@ -69,7 +70,7 @@ def format_template(template, templates, context, people, highlights=None):
 
   if highlights:
     for h in highlights:
-      template = template.replace(h, HIGHLIGHT.format(h))
+      template = template.replace(h, _HIGHLIGHT.format(h))
 
   if literals:
     for key, value in literals.items():
@@ -91,8 +92,8 @@ def format_and_send(send, sender, group, templates, sections, context, people,
   subject = format_template(templates['subject'], templates, context, people)
   messages = []
   # Special case for sending email to visiting speakers
-  if SPEAKER_KEY in context and official:
-    speaker = context['speaker']
+  if _SPEAKER_KEY in context and official:
+    speaker = context[_SPEAKER_KEY]
     if speaker in people:
       group.append(people[speaker])
   sent_already = set()
@@ -100,11 +101,11 @@ def format_and_send(send, sender, group, templates, sections, context, people,
     if not person.has_valid_email():
       continue
     if person.email in sent_already:
-      if VERBOSE:
+      if _VERBOSE:
         print('Already sent to ' + str(person))
       continue
     sent_already.add(person.email)
-    if VERBOSE:
+    if _VERBOSE:
       print('Formatting email for {}.'.format(str(person)))
     if highlight:
       highlights = [format_value(h, people) for h in person.highlights]
@@ -121,18 +122,18 @@ def format_and_send(send, sender, group, templates, sections, context, people,
     if reply_to:
       message.reply_to = reply_to
     messages.append(message)
-  if VERBOSE:
+  if _VERBOSE:
     print('Sending all emails.')
     print(len(messages))
-  send(messages, verbose=VERBOSE)
+  send(messages, verbose=_VERBOSE)
 
 
 def get_datedata(loader, today, email_type):
   one_day = datetime.timedelta(days=1)
-  if email_type == DRYRUN:
+  if email_type == _DRYRUN:
     return loader.fetch_date(today + one_day)
   datedata = loader.fetch_date(today)
-  if email_type == TEST and not datedata:
+  if email_type == _TEST and not datedata:
     new_day = today
     for i in range(10):
       new_day -= one_day
@@ -154,28 +155,28 @@ def run_template(loader, sender, server, datedata, email_type):
   people = loader.fetch_people()
   groups = loader.fetch_groups()
   templates = loader.fetch_templates()
-  if VERBOSE:
+  if _VERBOSE:
     print('Sending email for {}.'.format(
-        datedata[data.DATE].strftime(DATE_FORMAT)))
+        datedata[data.DATE].strftime(_DATE_FORMAT)))
   context = datedata[data.CONTEXT]
   section_list = datedata[data.SECTIONS]
   group = groups[context['group']]
   official = True
   highlight = True
-  if email_type == TEST:
+  if email_type == _TEST:
     if 'test' in groups:
       group = groups['test']
     else:
       group = [sender]
     context['prefix'] = 'TEST - '
     official = False
-  elif email_type == DRYRUN:
+  elif email_type == _DRYRUN:
     group = groups['dryrun']
     context['prefix'] = 'DRYRUN - '
     official = False
     highlight = False
-  if REPLY_TO_KEY in context:
-    reply_to = people[context[REPLY_TO_KEY]]
+  if _REPLY_TO_KEY in context:
+    reply_to = people[context[_REPLY_TO_KEY]]
   else:
     reply_to = None
   format_and_send(
@@ -230,6 +231,10 @@ def get_parser():
   parser.add_argument('-v', '--verbose', action='store_true')
   parser.add_argument('-s', '--skip-send', action='store_true',
       help='Test everything except actually sending emails')
+  parser.add_argument('--sample-config', action='store_true',
+      help='Print a sample config.yml file to stdout')
+  parser.add_argument('--version', action='store_true',
+      help='Print package version')
   return parser
 
 
@@ -240,16 +245,27 @@ def load_config(config=None):
     return yaml.load(config_file)
 
 
+def print_sample_config():
+  with open(_SAMPLE_CONFIG_FILE, 'r') as f:
+    print(f.read(), end='')  # No extra new line.
+
+
 def main():
-  global VERBOSE
+  global _VERBOSE
   options = get_parser().parse_args()
+  if options.sample_config:
+    print_sample_config()
+    return
+  if options.version:
+    print(emailer_version)
+    return
   assert options.all or options.dryrun or options.test, (
       'At least one action is needed')
-  VERBOSE = VERBOSE or options.verbose
+  _VERBOSE = _VERBOSE or options.verbose
   types = {}
-  types[ALL] = options.all
-  types[DRYRUN] = options.dryrun
-  types[TEST] = options.test
+  types[_ALL] = options.all
+  types[_DRYRUN] = options.dryrun
+  types[_TEST] = options.test
   if options.date:
     today = utils.parse_date(options.date)
   else:

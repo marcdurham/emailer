@@ -1,1 +1,2 @@
 include LICENSE
+include emailer/sample-config.yml
