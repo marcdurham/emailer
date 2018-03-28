@@ -2,7 +2,7 @@ Emailer
 =============
 
     usage: email [-h] [-n] [-t] [-a] [-k KEY [KEY ...]] [--config CONFIG]
-                 [--date DATE] [-v] [-s]
+                 [--date DATE] [-v] [-s] [--sample-config] [--version]
 
     Send emails
 
@@ -17,10 +17,11 @@ Emailer
       --date DATE           Run as if this was today
       -v, --verbose
       -s, --skip-send       Test everything except actually sending emails
+      --sample-config       Print a sample config.yml file to stdout
+      --version             Print package version
 
-* Create local config in `./config.yml` from `./config.yml.example`.
+* Create local config with `email --sample-config >> ~/.emailer/config.yml`.
     * The key is the long entry in the URL: `https://docs.google.com/spreadsheets/<key>/edit`
 * Set up the auth key according to [gspread's guide](http://gspread.readthedocs.org/en/latest/oauth2.html).
 * The most used command is likely `email -t`, this sends a test email to the sender.
 * Follow [Google's python style guide](http://google-styleguide.googlecode.com/svn/trunk/pyguide.html).
-
