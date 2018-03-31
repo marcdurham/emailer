@@ -11,12 +11,12 @@ https://travis-ci.org/WhiteHalmos/emailer)
 
     optional arguments:
       -h, --help            show this help message and exit
-      -n, --dryrun
+      -n, --next-day
       -t, --test
       -a, --all
       -k KEY [KEY ...], --key KEY [KEY ...]
                             Default is all keys
-      --config CONFIG       The config.yml file, default at ~/.emailer/config.yml
+      --config CONFIG       The config file, default at ~/.emailer/config.yml
       --date DATE           Run as if this was today
       -v, --verbose
       -s, --skip-send       Test everything except actually sending emails
