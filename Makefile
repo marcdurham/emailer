@@ -1,15 +1,18 @@
 dev:
 	pip install -e .
 
-test: unit_test
+full: test integration_test lint
 
-full_test: test integration_test
+test: unit_test lint
 
 integration_test:
 	tests/integration_test.py
 
 unit_test:
 	tests/unit_test.py
+
+lint:
+	pylint emailer tests/*.py
 
 upload: setup clean
 

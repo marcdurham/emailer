@@ -2,13 +2,13 @@
 Models for messages that are sent with servers.
 '''
 
-import email.headerregistry
-import email.message
-import email.policy
+# TODO: Rename all other email instances
+import email as email_package
 import re
-import requests
 import smtplib
 import time
+
+import requests
 
 
 class Person(object):
@@ -32,7 +32,7 @@ class Person(object):
     return False
 
   def get_address(self):
-    return email.headerregistry.Address(
+    return email_package.headerregistry.Address(
         self.name, self.username, self.domain)
 
   def __repr__(self):
@@ -50,7 +50,7 @@ class Message(object):
     self.html = html
 
   def get_message(self):
-    message = email.message.EmailMessage(email.policy.SMTP)
+    message = email_package.message.EmailMessage(email_package.policy.SMTP)
     message['Subject'] = self.subject
     message['From'] = self.sender.get_address()
     message['To'] = self.recipient.get_address()
@@ -106,4 +106,3 @@ class MailGun(object):
             auth=('api', self.api_key),
             data={'to': message.recipient.get_address()},
             files={'message': bytes(message.get_message())})
-

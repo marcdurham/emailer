@@ -7,3 +7,4 @@ install:
   - pip install -e .
 script:
   - make test
+  - make lint

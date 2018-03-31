@@ -135,13 +135,13 @@ def get_datedata(loader, today, email_type):
   datedata = loader.fetch_date(today)
   if email_type == _TEST and not datedata:
     new_day = today
-    for i in range(10):
+    for _ in range(10):
       new_day -= one_day
       datedata = loader.fetch_date(new_day)
       if datedata:
         return datedata
     new_day = today
-    for i in range(10):
+    for _ in range(10):
       new_day += one_day
       datedata = loader.fetch_date(new_day)
       if datedata:
@@ -251,6 +251,8 @@ def print_sample_config():
 
 
 def main():
+  # TODO: Remove global usage.
+  # pylint: disable=global-statement
   global _VERBOSE
   options = get_parser().parse_args()
   if options.sample_config:

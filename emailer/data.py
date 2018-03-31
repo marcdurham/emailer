@@ -29,7 +29,7 @@ class GSpreadLoader(object):
     try:
       self._authorize()
     except gspread.SpreadsheetNotFound:
-      print('Config key "{}" was not found or is not a Spreadsheet ID.'.format(key))
+      print('Config key "{}" was not found or is not a valid ID.'.format(key))
       sys.exit(-1)
     except Exception as e:
       print('Exception: {}'.format(e))
@@ -37,7 +37,7 @@ class GSpreadLoader(object):
       try:
         self._authorize()
       except Exception as e2:
-        print('Another Exception: {}'.format(e))
+        print('Another Exception: {}'.format(e2))
         time.sleep(600)
         self._authorize()
     people_sheet = self.spreadsheet.worksheet('People')
@@ -61,7 +61,7 @@ class GSpreadLoader(object):
 
   def parse_people_and_groups(self):
     self.people = {}
-    A, B, C, *group_names = self.people_data[0]
+    _, _, _, *group_names = self.people_data[0]
     self.groups = {name: [] for name in group_names}
     self.group_map = {idx: name for idx, name in enumerate(group_names)}
     for i in range(1, len(self.people_data)):
