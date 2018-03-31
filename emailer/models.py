@@ -41,7 +41,7 @@ class Person(object):
 
 class Message(object):
   def __init__(self, *, sender=None, recipient=None, reply_to=None,
-         subject=None, text=None, html=None):
+               subject=None, text=None, html=None):
     self.sender = sender
     self.recipient = recipient
     self.reply_to = reply_to
@@ -87,7 +87,7 @@ class Gmail(Server):
   '''Simple to use, simply supply user and password of any gmail account.'''
   def __init__(self, *, user, password, skip_send):
     super().__init__(host='smtp.gmail.com', port=587, user=user,
-             password=password, skip_send=skip_send)
+                     password=password, skip_send=skip_send)
 
 
 class MailGun(object):

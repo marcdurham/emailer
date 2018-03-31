@@ -5,10 +5,7 @@ indent-string='  '
 
 [MESSAGES CONTROL]
 
-# TODO: Fix attribute-defined-outside-init
 disable=
-  attribute-defined-outside-init,
-  bad-continuation,
   broad-except,
   fixme,
   invalid-name,

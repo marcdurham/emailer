@@ -51,6 +51,11 @@ class GSpreadLoader(object):
       self.sections_data = None
     context_sheet = self.spreadsheet.worksheet('Context')
     self.context_data = context_sheet.get_all_records(default_blank=None)
+    self.parse_people_and_groups()
+    self.parse_context_and_sections()
+    self.templates = {
+        name.strip(): template.strip()
+        for name, template, *rest in self.templates_data[1:]}
 
   def _authorize(self):
     scope = ['https://spreadsheets.google.com/feeds']
@@ -97,9 +102,9 @@ class GSpreadLoader(object):
           context = context_by_id[context_id]
           sections = [name for name in template_names if name]
           self.dates[date] = {
-            SECTIONS: sections,
-            CONTEXT: context,
-            DATE: date,
+              SECTIONS: sections,
+              CONTEXT: context,
+              DATE: date,
           }
     else:
       for context in self.context_data[1:]:
@@ -108,39 +113,19 @@ class GSpreadLoader(object):
           context = utils.newline_to_br(context)
         date = utils.parse_date(context[_SEND_DATE])
         self.dates[date] = {
-          SECTIONS: [context[_TEMPLATE]],
-          CONTEXT: context,
-          DATE: date,
+            SECTIONS: [context[_TEMPLATE]],
+            CONTEXT: context,
+            DATE: date,
         }
 
   def fetch_people(self):
-    try:
-      return self.people
-    except AttributeError:
-      self.parse_people_and_groups()
-      return self.people
+    return self.people
 
   def fetch_groups(self):
-    try:
-      return self.groups
-    except AttributeError:
-      self.parse_people_and_groups()
-      return self.groups
+    return self.groups
 
   def fetch_templates(self):
-    try:
-      return self.templates
-    except AttributeError:
-      self.templates = {
-        name.strip(): template.strip()
-        for name, template, *rest in self.templates_data[1:]}
-      return self.templates
+    return self.templates
 
   def fetch_date(self, date):
-    try:
-      return self.dates[date]
-    except AttributeError:
-      self.parse_context_and_sections()
-      return self.fetch_date(date)
-    except KeyError:
-      return None
+    return self.dates[date]

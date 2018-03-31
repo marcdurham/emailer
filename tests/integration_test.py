@@ -25,10 +25,10 @@ class TestDataInterface(unittest.TestCase):
           key=DEFAULT_KEY, auth=config['auth'])
     except Exception as e:
       print('Could not load the fixture spreadsheet. Try creating a '
-          'copy of the spreadsheet at ' + DEFAULT_URL + ' and sharing '
-          'it with the client_email address in your private.json '
-          "file. Don't forget to update your local.py with the new "
-          'URL.')
+            'copy of the spreadsheet at ' + DEFAULT_URL + ' and sharing '
+            'it with the client_email address in your private.json '
+            'file. Don\'t forget to update your local.py with the new '
+            'URL.')
       raise e
 
   def test_fetch_people(self):
@@ -64,8 +64,8 @@ class TestDataInterface(unittest.TestCase):
       self.assertIn(section_name, templates)
       section = templates[section_name]
       self.assertEqual(
-        correct_results[section_name],
-        section.format_map(context))
+          correct_results[section_name],
+          section.format_map(context))
 
   def test_fetch_dates_none(self):
     date = utils.parse_date('1111-11-11')
@@ -75,25 +75,25 @@ class TestDataInterface(unittest.TestCase):
   def test_fetch_dates_simple(self):
     date = utils.parse_date('1991-01-01')
     correct = {
-      'Section1': '2 3',
-      'Section2': 'Wut 4',
+        'Section1': '2 3',
+        'Section2': 'Wut 4',
     }
     self.date_verification_test(
-      self.gspread.fetch_date(date),
-      self.gspread.fetch_templates(),
-      correct)
+        self.gspread.fetch_date(date),
+        self.gspread.fetch_templates(),
+        correct)
 
   def test_fetch_dates_use_default(self):
     date = utils.parse_date('1991-01-02')
     correct = {
-      'Section1': '5 2',
-      'Section2': 'Wut 3',
-      'Section3': 'Hi',
+        'Section1': '5 2',
+        'Section2': 'Wut 3',
+        'Section3': 'Hi',
     }
     self.date_verification_test(
-      self.gspread.fetch_date(date),
-      self.gspread.fetch_templates(),
-      correct)
+        self.gspread.fetch_date(date),
+        self.gspread.fetch_templates(),
+        correct)
 
 
 if __name__ == '__main__':

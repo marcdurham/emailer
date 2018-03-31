@@ -53,8 +53,8 @@ def format_template(template, templates, context, people, highlights=None):
   values = LiteralDefault(templates)
   values.update({abbrev: person.name for abbrev, person in people.items()})
   values.update({
-    name: format_value(value, people)
-    for name, value in context.items()
+      name: format_value(value, people)
+      for name, value in context.items()
   })
   literals = {}
   for key, value in values.items():
@@ -81,13 +81,13 @@ def format_template(template, templates, context, people, highlights=None):
 
 def generate_body(templates, sections, context, people, highlights=None):
   return '\n'.join([
-    format_template(templates.get(name, name), templates, context, people,
-            highlights)
-    for name in sections])
+      format_template(templates.get(name, name), templates, context, people,
+                      highlights)
+      for name in sections])
 
 
 def format_and_send(send, sender, group, templates, sections, context, people,
-    reply_to=None, official=None, highlight=None):
+                    reply_to=None, official=None, highlight=None):
   assert 'subject' in templates, 'Missing "subject" template.'
   subject = format_template(templates['subject'], templates, context, people)
   messages = []
@@ -195,22 +195,21 @@ def run_template(loader, sender, server, datedata, email_type):
 def run(types, today, config, skip_send):
   if 'mailgun' in config:
     server = models.MailGun(host=config['mailgun']['host'],
-                api_key=config['mailgun']['api_key'],
-                skip_send=skip_send)
+                            api_key=config['mailgun']['api_key'],
+                            skip_send=skip_send)
   elif 'gmail' in config:
     server = models.Gmail(user=config['gmail']['user'],
-                password=config['gmail']['password'],
-                skip_send=skip_send)
+                          password=config['gmail']['password'],
+                          skip_send=skip_send)
   else:
     raise Exception('No valid authentication protocol in config file')
   sender = models.Person(name=config['sender']['name'],
-               email=config['sender']['email'])
+                         email=config['sender']['email'])
   keys = config['keys'].keys()
   options = config.get('options', dict())
-  loaders = [data.GSpreadLoader(key=config['keys'][key],
-                  auth=config['auth'],
-                  newline_to_br=options.get('newline-to-br'))
-         for key in keys]
+  loaders = [data.GSpreadLoader(key=config['keys'][key], auth=config['auth'],
+                                newline_to_br=options.get('newline-to-br'))
+             for key in keys]
   for loader in loaders:
     for email_type, should_run in types.items():
       if not should_run:
@@ -226,15 +225,15 @@ def get_parser():
   parser.add_argument('-a', '--all', action='store_true')
   parser.add_argument('-k', '--key', nargs='+', help='Default is all keys')
   parser.add_argument('--config',
-      help='The config.yml file, default at ~/.emailer/config.yml')
+                      help='The config file, default at ~/.emailer/config.yml')
   parser.add_argument('--date', help='Run as if this was today')
   parser.add_argument('-v', '--verbose', action='store_true')
   parser.add_argument('-s', '--skip-send', action='store_true',
-      help='Test everything except actually sending emails')
+                      help='Test everything except actually sending emails')
   parser.add_argument('--sample-config', action='store_true',
-      help='Print a sample config.yml file to stdout')
+                      help='Print a sample config.yml file to stdout')
   parser.add_argument('--version', action='store_true',
-      help='Print package version')
+                      help='Print package version')
   return parser
 
 
