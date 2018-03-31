@@ -28,5 +28,3 @@ https://travis-ci.org/WhiteHalmos/emailer)
 * Set up the auth key according to [gspread's guide](
 http://gspread.readthedocs.org/en/latest/oauth2.html).
 * The most used command is likely `email -t`, this sends a test email to the sender.
-* Follow [Google's python style guide](
-http://google-styleguide.googlecode.com/svn/trunk/pyguide.html).
