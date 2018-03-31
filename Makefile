@@ -3,7 +3,9 @@ dev:
 
 full: test integration_test lint
 
-test: unit_test lint
+test: unit_test
+
+lint: pylint
 
 integration_test:
 	tests/integration_test.py
@@ -11,7 +13,7 @@ integration_test:
 unit_test:
 	tests/unit_test.py
 
-lint:
+pylint:
 	pylint emailer tests/*.py
 
 upload: setup clean

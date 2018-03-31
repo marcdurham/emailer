@@ -5,6 +5,7 @@ python:
   - "3.6"
 install:
   - pip install -e .
+  - pip install -r requirements.txt
 script:
   - make test
   - make lint
