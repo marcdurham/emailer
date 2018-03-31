@@ -221,7 +221,7 @@ def run(types, today, config, skip_send):
 
 def get_parser():
   parser = argparse.ArgumentParser(description='Send emails')
-  parser.add_argument('-n', '--dryrun', action='store_true')
+  parser.add_argument('-n', '--next-day', action='store_true')
   parser.add_argument('-t', '--test', action='store_true')
   parser.add_argument('-a', '--all', action='store_true')
   parser.add_argument('-k', '--key', nargs='+', help='Default is all keys')
@@ -259,12 +259,12 @@ def main():
   if options.version:
     print(emailer_version)
     return
-  assert options.all or options.dryrun or options.test, (
+  assert options.all or options.next_day or options.test, (
       'At least one action is needed')
   _VERBOSE = _VERBOSE or options.verbose
   types = {}
   types[_ALL] = options.all
-  types[_DRYRUN] = options.dryrun
+  types[_DRYRUN] = options.next_day
   types[_TEST] = options.test
   if options.date:
     today = utils.parse_date(options.date)
