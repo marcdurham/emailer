@@ -10,11 +10,22 @@ from emailer import models, utils
 
 
 class TestModels(unittest.TestCase):
+  @staticmethod
+  def _create_person():
+    return models.Person.create(['1', '1@m'])
+
   def test_create_person(self):
     name, email = 'Name', 'Email@Domain'
     person = models.Person.create([name, email])
     self.assertEqual(name, person.name)
     self.assertEqual(email, person.email)
+
+  def test_get_message(self):
+    message = models.Message()
+    message.sender = self._create_person()
+    message.recipient = self._create_person()
+    message.html = ''
+    message.get_message()
 
 
 class TestUtils(unittest.TestCase):

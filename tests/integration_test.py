@@ -14,6 +14,7 @@ DEFAULT_URL = 'https://docs.google.com/spreadsheets/d/165AL8z-z5MlMrLyOEY8yJbNbL
 DEFAULT_KEY = '165AL8z-z5MlMrLyOEY8yJbNbLcqcKAcdvSeo-D5GSLE'
 
 
+# TODO: Move all non-essential tests to unit_test with a data interface.
 class TestDataInterface(unittest.TestCase):
   '''Ensures that the data interface returns well-formatted data.'''
 

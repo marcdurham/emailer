@@ -4,6 +4,8 @@ Models for messages that are sent with servers.
 
 # TODO: Rename all other email instances
 import email as email_package
+# TODO: Avoid specific imports
+from email import policy
 import re
 import smtplib
 import time
@@ -41,16 +43,15 @@ class Person(object):
 
 class Message(object):
   def __init__(self, *, sender=None, recipient=None, reply_to=None,
-               subject=None, text=None, html=None):
+               subject=None, html=None):
     self.sender = sender
     self.recipient = recipient
     self.reply_to = reply_to
     self.subject = subject
-    self.text = text
     self.html = html
 
   def get_message(self):
-    message = email_package.message.EmailMessage(email_package.policy.SMTP)
+    message = email_package.message.EmailMessage(policy.SMTP)
     message['Subject'] = self.subject
     message['From'] = self.sender.get_address()
     message['To'] = self.recipient.get_address()
@@ -75,11 +76,12 @@ class Server(object):
       server.starttls()
       server.login(self.user, self.password)
     for message in messages:
+      html_message = message.get_message()
       if not self.skip_send:
-        server.send_message(message.get_message())
-        if verbose:
-          print('Sent mail to {}'.format(message.recipient))
-        time.sleep(self.SECONDS_BETWEEN_EMAILS)
+        server.send_message(html_message)
+      if verbose:
+        print('Sent mail to {}'.format(message.recipient))
+      time.sleep(self.SECONDS_BETWEEN_EMAILS)
     server.quit()
 
 

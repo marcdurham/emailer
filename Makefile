@@ -16,12 +16,16 @@ unit_test:
 pylint:
 	pylint emailer tests/*.py
 
-upload: setup clean
+upload: full setup pypi clean
 
 setup:
 	pandoc README.md --from markdown --to rst -s -o README.rst
-	./setup.py sdist bdist_wheel && twine upload dist/*
+	./setup.py sdist bdist_wheel
+
+pypi:
+	twine upload dist/*
 
 clean:
-	rm dist/*
+	rm -rf build
+	rm -rf dist
 	rm README.rst

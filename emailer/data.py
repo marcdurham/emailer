@@ -128,4 +128,4 @@ class GSpreadLoader(object):
     return self.templates
 
   def fetch_date(self, date):
-    return self.dates[date]
+    return self.dates.get(date)
