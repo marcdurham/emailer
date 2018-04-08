@@ -1,5 +1,5 @@
 dev:
-	pip install -e .
+	pip install -U -e .
 
 full: test integration_test lint
 

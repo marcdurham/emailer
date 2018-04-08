@@ -105,8 +105,6 @@ def format_and_send(send, sender, group, templates, sections, context, people,
         print('Already sent to ' + str(person))
       continue
     sent_already.add(person.email)
-    if _VERBOSE:
-      print('Formatting email for {}.'.format(str(person)))
     if highlight:
       highlights = [format_value(h, people) for h in person.highlights]
     else:
