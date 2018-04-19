@@ -19,7 +19,6 @@ pylint:
 upload: full setup pypi clean
 
 setup:
-	pandoc README.md --from markdown --to rst -s -o README.rst
 	./setup.py sdist bdist_wheel
 
 pypi:
@@ -28,4 +27,3 @@ pypi:
 clean:
 	rm -rf build
 	rm -rf dist
-	rm README.rst
