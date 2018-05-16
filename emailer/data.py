@@ -55,8 +55,8 @@ class GSpreadLoader(object):
       self.sections_data = None
     self.context_data = self.spreadsheet.worksheet(
         'Context').get_all_records(default_blank=None)
-    self.parse_people_and_groups()
-    self.parse_context_and_sections()
+    self.people, self.groups = self.parse_people_and_groups()
+    self.dates = self.parse_context_and_sections()
     self.templates = {
         name.strip(): template.strip()
         for name, template, *rest in self.templates_data[1:]}
@@ -69,29 +69,30 @@ class GSpreadLoader(object):
     self.spreadsheet = self.client.open_by_key(self.key)
 
   def parse_people_and_groups(self):
-    self.people = {}
+    people = {}
     _, _, _, *group_names = self.people_data[0]
-    self.groups = {name: [] for name in group_names}
-    self.group_map = {idx: name for idx, name in enumerate(group_names)}
+    all_groups = {name: [] for name in group_names}
+    group_map = {idx: name for idx, name in enumerate(group_names)}
     for i in range(1, len(self.people_data)):
       abbreviation, name, email, *groups = self.people_data[i]
       abbreviation = abbreviation.strip()
       person = models.Person(name=name, email=email)
       if abbreviation:
-        self.people[abbreviation] = person
+        people[abbreviation] = person
       else:
-        self.people[name] = person
+        people[name] = person
       for idx, value in enumerate(groups):
         if value:
-          group_name = self.group_map[idx]
+          group_name = group_map[idx]
           if group_name.startswith('highlight-'):
             person.highlights.append(value)
           else:
-            self.groups[group_name].append(person)
+            all_groups[group_name].append(person)
+    return people, all_groups
 
   def parse_context_and_sections(self):
     default_context = self.context_data[0]
-    self.dates = {}
+    dates = {}
     if self.sections_data:
       context_by_id = {}
       for context in self.context_data[1:]:
@@ -105,7 +106,7 @@ class GSpreadLoader(object):
           date = utils.parse_date(date_string)
           context = context_by_id[context_id]
           sections = [name for name in template_names if name]
-          self.dates[date] = {
+          dates[date] = {
               SECTIONS: sections,
               CONTEXT: context,
               DATE: date,
@@ -116,11 +117,12 @@ class GSpreadLoader(object):
         if self._newline_to_br:
           context = utils.newline_to_br(context)
         date = utils.parse_date(context[_SEND_DATE])
-        self.dates[date] = {
+        dates[date] = {
             SECTIONS: [context[_TEMPLATE]],
             CONTEXT: context,
             DATE: date,
         }
+    return dates
 
   def fetch_people(self):
     return self.people
