@@ -28,6 +28,7 @@ class GSpreadLoader(object):
     self._newline_to_br = newline_to_br
     try:
       self._authorize()
+      self._init_data()
     except gspread.SpreadsheetNotFound:
       print('Config key "{}" was not found or is not a valid ID.'.format(key))
       sys.exit(-1)
@@ -36,21 +37,24 @@ class GSpreadLoader(object):
       time.sleep(60)
       try:
         self._authorize()
+        self._init_data()
       except Exception as e2:
         print('Another Exception: {}'.format(e2))
         time.sleep(600)
         self._authorize()
-    people_sheet = self.spreadsheet.worksheet('People')
-    self.people_data = people_sheet.get_all_values()
-    templates_sheet = self.spreadsheet.worksheet('Templates')
-    self.templates_data = templates_sheet.get_all_values()
+        self._init_data()
+
+  def _init_data(self):
+    self.people_data = self.spreadsheet.worksheet('People').get_all_values()
+    self.templates_data = self.spreadsheet.worksheet(
+        'Templates').get_all_values()
     try:
-      sections_sheet = self.spreadsheet.worksheet('Sections')
-      self.sections_data = sections_sheet.get_all_values()
+      self.sections_data = self.spreadsheet.worksheet(
+          'Sections').get_all_values()
     except gspread.exceptions.WorksheetNotFound:
       self.sections_data = None
-    context_sheet = self.spreadsheet.worksheet('Context')
-    self.context_data = context_sheet.get_all_records(default_blank=None)
+    self.context_data = self.spreadsheet.worksheet(
+        'Context').get_all_records(default_blank=None)
     self.parse_people_and_groups()
     self.parse_context_and_sections()
     self.templates = {

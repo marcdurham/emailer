@@ -22,8 +22,7 @@ class TestDataInterface(unittest.TestCase):
   def setUpClass(cls):
     try:
       config = main.load_config()
-      cls.gspread = data.GSpreadLoader(
-          key=DEFAULT_KEY, auth=config['auth'])
+      cls.gspread = data.GSpreadLoader(key=DEFAULT_KEY, auth=config['auth'])
     except Exception as e:
       print('Could not load the fixture spreadsheet. Try creating a '
             'copy of the spreadsheet at ' + DEFAULT_URL + ' and sharing '
