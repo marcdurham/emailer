@@ -94,8 +94,11 @@ def format_and_send(send, sender, group, templates, sections, context, people,
   # Special case for sending email to visiting speakers
   if _SPEAKER_KEY in context and official:
     speaker = context[_SPEAKER_KEY]
-    if speaker in people:
-      group.append(people[speaker])
+    for person in people.values():
+      # Allow extraneous characters in name and multiple speakers, but require
+      # that the person's full name be listed
+      if person.name in speaker:
+        group.append(person)
   sent_already = set()
   for person in group:
     if not person.has_valid_email():
@@ -227,7 +230,8 @@ def get_parser():
   parser.add_argument('--date', help='Run as if this was today')
   parser.add_argument('-v', '--verbose', action='store_true')
   parser.add_argument('-s', '--skip-send', action='store_true',
-                      help='Test everything except actually sending emails')
+                      help='Test everything except actually sending emails. '
+                           'Also avoids sending delay.')
   parser.add_argument('--sample-config', action='store_true',
                       help='Print a sample config.yml file to stdout')
   parser.add_argument('--version', action='store_true',

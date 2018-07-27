@@ -79,9 +79,9 @@ class Server(object):
       html_message = message.get_message()
       if not self.skip_send:
         server.send_message(html_message)
+        time.sleep(self.SECONDS_BETWEEN_EMAILS)
       if verbose:
         print('Sent mail to {}'.format(message.recipient))
-      time.sleep(self.SECONDS_BETWEEN_EMAILS)
     server.quit()
 
 
