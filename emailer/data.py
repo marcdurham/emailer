@@ -21,7 +21,7 @@ _SEND_DATE = 'send-date'
 _TEMPLATE = 'template'
 
 
-class GSpreadLoader(object):
+class GSpreadLoader():
   def __init__(self, *, key, auth, newline_to_br=None):
     self.key = key
     self.auth = auth

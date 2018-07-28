@@ -13,7 +13,7 @@ import time
 import requests
 
 
-class Person(object):
+class Person():
   '''The combination of a full name and an email address.'''
 
   def __init__(self, *, name, email):
@@ -41,7 +41,7 @@ class Person(object):
     return '{name} <{email}>'.format(name=self.name, email=self.email)
 
 
-class Message(object):
+class Message():
   def __init__(self, *, sender=None, recipient=None, reply_to=None,
                subject=None, html=None):
     self.sender = sender
@@ -61,7 +61,7 @@ class Message(object):
     return message
 
 
-class Server(object):
+class Server():
   SECONDS_BETWEEN_EMAILS = 1
   def __init__(self, *, host, port, user, password, skip_send):
     self.host = host
@@ -92,7 +92,7 @@ class Gmail(Server):
                      password=password, skip_send=skip_send)
 
 
-class MailGun(object):
+class MailGun():
   API_V3 = 'https://api.mailgun.net/v3/{}/messages.mime'
 
   def __init__(self, *, host, api_key, skip_send):
