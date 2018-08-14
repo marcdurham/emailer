@@ -23,6 +23,7 @@ setuptools.setup(
   python_requires='>=3',
   include_package_data=True,
   install_requires=[
+    'attr',
     'gspread',
     'oauth2client',
     'premailer',

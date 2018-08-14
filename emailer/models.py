@@ -2,109 +2,101 @@
 Models for messages that are sent with servers.
 '''
 
-# TODO: Rename all other email instances
-import email as email_package
-# TODO: Avoid specific imports
-from email import policy
+import email
 import re
 import smtplib
 import time
 
+import attr
 import requests
 
 
+@attr.s(frozen=True)
+class EmailAddress():
+  full = attr.ib(default='')
+
+  @property
+  def username(self):
+    return self.full.split('@')[0]
+
+  @property
+  def domain(self):
+    return self.full.split('@')[1]
+
+  def is_valid(self):
+    return self.full and re.match(r'.+@.+\..+', self.full):
+
+
+@attr.s(frozen=True)
 class Person():
-  '''The combination of a full name and an email address.'''
+  name = attr.ib()
+  email_address = attr.ib(factory=EmailAddress)
+  highlights = attr.ib(factory=list)
 
-  def __init__(self, *, name, email):
-    self.name = name
-    self.email = email
-    if email:
-      self.username, self.domain = email.split('@')
-    self.highlights = [self.name]
+  @property
+  def header_address(self):
+    return email.headerregistry.Address(
+        self.name, self.email_address.username, self.email_address.domain)
 
-  @classmethod
-  def create(cls, attr_list):
-    name, email = attr_list
-    return cls(name=name, email=email)
-
-  def has_valid_email(self):
-    if self.email and re.match(r'.+@.+\..+', self.email):
-      return True
-    return False
-
-  def get_address(self):
-    return email_package.headerregistry.Address(
-        self.name, self.username, self.domain)
-
-  def __repr__(self):
-    return '{name} <{email}>'.format(name=self.name, email=self.email)
+  def formatted(self):
+    return '{self.name} <{self.email_address}>'.format(self)
 
 
+@attr.s(frozen=True)
 class Message():
-  def __init__(self, *, sender=None, recipient=None, reply_to=None,
-               subject=None, html=None):
-    self.sender = sender
-    self.recipient = recipient
-    self.reply_to = reply_to
-    self.subject = subject
-    self.html = html
+  sender = attr.ib()
+  recipient = attr.ib()
+  subject = attr.ib()
+  html = attr.ib()
+  reply_to = attr.ib(default=None)
 
-  def get_message(self):
-    message = email_package.message.EmailMessage(policy.SMTP)
+  def get_email_message(self):
+    message = email.message.EmailMessage(email.policy.SMTP)
     message['Subject'] = self.subject
-    message['From'] = self.sender.get_address()
-    message['To'] = self.recipient.get_address()
+    message['From'] = self.sender.header_address()
+    message['To'] = self.recipient.header_address()
     if self.reply_to:
-      message['Reply-To'] = self.reply_to.get_address()
+      message['Reply-To'] = self.reply_to.header_address()
     message.set_content(self.html, subtype='html', cte='quoted-printable')
     return message
 
 
+@attr.s
 class Server():
-  SECONDS_BETWEEN_EMAILS = 1
-  def __init__(self, *, host, port, user, password, skip_send):
-    self.host = host
-    self.port = port
-    self.user = user
-    self.password = password
-    self.skip_send = skip_send
+  '''SMTP Server, defaults to Gmail'''
+
+  _host = attr.ib(default='smtp.gmail.com')
+  _port = attr.ib(default=587)
+  _user = attr.ib()
+  _password = attr.ib()
+  _skip_send = attr.ib(default=True)
+  _SECONDS_BETWEEN_EMAILS = 0.1  # 100 ms
 
   def send(self, messages, verbose=False):
-    server = smtplib.SMTP(self.host, self.port)
-    if self.user and self.password:
+    with smtplib.SMTP(self._host, self._port) as server:
       server.starttls()
-      server.login(self.user, self.password)
-    for message in messages:
-      html_message = message.get_message()
-      if not self.skip_send:
-        server.send_message(html_message)
-        time.sleep(self.SECONDS_BETWEEN_EMAILS)
-      if verbose:
-        print('Sent mail to {}'.format(message.recipient))
-    server.quit()
+      server.login(self._user, self._password)
+      for message in messages:
+        html_message = message.get_email_message()
+        if not self._skip_send:
+          server.send_message(html_message)
+          time.sleep(self._SECONDS_BETWEEN_EMAILS)
+        if verbose:
+          print('Sent mail to {}'.format(message.recipient.formatted()))
 
 
-class Gmail(Server):
-  '''Simple to use, simply supply user and password of any gmail account.'''
-  def __init__(self, *, user, password, skip_send):
-    super().__init__(host='smtp.gmail.com', port=587, user=user,
-                     password=password, skip_send=skip_send)
-
-
+@attr.s
 class MailGun():
-  API_V3 = 'https://api.mailgun.net/v3/{}/messages.mime'
-
-  def __init__(self, *, host, api_key, skip_send):
-    self.host = host
-    self.api_key = api_key
-    self.skip_send = skip_send
+  _host = attr.ib()
+  _api_key = attr.ib()
+  _skip_send = attr.ib()
+  _API_V3 = 'https://api.mailgun.net/v3/{}/messages.mime'
 
   def send(self, messages):
     for message in messages:
-      if not self.skip_send:
+      if not self._skip_send:
         requests.post(
-            self.API_V3.format(self.host),
-            auth=('api', self.api_key),
-            data={'to': message.recipient.get_address()},
-            files={'message': bytes(message.get_message())})
+            self._API_V3.format(self._host),
+            auth=('api', self._api_key),
+            data={'to': message.recipient.header_address()},
+            files={'message': bytes(message.get_email_message())})
