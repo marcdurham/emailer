@@ -11,6 +11,7 @@ import premailer
 import yaml
 
 from . import data, models, utils, __version__ as emailer_version
+from .fetcher import fetch_values
 
 
 _DATE_FORMAT = '%B %d, %Y'
@@ -199,24 +200,27 @@ def run(types, today, config, skip_send):
                             api_key=config['mailgun']['api_key'],
                             skip_send=skip_send)
   elif 'gmail' in config:
-    server = models.Gmail(user=config['gmail']['user'],
-                          password=config['gmail']['password'],
-                          skip_send=skip_send)
+    server = models.Server(user=config['gmail']['user'],
+                           password=config['gmail']['password'],
+                           skip_send=skip_send)
   else:
     raise Exception('No valid authentication protocol in config file')
   sender = models.Person(name=config['sender']['name'],
                          email=config['sender']['email'])
   keys = config['keys'].keys()
   options = config.get('options', dict())
-  loaders = [data.GSpreadLoader(key=config['keys'][key], auth=config['auth'],
-                                newline_to_br=options.get('newline-to-br'))
-             for key in keys]
-  for loader in loaders:
-    for email_type, should_run in types.items():
-      if not should_run:
-        continue
-      datedata = get_datedata(loader, today, email_type)
-      run_template(loader, sender, server, datedata, email_type)
+  from pprint import pprint
+  for key in keys:
+    pprint(fetch_values(key=config['keys'][key], auth=config['auth'])['Context'])
+  #loaders = [data.GSpreadLoader(key=config['keys'][key], auth=config['auth'],
+  #                              newline_to_br=options.get('newline-to-br'))
+  #           for key in keys]
+  #for loader in loaders:
+  #  for email_type, should_run in types.items():
+  #    if not should_run:
+  #      continue
+  #    datedata = get_datedata(loader, today, email_type)
+  #    run_template(loader, sender, server, datedata, email_type)
 
 
 def get_parser():

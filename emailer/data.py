@@ -9,14 +9,12 @@ import time
 import gspread
 import oauth2client.service_account as oauth
 
-import .models
-import .utils
+from . import models, utils
 
 SECTIONS = 'sections'
 CONTEXT = 'context'
 DATE = 'date'
 ID = 'ID'
-DATE_FORMAT = '%d/%m/%Y'
 
 _SEND_DATE = 'send-date'
 _TEMPLATE = 'template'
