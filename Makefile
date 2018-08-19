@@ -1,8 +1,10 @@
-.PHONY: dev test lint upload clean
+.PHONY: dev install test lint upload clean
 dev:
+	ctags
+
+install:
 	pip install -U -r requirements.txt
 	pip install -U -e .
-	ctags
 
 test:
 	pytest
