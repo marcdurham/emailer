@@ -1,7 +1,3 @@
-'''
-Desperately needs a new meaning in life other than 'everything'.
-'''
-
 import argparse
 import datetime
 import os
@@ -19,7 +15,6 @@ _TIME_FORMAT = '%I:%M %p'
 _REPLY_TO_KEY = 'reply-to'
 _SPEAKER_KEY = 'speaker'
 _HIGHLIGHT = '<strong style="background-color: yellow">{}</strong>'
-_VERBOSE = False
 _ALL = 'all'
 _DRYRUN = 'dryrun'
 _TEST = 'test'
@@ -105,8 +100,6 @@ def format_and_send(send, sender, group, templates, sections, context, people,
     if not person.has_valid_email():
       continue
     if person.email in sent_already:
-      if _VERBOSE:
-        print('Already sent to ' + str(person))
       continue
     sent_already.add(person.email)
     if highlight:
@@ -124,10 +117,7 @@ def format_and_send(send, sender, group, templates, sections, context, people,
     if reply_to:
       message.reply_to = reply_to
     messages.append(message)
-  if _VERBOSE:
-    print('Sending all emails.')
-    print(len(messages))
-  send(messages, verbose=_VERBOSE)
+  send(messages)
 
 
 def get_datedata(loader, today, email_type):
@@ -157,9 +147,6 @@ def run_template(loader, sender, server, datedata, email_type):
   people = loader.fetch_people()
   groups = loader.fetch_groups()
   templates = loader.fetch_templates()
-  if _VERBOSE:
-    print('Sending email for {}.'.format(
-        datedata[data.DATE].strftime(_DATE_FORMAT)))
   context = datedata[data.CONTEXT]
   section_list = datedata[data.SECTIONS]
   group = groups[context['group']]
@@ -223,6 +210,18 @@ def run(types, today, config, skip_send):
   #    run_template(loader, sender, server, datedata, email_type)
 
 
+def load_config(config=None):
+  if not config:
+    config = os.path.expanduser('~/.emailer/config.yml')
+  with open(config, 'r') as config_file:
+    return yaml.load(config_file)
+
+
+def get_sample_config():
+  with open(_SAMPLE_CONFIG_FILE, 'r') as f:
+    return f.read()
+
+
 def get_parser():
   parser = argparse.ArgumentParser(description='Send emails')
   parser.add_argument('-n', '--next-day', action='store_true')
@@ -243,32 +242,12 @@ def get_parser():
   return parser
 
 
-def load_config(config=None):
-  if not config:
-    config = os.path.expanduser('~/.emailer/config.yml')
-  with open(config, 'r') as config_file:
-    return yaml.load(config_file)
-
-
-def print_sample_config():
-  with open(_SAMPLE_CONFIG_FILE, 'r') as f:
-    print(f.read(), end='')  # No extra new line.
-
-
 def main():
-  # TODO: Remove global usage.
-  # pylint: disable=global-statement
-  global _VERBOSE
   options = get_parser().parse_args()
   if options.sample_config:
-    print_sample_config()
-    return
+    print(get_sample_config())
   if options.version:
     print(emailer_version)
-    return
-  assert options.all or options.next_day or options.test, (
-      'At least one action is needed')
-  _VERBOSE = _VERBOSE or options.verbose
   types = {}
   types[_ALL] = options.all
   types[_DRYRUN] = options.next_day

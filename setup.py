@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 
-import emailer
-import os
 import setuptools
+
+import emailer
 
 
 with open('README.md') as f:
@@ -28,12 +28,11 @@ setuptools.setup(
     'oauth2client',
     'premailer',
     'PyYAML',
-    'python-dateutil',
     'requests',
   ],
   entry_points={
     'console_scripts': [
       'email = emailer.main:main',
-    ]
+    ],
   },
 )
