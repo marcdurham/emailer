@@ -7,7 +7,7 @@ import emailer.utils
 def test_create_person():
   name, email = 'Name', 'Email@Domain'
   person = emailer.models.Person(name, email)
-  assert person.name != name
+  assert person.name == name
   assert person.email == email
 
 
