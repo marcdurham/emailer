@@ -3,6 +3,7 @@ Models for messages that are sent with servers.
 '''
 
 import email
+import email.policy
 import re
 import smtplib
 import time
@@ -12,34 +13,42 @@ import requests
 
 
 @attr.s(frozen=True)
-class EmailAddress():
-  full = attr.ib(default='')
+class Email():
+  email = attr.ib(default='')
 
   @property
   def username(self):
-    return self.full.split('@')[0]
+    return self.email.split('@')[0]
 
   @property
   def domain(self):
-    return self.full.split('@')[1]
+    return self.email.split('@')[1]
 
   def is_valid(self):
-    return self.full and re.match(r'.+@.+\..+', self.full):
+    return self.email and re.match(r'.+@.+\..+', self.email)
 
 
 @attr.s(frozen=True)
 class Person():
-  name = attr.ib()
-  email_address = attr.ib(factory=EmailAddress)
-  highlights = attr.ib(factory=list)
+  _name = attr.ib()
+  _email = attr.ib(default='')
+  _highlights = attr.ib(factory=list)
+
+  @property
+  def name(self):
+    return self._name
+
+  @property
+  def email(self):
+    return Email(self._email)
 
   @property
   def header_address(self):
     return email.headerregistry.Address(
-        self.name, self.email_address.username, self.email_address.domain)
+        self._name, self.email.username, self.email.domain)
 
   def formatted(self):
-    return '{self.name} <{self.email_address}>'.format(self)
+    return '{} <{}>'.format(self._name, self._)
 
 
 @attr.s(frozen=True)
@@ -50,7 +59,7 @@ class Message():
   html = attr.ib()
   reply_to = attr.ib(default=None)
 
-  def get_email_message(self):
+  def get_message(self):
     message = email.message.EmailMessage(email.policy.SMTP)
     message['Subject'] = self.subject
     message['From'] = self.sender.header_address()
@@ -65,10 +74,10 @@ class Message():
 class Server():
   '''SMTP Server, defaults to Gmail'''
 
-  _host = attr.ib(default='smtp.gmail.com')
-  _port = attr.ib(default=587)
   _user = attr.ib()
   _password = attr.ib()
+  _host = attr.ib(default='smtp.gmail.com')
+  _port = attr.ib(default=587)
   _skip_send = attr.ib(default=True)
   _SECONDS_BETWEEN_EMAILS = 0.1  # 100 ms
 

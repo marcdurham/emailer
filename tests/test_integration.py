@@ -6,7 +6,7 @@ Runs all the tests for this module.
 
 import unittest
 
-from emailer import data, main, utils
+from .context import emailer
 
 
 # pylint: disable=line-too-long
@@ -20,16 +20,8 @@ class TestDataInterface(unittest.TestCase):
 
   @classmethod
   def setUpClass(cls):
-    try:
-      config = main.load_config()
-      cls.gspread = data.GSpreadLoader(key=DEFAULT_KEY, auth=config['auth'])
-    except Exception as e:
-      print('Could not load the fixture spreadsheet. Try creating a '
-            'copy of the spreadsheet at ' + DEFAULT_URL + ' and sharing '
-            'it with the client_email address in your private.json '
-            'file. Don\'t forget to update your local.py with the new '
-            'URL.')
-      raise e
+    config = main.load_config()
+    cls.gspread = data.GSpreadLoader(key=DEFAULT_KEY, auth=config['auth'])
 
   def test_fetch_people(self):
     self.people_test(self.gspread.fetch_people())

@@ -7,9 +7,10 @@ import sys
 import time
 
 import gspread
-from oauth2client.service_account import ServiceAccountCredentials
+import oauth2client.service_account as oauth
 
-from . import models, utils
+import .models
+import .utils
 
 SECTIONS = 'sections'
 CONTEXT = 'context'
@@ -63,7 +64,7 @@ class GSpreadLoader():
 
   def _authorize(self):
     scope = ['https://spreadsheets.google.com/feeds']
-    credentials = ServiceAccountCredentials.from_json_keyfile_dict(
+    credentials = oauth.ServiceAccountCredentials.from_json_keyfile_dict(
         self.auth, scope)
     self.client = gspread.authorize(credentials)
     self.spreadsheet = self.client.open_by_key(self.key)

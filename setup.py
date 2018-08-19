@@ -10,7 +10,7 @@ with open('README.md') as f:
 
 
 setuptools.setup(
-  name='emailer',
+  name=emailer.__name__,
   version=emailer.__version__,
   description=emailer.__description__,
   long_description=long_description,
@@ -19,11 +19,11 @@ setuptools.setup(
   author=emailer.__author__,
   author_email=emailer.__author_email__,
   license=emailer.__license__,
-  packages=['emailer'],
+  packages=[emailer.__name__],
   python_requires='>=3',
   include_package_data=True,
   install_requires=[
-    'attr',
+    'attrs',
     'gspread',
     'oauth2client',
     'premailer',

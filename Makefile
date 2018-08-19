@@ -1,30 +1,24 @@
+.PHONY: dev full test lint integration upload clean
 dev:
 	pip install -U -r requirements.txt
 	pip install -U -e .
+	ctags
 
-full: test integration_test lint
+full: test integration lint
 
-test: unit_test
-
-lint: pylint
-
-integration_test:
-	# TODO: Fix crash
-	#tests/integration_test.py
-
-unit_test:
+test:
 	tests/unit_test.py
 
-pylint:
+lint:
 	pylint emailer tests/*.py
 
-upload: full setup pypi clean
+integration:
+	tests/integration_test.py
 
-setup:
+upload: full
 	./setup.py sdist bdist_wheel
-
-pypi:
 	twine upload dist/*
+	make clean
 
 clean:
 	rm -rf build

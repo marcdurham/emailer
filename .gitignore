@@ -1,5 +1,2 @@
-build/
 emailer.egg-info/
 *.pyc
-/config.yml
-/auth.json

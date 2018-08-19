@@ -6,26 +6,27 @@ Runs all the tests for this module.
 
 import unittest
 
-from emailer import models, utils
+from .context import emailer
 
 
 class TestModels(unittest.TestCase):
   @staticmethod
   def _create_person():
-    return models.Person.create(['1', '1@m'])
+    return models.Person('1', '1@m')
 
   def test_create_person(self):
     name, email = 'Name', 'Email@Domain'
-    person = models.Person.create([name, email])
+    person = models.Person(name, email)
     self.assertEqual(name, person.name)
-    self.assertEqual(email, person.email)
+    self.assertEqual(models.Email(email), person.email)
 
   def test_get_message(self):
-    message = models.Message()
-    message.sender = self._create_person()
-    message.recipient = self._create_person()
-    message.html = ''
-    message.get_message()
+    msg = models.Message(
+        sender = models.Person('1', '2@3'),
+        recipient = models.Person('2', '3@4'),
+        subject = 'ba',
+        html = 'hi')
+    msg.get_message()
 
 
 class TestUtils(unittest.TestCase):
