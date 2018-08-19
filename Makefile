@@ -1,21 +1,16 @@
-.PHONY: dev full test lint integration upload clean
+.PHONY: dev test lint upload clean
 dev:
 	pip install -U -r requirements.txt
 	pip install -U -e .
 	ctags
 
-full: test integration lint
-
 test:
-	tests/unit_test.py
+	pytest
 
 lint:
-	pylint emailer tests/*.py
+	pylint emailer tests
 
-integration:
-	tests/integration_test.py
-
-upload: full
+upload: test lint
 	./setup.py sdist bdist_wheel
 	twine upload dist/*
 	make clean

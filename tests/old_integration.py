@@ -6,7 +6,7 @@ Runs all the tests for this module.
 
 import unittest
 
-from .context import emailer
+import emailer
 
 
 # pylint: disable=line-too-long

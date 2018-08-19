@@ -13,8 +13,14 @@ import requests
 
 
 @attr.s(frozen=True)
-class Email():
-  email = attr.ib(default='')
+class Person():
+  name = attr.ib()
+  email = attr.ib()
+
+  @email.validator
+  def has_at_sign(self, attribute, value):
+    if '@' not in value:
+      raise ValueError('Email address must include @: {}.'.format(value))
 
   @property
   def username(self):
@@ -27,28 +33,12 @@ class Email():
   def is_valid(self):
     return self.email and re.match(r'.+@.+\..+', self.email)
 
-
-@attr.s(frozen=True)
-class Person():
-  _name = attr.ib()
-  _email = attr.ib(default='')
-  _highlights = attr.ib(factory=list)
-
-  @property
-  def name(self):
-    return self._name
-
-  @property
-  def email(self):
-    return Email(self._email)
-
   @property
   def header_address(self):
-    return email.headerregistry.Address(
-        self._name, self.email.username, self.email.domain)
+    return email.headerregistry.Address(self.name, self.username, self.domain)
 
   def formatted(self):
-    return '{} <{}>'.format(self._name, self._)
+    return '{} <{}>'.format(self.name, self.email)
 
 
 @attr.s(frozen=True)
