@@ -1,15 +1,16 @@
 from .recipient import Recipient
 
 
+def _fill_defaults(values, defaults):
+  return [v if v != '' else d for v, d in zip(values, defaults)]
+
+
 def parse_emails(data):
   res = dict()
   keys = data[0]
   defaults = data[1]
-  def fill_defaults(vals):
-    return [v if v != '' else d for v, d in zip(vals, defaults)]
-
   for row in data[2:]:
-    values = fill_defaults(row)
+    values = fill_defaults(row, defaults)
     res[row[0]] = {k: v for k, v in zip(keys, values)}
   return res
 
