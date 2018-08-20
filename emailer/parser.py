@@ -10,7 +10,7 @@ def parse_emails(data):
   keys = data[0]
   defaults = data[1]
   for row in data[2:]:
-    values = fill_defaults(row, defaults)
+    values = _fill_defaults(row, defaults)
     res[row[0]] = {k: v for k, v in zip(keys, values)}
   return res
 
