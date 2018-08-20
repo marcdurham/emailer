@@ -24,10 +24,11 @@ setuptools.setup(
   include_package_data=True,
   install_requires=[
     'attrs',
-    'gspread',
-    'oauth2client',
+    'google-api-python-client',
+    'google-auth',
+    'google-auth-httplib2',
+    'google-auth-oauthlib',
     'premailer',
-    'PyYAML',
     'requests',
   ],
   entry_points={

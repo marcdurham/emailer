@@ -1,5 +1,3 @@
-import datetime
-
 from .recipient import Recipient
 
 
@@ -11,7 +9,7 @@ def parse_emails(data):
     return [v if v != '' else d for v, d in zip(vals, defaults)]
 
   for row in data[2:]:
-    values = fill_defaults(row, defaults)
+    values = fill_defaults(row)
     res[row[0]] = {k: v for k, v in zip(keys, values)}
   return res
 

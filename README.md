@@ -12,9 +12,7 @@ Data format
 
 Ideas
 -----
-- Use [Gmail API](https://developers.google.com/gmail/api/guides/sending) to
-  send emails
-  - Remove `gspread` as a dependency and use [google-api-python-client](https://developers.google.com/sheets/api/quickstart/python)
+- ..
 
 Usage
 -----
@@ -36,8 +34,9 @@ Usage
       -s, --skip-send       Test everything except actually sending emails
       --sample-config       Print a sample config.yml file to stdout
       --version             Print package version
+* Enable the [Gmail](https://developers.google.com/gmail/api/quickstart/python)
+  and [Sheets](https://developers.google.com/sheets/api/quickstart/python) APIs.
 * Create local config with `email --sample-config >> ~/.emailer/config.yml`
     * The key is the long entry in the URL: `https://docs.google.com/spreadsheets/<key>/edit`
-* Set up the auth key according to [gspread's guide](http://gspread.readthedocs.org/en/latest/oauth2.html)
 * The most used command is likely `email -t`, this sends a test email to the sender
 

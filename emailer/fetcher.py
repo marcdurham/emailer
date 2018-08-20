@@ -1,7 +1,6 @@
 """Fetch spreadsheet data."""
 
 
-import gspread
 import oauth2client.service_account as oauth
 
 

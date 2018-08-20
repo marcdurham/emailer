@@ -1,5 +1,5 @@
 .PHONY: dev install test lint upload clean
-dev:
+dev: install
 	ctags
 
 install:
