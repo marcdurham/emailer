@@ -1,3 +1,4 @@
 /emailer.egg-info
 /.pytest_cache
+/.tox
 /**/__pycache__

@@ -28,8 +28,6 @@ setuptools.setup(
     'google-auth',
     'google-auth-httplib2',
     'google-auth-oauthlib',
-    'premailer',
-    'requests',
   ],
   entry_points={
     'console_scripts': [

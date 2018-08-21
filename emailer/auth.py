@@ -1,56 +1,55 @@
-import base64
 import json
 import os.path
 
-import googleapiclient.discovery
 import google.oauth2.credentials
 import google_auth_oauthlib.flow
 
 
+# https://developers.google.com/gmail/api/auth/scopes
+# https://developers.google.com/sheets/api/guides/authorizing
 _SCOPES = [
-    # https://developers.google.com/gmail/api/auth/scopes
     'https://www.googleapis.com/auth/gmail.send',
-    # https://developers.google.com/sheets/api/guides/authorizing
     'https://www.googleapis.com/auth/spreadsheets.readonly',
 ]
+_DEFAULT_CONFIG_DIR = os.path.expanduser('~/.emailer')
+_CLIENT_SECRET_FILENAME = 'client_secret.json'
+_TOKENS_FILENAME = 'token.json'
+_CREDENTIAL_KEYS = ['token', 'refresh_token', 'token_uri', 'client_id',
+                    'client_secret', 'scopes']
 
 
-def _fetch_new_tokens(creds_path):
-  flow = google_auth_oauthlib.flow.Flow.from_client_secrets_file(
-      creds_path, scopes=_SCOPES, redirect_uri='urn:ietf:wg:oauth:2.0:oob')
-  auth_url, _ = flow.authorization_url(access_type='offline', prompt='consent')
-  print('Please go to this URL: {}'.format(auth_url))
-  code = input('Enter the authorization code: ')
-  flow.fetch_token(code=code)
-  credentials = flow.credentials
-  return {
-      'token': credentials.token,
-      'refresh_token': credentials.refresh_token,
-      'token_uri': credentials.token_uri,
-      'client_id': credentials.client_id,
-      'client_secret': credentials.client_secret,
-      'scopes': credentials.scopes,
-  }
+def _load_json_file(path):
+  with open(path, 'r') as f:
+    return json.load(f)
 
 
-def _get_or_create_creds(config_dir):
-  token_path = os.path.join(config_dir, 'token.json')
-  if os.path.exists(token_path):
-    with open(token_path, 'r') as token_file:
-      tokens = json.load(token_file)
-  else:
-    creds_path = os.path.join(config_dir, 'client_secret.json')
-    with open(token_path, 'w') as token_file:
-      tokens = _fetch_new_tokens(creds_path)
-      json.dump(tokens, token_file)
-  return google.oauth2.credentials.Credentials(**tokens)
+def _save_json_file(data, path):
+  with open(path, 'w') as f:
+    json.dump(data, path)
 
 
-def authorize_gmail(config_dir=os.path.expanduser('~/.emailer')):
-  creds = _get_or_create_creds(config_dir)
-  return googleapiclient.discovery.build('gmail', 'v1', credentials=creds)
+def _fetch_new_tokens(config):
+  flow = google_auth_oauthlib.flow.InstalledAppFlow.from_client_config(
+      config, scopes=_SCOPES)
+  creds = flow.run_console()
+  return {k: getattr(creds, k) for k in _CREDENTIAL_KEYS}
 
 
-def authorize_sheets(config_dir=os.path.expanduser('~/.emailer')):
-  creds = _get_or_create_creds(config_dir)
-  return googleapiclient.discovery.build('sheets', 'v4', credentials=creds)
+def _create_tokens(token_path, config_path):
+  config = _load_json_file(config_path)
+  tokens = _fetch_new_tokens(config)
+  _save_json_file(tokens, token_path)
+
+
+def creds(config_dir=None):
+  if config_dir is None:
+    config_dir = _DEFAULT_CONFIG_DIR
+  token_path = os.path.join(config_dir, _TOKENS_FILENAME)
+  if not os.path.exists(token_path):
+    config_path = os.path.join(config_dir, _CLIENT_SECRET_FILENAME)
+    _create_tokens(token_path, config_path)
+  return google.oauth2.credentials.Credentials(**_load_json_file(token_path))
+
+
+if __name__ == '__main__':
+  creds()
