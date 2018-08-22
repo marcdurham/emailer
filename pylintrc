@@ -1,16 +1,9 @@
 [FORMAT]
-
 max-line-length=80
 indent-string='  '
 
 [MESSAGES CONTROL]
-
 disable=
-  broad-except,
   fixme,
-  invalid-name,
   missing-docstring,
-  too-few-public-methods,
-  too-many-arguments,
-  too-many-instance-attributes,
-  too-many-locals,
+  redefined-outer-name,

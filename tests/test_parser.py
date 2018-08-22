@@ -21,8 +21,8 @@ def test_parse_recipients_returns_list_of_recipients():
       ['Name', 'Email'],
       ['Daniel', 'daniel@example.com'],
   ])
-  for r in res:
-    assert isinstance(r, Recipient)
+  for recipient in res:
+    assert isinstance(recipient, Recipient)
 
 
 def test_parse_recipients_default_highlight_name():
