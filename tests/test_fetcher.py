@@ -1,11 +1,10 @@
 import pytest
-from pretend import stub
 
 from emailer import fetcher
 
 
 @pytest.fixture
-def sheets():
+def sheets(stub):
   # https://developers.google.com/sheets/api/reference/rest/v4/spreadsheets/get
   return lambda metadata, data: stub(
       spreadsheets=lambda: stub(
