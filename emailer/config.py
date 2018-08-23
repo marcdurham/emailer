@@ -2,6 +2,14 @@ import json
 import os.path
 
 
+def load(config_path):
+  try:
+    with open(config_path, 'r') as config_file:
+      return json.load(config_file)
+  except (ValueError, TypeError):
+    return {}
+
+
 def _create_and_save_tokens(token_path, config_path):
   with open(config_path, 'r') as config_file:
     config = json.load(config_file)
