@@ -1,9 +1,9 @@
 import google.oauth2.credentials
-import google_auth_oauthlib.flow as flow
+import google_auth_oauthlib.flow as oauth_flow
 
 
 def fetch_new_creds(config):
-  return flow.InstalledAppFlow.from_client_config(config, scopes=[
+  return oauth_flow.InstalledAppFlow.from_client_config(config, scopes=[
       'https://www.googleapis.com/auth/gmail.send',
       'https://www.googleapis.com/auth/spreadsheets.readonly',
       ]).run_console()
