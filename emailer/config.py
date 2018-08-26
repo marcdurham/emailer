@@ -12,11 +12,11 @@ CONFIG_FILES = ['.emailer.json', 'emailer.json']
 @attr.s(frozen=True)
 class Config():
   client_secret = attr.ib()
-  serialized_creds = attr.ib()
+  serialized_creds = attr.ib(default=None)
 
   def set_serialized_creds(self, serialized_creds):
     new_attrs = attr.asdict(self, recurse=False)
-    new_attrs[CLIENT_SECRET_KEY] = serialized_creds
+    new_attrs[SERIALIZED_CREDS_KEY] = serialized_creds
     return Config(**new_attrs)
 
   def serialize(self):

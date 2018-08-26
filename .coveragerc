@@ -1,0 +1,12 @@
+[run]
+source=
+  emailer
+  tests
+omit=
+  emailer/shell.py
+  emailer/old_main.py
+
+
+[report]
+show_missing=true
+skip_covered=true

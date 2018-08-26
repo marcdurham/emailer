@@ -4,6 +4,11 @@ import os.path
 import pytest
 
 from emailer import config
+from emailer.config import Config
+
+
+def test_set_new_serialized_creds():
+  assert Config('hi').set_serialized_creds('bye').serialized_creds == 'bye'
 
 
 def test_load_none_file_raises_invalid_file_error():
@@ -20,7 +25,7 @@ def test_load_nonexistent_file_raises_invalid_file_error(tmpdir):
 def test_load_returns_filled_config_object(tmpdir):
   config_file = tmpdir.join('config.json')
   config_file.write(json.dumps(
-    {'hi': 'bye', 'client_secret': 's', 'serialized_creds': 'world'}))
+    {config.CLIENT_SECRET_KEY: 's', config.SERIALIZED_CREDS_KEY: 'world'}))
   config_data = config.load_from_file(config_file.strpath)
   assert config_data.serialized_creds == 'world'
   assert config_data.client_secret == 's'
@@ -30,13 +35,6 @@ def test_load_empty_file_raises_invalid_file_content_error(tmpdir):
   with pytest.raises(config.InvalidFileContentError, match='config.json'):
     config_file = tmpdir.join('config.json')
     config_file.write('')
-    config.load_from_file(config_file.strpath)
-
-
-def test_load_bad_json_file_raises_invalid_file_content_error(tmpdir):
-  with pytest.raises(config.InvalidFileContentError, match='config.json'):
-    config_file = tmpdir.join('config.json')
-    config_file.write('badjson')
     config.load_from_file(config_file.strpath)
 
 
@@ -66,7 +64,7 @@ def test_files_yields_all_possible_names():
 
 
 def test_find_returns_first_existing_config_dot(tmpdir):
-  config_file = tmpdir.join('emailer.json')
+  config_file = tmpdir.join('.emailer.json')
   config_file.write('')
   assert config.find_config_file(config_file.strpath) == config_file.strpath
 
