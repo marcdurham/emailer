@@ -1,6 +1,0 @@
-coverage
-pretend
-pylint
-pytest
-tox
-twine
