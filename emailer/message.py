@@ -1,16 +1,17 @@
 import base64
 import email.message
 
-import attr
+from dataclasses import dataclass
+from .recipient import Recipient
 
 
-@attr.s(frozen=True)
+@dataclass(frozen=True)
 class Message():
-  subject = attr.ib(default='')
-  sender = attr.ib(default=None)
-  recipient = attr.ib(default=None)
-  replyto = attr.ib(default=None)
-  body = attr.ib(default='')
+  subject: str = ''
+  sender: Recipient = None
+  receiver: Recipient = None
+  replyto: Recipient = None
+  body: str = ''
 
   @property
   def email_message(self):
@@ -18,8 +19,8 @@ class Message():
     message['Subject'] = self.subject
     if self.sender:
       message['From'] = self.sender.header
-    if self.recipient:
-      message['To'] = self.recipient.header
+    if self.receiver:
+      message['To'] = self.receiver.header
     if self.replyto:
       message['Reply-To'] = self.replyto.header
     # TODO: Figure out what cte is and whether it is necessary

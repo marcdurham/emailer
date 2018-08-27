@@ -1,14 +1,14 @@
 import email.headerregistry
 
-import attr
+from dataclasses import dataclass
 
 
-@attr.s(frozen=True)
+@dataclass(frozen=True)
 class Recipient():
-  name = attr.ib(default='')
-  email = attr.ib(default='')
-  groups = attr.ib(factory=tuple)
-  highlights = attr.ib(factory=tuple)
+  name: str = ''
+  email: str = ''
+  groups: tuple = ()
+  highlights: tuple = ()
 
   @property
   def header(self):
