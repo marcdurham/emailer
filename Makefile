@@ -3,12 +3,12 @@ dev: install
 
 install:
 	pip install --user -U pipenv
-	pipenv install --python 3.5 --dev --skip-lock
-
-ci:
-	pipenv run pytest tests
+	pipenv install --python 3.7 --dev --skip-lock
 
 test:
+	pipenv run pytest tests
+
+tox:
 	tox
 
 lint:
@@ -19,8 +19,7 @@ cover:
 	pipenv run coverage report
 
 upload: test lint cover
-	pip install --user -U twine
-	python setup.py sdist bdist_wheel
+	python3.7 setup.py sdist bdist_wheel
 	twine upload dist/*
 	make clean
 

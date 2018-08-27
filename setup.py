@@ -20,13 +20,10 @@ setuptools.setup(
   author_email=emailer.__author_email__,
   license=emailer.__license__,
   packages=[emailer.__name__],
-  python_requires='>=3',
+  python_requires='>=3.7',
   include_package_data=True,
   install_requires=[
-    'attrs',
     'google-api-python-client',
-    'google-auth',
-    'google-auth-httplib2',
     'google-auth-oauthlib',
   ],
   entry_points={
