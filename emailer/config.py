@@ -1,7 +1,6 @@
+import dataclasses
 import json
 import os.path
-
-from dataclasses import asdict, dataclass
 
 
 CLIENT_SECRET_KEY = 'client_secret'
@@ -9,22 +8,17 @@ SERIALIZED_CREDS_KEY = 'serialized_creds'
 CONFIG_FILES = ['.emailer.json', 'emailer.json']
 
 
-@dataclass(frozen=True)
+@dataclasses.dataclass(frozen=True)
 class Config():
   client_secret: dict
   serialized_creds: dict = None
 
   def set_serialized_creds(self, serialized_creds):
-    new_attrs = asdict(self)
-    new_attrs[SERIALIZED_CREDS_KEY] = serialized_creds
-    return Config(**new_attrs)
-
-  def serialize(self):
-    return asdict(self)
+    return dataclasses.replace(self, serialized_creds=serialized_creds)
 
   def save_to_file(self, config_path):
     with open(config_path, 'w') as config_file:
-      json.dump(self.serialize(), config_file)
+      json.dump(dataclasses.asdict(self), config_file)
 
 
 class InvalidFileError(Exception):

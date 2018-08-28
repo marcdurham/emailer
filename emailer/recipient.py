@@ -1,9 +1,8 @@
+import dataclasses
 import email.headerregistry
 
-from dataclasses import dataclass
 
-
-@dataclass(frozen=True)
+@dataclasses.dataclass(frozen=True)
 class Recipient():
   name: str = ''
   email: str = ''
@@ -16,12 +15,10 @@ class Recipient():
     return email.headerregistry.Address(self.name, username, domain)
 
   def add_highlight(self, highlight):
-    return Recipient(
-        self.name, self.email, self.groups, self.highlights + (highlight,))
+    return dataclasses.replace(self, highlights=self.highlights+(highlight,))
 
   def add_group(self, group):
-    return Recipient(
-        self.name, self.email, self.groups + (group,), self.highlights)
+    return dataclasses.replace(self, groups=self.groups+(group,))
 
   def is_active(self):
     return 'active' in self.groups

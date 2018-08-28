@@ -1,11 +1,11 @@
 import base64
+import dataclasses
 import email.message
 
-from dataclasses import dataclass
 from .recipient import Recipient
 
 
-@dataclass(frozen=True)
+@dataclasses.dataclass(frozen=True)
 class Message():
   subject: str = ''
   sender: Recipient = None

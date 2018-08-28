@@ -25,10 +25,12 @@ setuptools.setup(
   install_requires=[
     'google-api-python-client',
     'google-auth-oauthlib',
+    #'mistune',
+    #'premailer', # Not sure if still necessary
   ],
   entry_points={
     'console_scripts': [
-      'email = emailer.main:main',
+      'email = emailer.shell:main',
     ],
   },
 )

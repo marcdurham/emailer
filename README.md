@@ -2,17 +2,14 @@ Emailer
 =============
 [![Build Status](https://travis-ci.org/WhiteHalmos/emailer.svg?branch=master)](https://travis-ci.org/WhiteHalmos/emailer)
 
-Data format
+Data Format
 -----------------------
 - `Emails`: Each row is one email with default values and overridden values
+  - This is the only sheet with values that can change for each email
 - `Recipients`: Each row is one recipient
-- `General`: General information that do not change per email
+- `General`: General information
 - `Shortcuts`: Abbreviations for values
-- `Templates`: Lengthy values that do not change per email
-
-Ideas
------
-- ..
+- `Markdown`: Values are parsed with markdown
 
 Usage
 -----

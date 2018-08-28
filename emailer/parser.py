@@ -20,12 +20,12 @@ def parse_recipients(data):
   keys = data[0]
   for row in data[1:]:
     recipient = Recipient(row[0], row[1])
-    recipient = recipient.add_highlight(recipient.name)
     for header, value in zip(keys[2:], row[2:]):
-      if 'highlight' in header.lower():
+      clean_header = header.strip().lower()
+      if 'highlight' in clean_header:
         recipient = recipient.add_highlight(value)
       elif value != '':
-        recipient = recipient.add_group(header.strip().lower())
+        recipient = recipient.add_group(clean_header)
     res.append(recipient)
   return res
 

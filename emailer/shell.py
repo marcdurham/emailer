@@ -1,12 +1,12 @@
 import os
-from . import api, args, config
+from . import api, args, auth, config
 
 
 def get_creds(config_dir):
   config_path = config.find_config_file(config_dir)
   config_obj = config.load_from_file(config_path)
   creds = auth.creds(config_obj.serialized_creds, config_obj.client_secret)
-  config_obj = config.set_serialized_creds(auth.serialize(creds))
+  config_obj = config_obj.set_serialized_creds(auth.serialize(creds))
   config_obj.save_to_file(config_path)
   return creds
 

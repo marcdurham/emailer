@@ -16,21 +16,15 @@ def test_parse_emails_with_default():
   }
 
 
-def test_parse_recipients_returns_list_of_recipients():
+def test_parse_recipients_returns_list_of_recipients_no_default_values():
   res = parser.parse_recipients([
       ['Name', 'Email'],
       ['Daniel', 'daniel@example.com'],
   ])
   for recipient in res:
     assert isinstance(recipient, Recipient)
-
-
-def test_parse_recipients_default_highlight_name():
-  res = parser.parse_recipients([
-      ['Name', 'Email'],
-      ['Daniel', 'daniel@example.com'],
-  ])
-  assert res[0].highlights == ('Daniel',)
+    assert recipient.groups == ()
+    assert recipient.highlights == ()
 
 
 def test_parse_recipients_case_insensitive_highlights():
@@ -38,7 +32,7 @@ def test_parse_recipients_case_insensitive_highlights():
       ['Name', 'Email', 'Highlight'],
       ['Daniel', 'daniel@example.com', 'Hi'],
   ])
-  assert res[0].highlights == ('Daniel', 'Hi')
+  assert res[0].highlights == ('Hi',)
 
 
 def test_parse_recipients_lower_case_groups():
