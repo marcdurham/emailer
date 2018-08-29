@@ -3,22 +3,7 @@ import json
 import os.path
 
 
-CLIENT_SECRET_KEY = 'client_secret'
-SERIALIZED_CREDS_KEY = 'serialized_creds'
 CONFIG_FILES = ['.emailer.json', 'emailer.json']
-
-
-@dataclasses.dataclass(frozen=True)
-class Config():
-  client_secret: dict
-  serialized_creds: dict = None
-
-  def set_serialized_creds(self, serialized_creds):
-    return dataclasses.replace(self, serialized_creds=serialized_creds)
-
-  def save_to_file(self, config_path):
-    with open(config_path, 'w') as config_file:
-      json.dump(dataclasses.asdict(self), config_file)
 
 
 class InvalidFileError(Exception):
@@ -27,6 +12,33 @@ class InvalidFileError(Exception):
 
 class InvalidFileContentError(Exception):
   pass
+
+
+@dataclasses.dataclass(frozen=True)
+class Config():
+  client_secret: dict = None
+  serialized_creds: dict = None
+  keys: dict = None
+
+  def validate(self):
+    if self.client_secret is None:
+      raise InvalidFileContentError(
+          'Unable to locate client_secret data, see {} to obtain one.'.format(
+              'https://developers.google.com/identity/protocols/OAuth2'))
+
+  def get_keys(self, names=None):
+    if self.keys is None:
+      raise InvalidFileContentError('No keys dict in config.')
+    if names is None:
+      return self.keys.values()
+    return (self.keys[name] for name in names)
+
+  def set_serialized_creds(self, serialized_creds):
+    return dataclasses.replace(self, serialized_creds=serialized_creds)
+
+  def save_to_file(self, config_path):
+    with open(config_path, 'w') as config_file:
+      json.dump(dataclasses.asdict(self), config_file)
 
 
 def files(root_path):
@@ -48,27 +60,12 @@ def find_config_file(root):
   return None
 
 
-def validate(config):
-  if CLIENT_SECRET_KEY not in config:
-    raise InvalidFileContentError(
-        'Unable to locate client_secret data, see {} to obtain one.'.format(
-            'https://developers.google.com/identity/protocols/OAuth2'))
-
-
-def create_from_data(data):
-  validate(data)
-  return Config(
-      client_secret=data[CLIENT_SECRET_KEY],
-      serialized_creds=data.get(SERIALIZED_CREDS_KEY),
-      )
-
-
 def load_from_file(config_path):
   if not config_path or not os.path.exists(config_path):
     raise InvalidFileError(config_path)
   with open(config_path, 'r') as config_file:
     try:
-      return create_from_data(json.load(config_file))
+      return Config(**json.load(config_file))
     except json.JSONDecodeError:
       raise InvalidFileContentError(
           '{} must be a valid JSON file.'.format(config_path))

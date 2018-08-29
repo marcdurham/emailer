@@ -11,8 +11,7 @@ class Recipient():
 
   @property
   def header(self):
-    username, domain = self.email.split('@')
-    return email.headerregistry.Address(self.name, username, domain)
+    return email.headerregistry.Address(self.name, addr_spec=self.email)
 
   def add_highlight(self, highlight):
     return dataclasses.replace(self, highlights=self.highlights+(highlight,))

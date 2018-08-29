@@ -24,8 +24,8 @@ def test_load_nonexistent_file_raises_invalid_file_error(tmpdir):
 
 def test_load_returns_filled_config_object(tmpdir):
   config_file = tmpdir.join('config.json')
-  config_file.write(json.dumps(
-    {config.CLIENT_SECRET_KEY: 's', config.SERIALIZED_CREDS_KEY: 'world'}))
+  config_file.write(
+      json.dumps({'client_secret': 's', 'serialized_creds': 'world'}))
   config_data = config.load_from_file(config_file.strpath)
   assert config_data.serialized_creds == 'world'
   assert config_data.client_secret == 's'
@@ -38,16 +38,28 @@ def test_load_empty_file_raises_invalid_file_content_error(tmpdir):
     config.load_from_file(config_file.strpath)
 
 
-def test_create_from_empty_dict_fails_without_valid_client_secret_config():
+def test_validate_fails_without_valid_client_secret_config():
   with pytest.raises(config.InvalidFileContentError, match='client_secret'):
-    config.create_from_data({})
+    config.Config().validate()
+
+
+def test_get_keys_with_invalid_key_dict_raises_invalid_file_content_error():
+  with pytest.raises(config.InvalidFileContentError):
+    config.Config().get_keys()
+
+
+def test_get_keys_returns_all_keys_by_default():
+  c = Config(keys={'a': 1, 'b': 2})
+  assert list(c.get_keys()) == [1, 2]
+  assert list(c.get_keys(None)) == [1, 2]
+  assert list(c.get_keys(['a'])) == [1]
 
 
 def test_save_updates_config_file_with_data(tmpdir):
   config_file = tmpdir.join('config.json')
-  config_obj = config.create_from_data({config.CLIENT_SECRET_KEY: 'hi'})
+  config_obj = config.Config(client_secret='hi')
   config_obj.save_to_file(config_file.strpath)
-  assert json.loads(config_file.read())[config.CLIENT_SECRET_KEY] == 'hi'
+  assert json.loads(config_file.read())['client_secret'] == 'hi'
 
 
 def test_files_yields_all_possible_names():
