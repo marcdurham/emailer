@@ -9,5 +9,6 @@ def values(key, sheets):
         range=title,
         fields='values',
         valueRenderOption='FORMATTED_VALUE').execute()
-    res[title] = sheet_data['values']
+    # Use get in case there is no data on this sheet.
+    res[title] = sheet_data.get('values')
   return res

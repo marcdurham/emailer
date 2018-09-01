@@ -5,6 +5,9 @@ install:
 	pip install --user -U pipenv
 	pipenv install --python 3.7 --dev --skip-lock
 
+run:
+	pipenv run email
+
 test:
 	pipenv run pytest tests
 

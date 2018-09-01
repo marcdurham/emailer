@@ -57,3 +57,7 @@ def test_parse_general_returns_generic_dict():
       ['reply-to', 'Daniel'],
   ])
   assert res == {'reply-to': 'Daniel'}
+
+
+def test_parse_general_returns_empty_dict_for_none():
+  assert parser.parse_general(None) == {}

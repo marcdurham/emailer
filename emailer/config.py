@@ -38,7 +38,7 @@ class Config():
 
   def save_to_file(self, config_path):
     with open(config_path, 'w') as config_file:
-      json.dump(dataclasses.asdict(self), config_file)
+      json.dump(dataclasses.asdict(self), config_file, indent=2, sort_keys=True)
 
 
 def files(root_path):
