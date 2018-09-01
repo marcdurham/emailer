@@ -6,10 +6,10 @@ init: install
 	pipenv install --python 3.7 --dev
 
 install:
-	pip install --user -U pipenv tox twine
+	pip install --quiet --user --upgrade pipenv tox twine
 
 travis:
-	pip install -U pipenv
+	pip install --upgrade pipenv
 	pipenv install --dev --skip-lock
 
 run:
@@ -28,7 +28,7 @@ cover:
 	pipenv run coverage run -m pytest
 	pipenv run coverage report
 
-upload: test lint cover
+upload: install test lint cover
 	python3.7 setup.py sdist bdist_wheel
 	twine upload dist/*
 	make clean

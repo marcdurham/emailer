@@ -1,8 +1,8 @@
-# Use containers for faster startup
-sudo: false
+# Support python 3.7: https://github.com/travis-ci/travis-ci/issues/9831
 language: python
-python:
-  - "3.7"
+python: 3.7
+dist: xenial
+sudo: true
 install:
   - make travis
 script:
