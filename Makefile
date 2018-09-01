@@ -1,9 +1,16 @@
 dev: install
+	pipenv update
 	ctags
 
+init: install
+	pipenv install --python 3.7 --dev
+
 install:
-	pip install --user -U pipenv
-	pipenv install --python 3.7 --dev --skip-lock
+	pip install --user -U pipenv tox twine
+
+travis:
+	pip install -U pipenv
+	pipenv install --dev --skip-lock
 
 run:
 	pipenv run email
@@ -27,4 +34,4 @@ upload: test lint cover
 	make clean
 
 clean:
-	rm -rf build dist emailer.egg-info
+	rm -rf build dist
