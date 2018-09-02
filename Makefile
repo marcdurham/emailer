@@ -13,7 +13,7 @@ travis:
 	pipenv install --dev --skip-lock
 
 run:
-	pipenv run email
+	pipenv run email -k testkey --date=2018-01-01 --test
 
 test:
 	pipenv run pytest tests
@@ -22,7 +22,7 @@ tox:
 	tox
 
 lint:
-	pipenv run pylint emailer tests
+	pipenv run pylint emailer tests/*
 
 cover:
 	pipenv run coverage run -m pytest

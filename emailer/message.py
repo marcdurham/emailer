@@ -1,5 +1,5 @@
 import base64
-import dataclasses
+import dataclasses  # pylint: disable=wrong-import-order
 import email.message
 
 from .recipient import Recipient

@@ -4,6 +4,7 @@ indent-string='  '
 
 [MESSAGES CONTROL]
 disable=
-  fixme,
-  missing-docstring,
-  redefined-outer-name,
+  fixme,  # Allow TODOs
+  redefined-outer-name,  # Pytest fixtures are named the same
+  missing-docstring,  # Not necessary
+  unsubscriptable-object,  # Dictionaries defaulted to None

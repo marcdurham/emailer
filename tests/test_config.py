@@ -49,10 +49,10 @@ def test_get_keys_with_invalid_key_dict_raises_invalid_file_content_error():
 
 
 def test_get_keys_returns_all_keys_by_default():
-  c = Config(keys={'a': 1, 'b': 2})
-  assert list(c.get_keys()) == [1, 2]
-  assert list(c.get_keys(None)) == [1, 2]
-  assert list(c.get_keys(['a'])) == [1]
+  conf = Config(keys={'a': 1, 'b': 2})
+  assert list(conf.get_keys()) == [1, 2]
+  assert list(conf.get_keys(None)) == [1, 2]
+  assert list(conf.get_keys(['a'])) == [1]
 
 
 def test_save_updates_config_file_with_data(tmpdir):

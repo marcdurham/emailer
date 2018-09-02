@@ -4,6 +4,12 @@ import logging
 import os
 
 
+def iso_date(date_str):
+  if date_str:
+    return datetime.date.fromisoformat(date_str)
+  return datetime.date.today()
+
+
 def get_parser():
   parser = argparse.ArgumentParser()
   parser.add_argument('-c', '--config-dir', default=os.getcwd(),
@@ -12,25 +18,41 @@ def get_parser():
   parser.add_argument('-k', '--key-name', action='append', dest='key_names',
                       help='Key name matching a key in the config. Default '
                            'is all available key names.')
-  parser.add_argument('-d', '--date',
+  # Default string is passed into iso_date method.
+  parser.add_argument('-d', '--date', type=iso_date, default='',
                       help='Date for which to send emails (YYYY-MM-DD). The '
                            'default is today.')
   parser.add_argument('-v', '--verbose', action='store_true',
                       help='Display more logging output')
+  parser.add_argument('--active', action='store_true',
+                      help='Send emails to all active recipients.')
+  parser.add_argument('--dryrun', action='store_true',
+                      help='Send emails one day early to dryrun recipients.')
+  parser.add_argument('--test', action='store_true',
+                      help='Send emails only to test recipients.')
   return parser
 
 
-def get_options(args=None):
-  return get_parser().parse_args(args)
-
-
-def get_date(options):
-  if options.date:
-    return datetime.date.fromisoformat(options.date)
-  return datetime.date.today()
+def get_options(argv=None):
+  return get_parser().parse_args(argv)
 
 
 def get_log_level(options):
   if options.verbose:
     return logging.INFO
   return logging.WARNING
+
+
+def get_groups(options):
+  if options.active:
+    yield 'active'
+  if options.dryrun:
+    yield 'dryrun'
+  if options.test:
+    yield 'test'
+
+
+def get_date(date, group):
+  if group == 'dryrun':
+    return date - datetime.timedelta(days=1)
+  return date

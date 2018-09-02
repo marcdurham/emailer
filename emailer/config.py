@@ -1,4 +1,4 @@
-import dataclasses
+import dataclasses  # pylint: disable=wrong-import-order
 import json
 import os.path
 

@@ -21,7 +21,8 @@ def test_fetch_new_creds_calls_right_api(monkeypatch, stub):
   def myfrom(config, scopes):
     return stub(run_console=lambda: (config, scopes))
   monkeypatch.setattr(InstalledAppFlow, 'from_client_config', myfrom)
-  config, scopes = auth.fetch_new_creds({'hi': 'bye'})
+  creds = auth.fetch_new_creds({'hi': 'bye'})
+  config, scopes = creds  # pylint: disable=unpacking-non-sequence
   assert config == {'hi': 'bye'}
   assert 'https://www.googleapis.com/auth/gmail.send' in scopes
   assert 'https://www.googleapis.com/auth/spreadsheets.readonly' in scopes
@@ -32,10 +33,10 @@ def test_serialize_creds_returns_dict(stub, creds_dict):
   assert auth.serialize(creds) == creds_dict
 
 
-def test_creds_fetches_new_creds_when_passed_none_or_empty_dict(monkeypatch, stub):
-  monkeypatch.setattr(auth, 'fetch_new_creds', lambda x: x)
-  assert auth.creds(None, 'config') == 'config'
-  assert auth.creds({}, 'config') == 'config'
+def test_creds_fetches_new_creds_when_passed_none_or_empty_dict(monkeypatch):
+  monkeypatch.setattr(auth, 'fetch_new_creds', lambda x: 'new' + x)
+  assert auth.creds(None, 'config') == 'newconfig'
+  assert auth.creds({}, 'config') == 'newconfig'
 
 
 def test_creds_returns_deserialized_creds_when_passed_dict(creds_dict):

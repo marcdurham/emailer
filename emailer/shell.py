@@ -1,16 +1,16 @@
 import logging
-import os
-from . import api, args, auth, config, fetcher, parser, sender
+from . import api, args, auth, composer, config, fetcher, parser, sender
 
 
-def get_messages(data, date):
-  emails = parser.parse_emails(data['Emails'])
-  recipients = parser.parse_recipients(data['Recipients'])
+def get_messages(data, date, group):
+  recipients = parser.parse_recipients_in_group(data['Recipients'], group)
   general = parser.parse_general(data['General'])
   shortcuts = parser.parse_general(data['Shortcuts'])
   markdown = parser.parse_general(data['Markdown'])
-  # TODO: Add message parsing
-  return []
+  for email in parser.parse_emails_for_date(data['Emails'], date):
+    body = composer.compose_body(email, shortcuts, markdown)
+    for recipient in recipients:
+      yield composer.compose_for_recipient(recipient, body)
 
 
 def main():
@@ -24,11 +24,13 @@ def main():
   gmail = api.gmail(creds)
   sheets = api.sheets(creds)
   keys = config_obj.get_keys(options.key_names)
-  date = args.get_date(options)
+  groups = args.get_groups(options)
   for key in keys:
     data = fetcher.values(key, sheets)
-    messages = get_messages(data, date)
-    sender.send_messages(messages, gmail)
+    for group in groups:
+      date = args.get_date(options.date, group)
+      messages = get_messages(data, date, group)
+      sender.send_messages(messages, gmail)
 
 
 if __name__ == '__main__':

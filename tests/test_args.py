@@ -3,6 +3,8 @@ import datetime
 import logging
 import os
 
+import pytest
+
 from emailer import args
 
 
@@ -18,9 +20,12 @@ def test_args_returns_default_options_with_no_args():
 def test_args_defaults():
   options = args.get_options([])
   assert options.config_dir == os.getcwd()
-  assert options.key_names == None
-  assert options.date == None
-  assert options.verbose == False
+  assert options.key_names is None
+  assert options.date == datetime.date.today()
+  assert not options.verbose
+  assert not options.active
+  assert not options.dryrun
+  assert not options.test
 
 
 def test_key_names_collects_values():
@@ -31,13 +36,28 @@ def test_key_names_collects_values():
 
 
 def test_verbose_stores_true_if_passed():
-  assert args.get_options(['--verbose']).verbose == True
-  assert args.get_options(['-v']).verbose == True
+  assert args.get_options(['--verbose']).verbose
+  assert args.get_options(['-v']).verbose
 
 
-def test_get_date_parses_date_to_datetime_value_and_today_by_default(stub):
-  assert args.get_date(stub(date=None)) == datetime.date.today()
-  assert args.get_date(stub(date='2018-05-12')) == datetime.date(2018, 5, 12)
+def test_date_parses_date_if_valid():
+  assert args.get_options(
+      ['--date', '2018-04-04']).date == datetime.date(2018, 4, 4)
+  with pytest.raises(SystemExit, message='invalid'):
+    args.get_options(['--date', 'wrong'])
+
+
+def test_get_date_returns_one_day_earlier_for_dryrun_group():
+  fourth = datetime.date(2018, 4, 4)
+  fifth = datetime.date(2018, 4, 5)
+  assert args.get_date(fifth, 'dryrun') == fourth
+  assert args.get_date(fifth, 'not-dryrun') == fifth
+
+
+def test_get_groups_collects_groups():
+  assert list(args.get_groups(args.get_options(['--active']))) == ['active']
+  assert list(args.get_groups(args.get_options(
+      ['--active', '--dryrun', '--test']))) == ['active', 'dryrun', 'test']
 
 
 def test_get_log_level_returns_info_for_verbose_and_warning_by_default(stub):

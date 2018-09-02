@@ -8,18 +8,10 @@ def test_recipient_default_empty_highlight_and_group():
   assert Recipient().groups == ()
 
 
-def test_recipient_add_highlight():
-  assert Recipient().add_highlight('Me').highlights == ('Me',)
-
-
-def test_recipient_add_group():
-  assert Recipient().add_group('Me').groups == ('Me',)
-
-
-def test_recipient_default_not_active_dryrun_test():
-  assert not Recipient().is_active()
-  assert not Recipient().is_dryrun()
-  assert not Recipient().is_test()
+def test_recipient_in_group_if_and_only_if_in():
+  recipient = Recipient(groups=('Hi',))
+  assert recipient.in_group('Hi')
+  assert not recipient.in_group('Other')
 
 
 def test_recipient_email_header():

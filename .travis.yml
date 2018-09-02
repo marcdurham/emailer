@@ -7,4 +7,5 @@ install:
   - make travis
 script:
   - make test
+  - make cover
   - make lint

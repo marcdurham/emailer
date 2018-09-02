@@ -2,7 +2,7 @@ import logging
 
 
 def send_message(message, gmail):
-  logging.info('Sending {}'.format(message))
+  logging.info('Sending %s', message)
   return gmail.users().messages().send(
       userId='me', body=message.gmail_body).execute()
 
