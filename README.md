@@ -7,7 +7,6 @@ Data Format
 - `Emails`: Each row is one email with default values and overridden values
   - This is the only sheet with values that can change for each email
 - `Recipients`: Each row is one recipient
-- `General`: General information
 - `Shortcuts`: Abbreviations for values
 - `Markdown`: Values are parsed with markdown
 

@@ -4,18 +4,38 @@ from emailer import parser
 from emailer.recipient import Recipient
 
 
-def test_parse_emails_with_default():
-  res = parser.parse_emails([
+def test_parse_emails_replace_empty_string_with_default():
+  res = list(parser.parse_emails([
       ['send-date', 'email-context'],
       ['', 'hi'],  # Defaults
       ['2018-01-01', ''],
-      ])
-  assert res == {
-      datetime.date(2018, 1, 1): {
-          'send-date': '2018-01-01',
-          'email-context': 'hi',
-      },
-  }
+      ]))
+  assert res == [(datetime.date(2018, 1, 1), {
+      'send-date': '2018-01-01',
+      'email-context': 'hi',
+      })]
+
+
+def test_parse_emails_fills_rest_with_default():
+  res = list(parser.parse_emails([
+      ['send-date', 'other-data'],
+      ['', 'bye'],  # Defaults
+      ['2018-01-01'],  # Shortened row
+      ]))
+  assert res == [(datetime.date(2018, 1, 1), {
+      'send-date': '2018-01-01',
+      'other-data': 'bye',
+      })]
+
+
+def test_parse_emails_returns_multiple_emails_for_same_date():
+  res = list(parser.parse_emails([
+      ['send-date'],
+      [''],  # Defaults
+      ['2018-01-01'],
+      ['2018-01-01'],
+      ]))
+  assert len(res) == 2
 
 
 def test_parse_emails_with_date_returns_only_that_date():

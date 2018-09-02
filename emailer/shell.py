@@ -1,16 +1,22 @@
 import logging
+
+import mistune
+
 from . import api, args, auth, composer, config, fetcher, parser, sender
+from .message import Message
 
 
 def get_messages(data, date, group):
+  emails = parser.parse_emails_for_date(data['Emails'], date)
   recipients = parser.parse_recipients_in_group(data['Recipients'], group)
-  general = parser.parse_general(data['General'])
   shortcuts = parser.parse_general(data['Shortcuts'])
   markdown = parser.parse_general(data['Markdown'])
-  for email in parser.parse_emails_for_date(data['Emails'], date):
-    body = composer.compose_body(email, shortcuts, markdown)
+  for email in emails:
+    subject = composer.compose_email_subject(email, shortcuts, markdown)
+    body = composer.compose_email_body(email, shortcuts, markdown)
+    formatted_body = mistune.markdown(body, hard_wrap=True)
     for recipient in recipients:
-      yield composer.compose_for_recipient(recipient, body)
+      yield Message(receiver=recipient, subject=subject, body=formatted_body)
 
 
 def main():

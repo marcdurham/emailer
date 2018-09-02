@@ -25,8 +25,7 @@ setuptools.setup(
   install_requires=[
     'google-api-python-client',
     'google-auth-oauthlib',
-    #'mistune',
-    #'premailer', # Not sure if still necessary
+    'mistune',
   ],
   entry_points={
     'console_scripts': [

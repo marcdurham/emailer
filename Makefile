@@ -13,7 +13,7 @@ travis:
 	pipenv install --dev --skip-lock
 
 run:
-	pipenv run email -k testkey --date=2018-01-01 --test
+	pipenv run email -k testkey --date=2018-01-01 --test -v
 
 test:
 	pipenv run pytest tests

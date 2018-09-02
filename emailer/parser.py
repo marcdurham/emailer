@@ -1,27 +1,27 @@
 import datetime
+import itertools
 
 from .recipient import Recipient
 
 
 def _fill_defaults(values, defaults):
-  return [v if v != '' else d for v, d in zip(values, defaults)]
+  return (v if v != '' else d
+          for v, d in itertools.zip_longest(values, defaults, fillvalue=''))
 
 
 def parse_emails(data):
-  res = dict()
   keys = data[0]
   defaults = data[1]
   for row in data[2:]:
     values = _fill_defaults(row, defaults)
     date = datetime.date.fromisoformat(row[0])
-    res[date] = {k: v for k, v in zip(keys, values)}
-  return res
+    yield date, {k: v for k, v in zip(keys, values)}
 
 
-def parse_emails_for_date(data, date):
-  parsed_data = parse_emails(data)
-  if date in parsed_data:
-    yield parsed_data[date]
+def parse_emails_for_date(data, target_date):
+  for date, values in parse_emails(data):
+    if date == target_date:
+      yield values
 
 
 def parse_recipients(data):
