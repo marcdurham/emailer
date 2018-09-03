@@ -23,8 +23,8 @@ class Config():
   def validate(self):
     if self.client_secret is None:
       raise InvalidFileContentError(
-          'Unable to locate client_secret data, see {} to obtain one.'.format(
-              'https://developers.google.com/identity/protocols/OAuth2'))
+          'Unable to locate client_secret data: '
+          'https://developers.google.com/identity/protocols/OAuth2')
 
   def get_keys(self, names=None):
     if self.keys is None:
@@ -67,5 +67,4 @@ def load_from_file(config_path):
     try:
       return Config(**json.load(config_file))
     except json.JSONDecodeError:
-      raise InvalidFileContentError(
-          '{} must be a valid JSON file.'.format(config_path))
+      raise InvalidFileContentError(f'{config_path} must be a valid JSON file.')

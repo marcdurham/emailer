@@ -1,3 +1,5 @@
+import mistune
+
 from .recipient import Recipient
 
 
@@ -25,11 +27,20 @@ def replace_value(values):
   return {k: values.get(v, v) for k, v in values.items()}
 
 
+def markdown(text):
+  # Convert newlines to <br> with hard_wrap=True
+  return mistune.markdown(text, hard_wrap=True)
+
+
 def mark_text(text, highlights, values):
   for highlight in highlights:
     mark = values.get(highlight, highlight)
-    text = text.replace(mark, '<mark>{}</mark>'.format(mark))
+    text = text.replace(mark, f'<mark>{mark}</mark>')
   return text
+
+
+def prepend_prefix(text, key, values):
+  return values.get(f'{key}-prefix', '') + text
 
 
 def get_replyto(values):

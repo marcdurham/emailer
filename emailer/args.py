@@ -65,5 +65,5 @@ def get_date(date, group):
 
 def print_version(options):
   if options.version:
-    return sys.stdout.write('{}\n'.format(__version__))
+    return sys.stdout.write(f'{__version__}\n')
   return None

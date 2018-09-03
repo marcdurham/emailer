@@ -1,7 +1,5 @@
 import logging
 
-import mistune
-
 from . import api, args, auth, composer, config, fetcher, parser, sender
 from .message import Message
 
@@ -12,15 +10,15 @@ def get_messages(data, date, group):
   shortcuts = parser.parse_general(data['Shortcuts'])
   for email in emails:
     values = composer.replace_value({**email, **shortcuts})
-    subject = composer.substitute_for_key('subject', values)
+    raw_subject = composer.substitute_for_key('subject', values)
+    subject = composer.prepend_prefix(raw_subject, group, values)
     text_body = composer.substitute_for_key('body', values)
-    # Convert newlines to <br> with hard_wrap=True
-    markdown_body = mistune.markdown(text_body, hard_wrap=True)
+    markdown_body = composer.markdown(text_body)
     for recipient in recipients:
       body = composer.mark_text(markdown_body, recipient.highlights, values)
       replyto = composer.get_replyto(values)
-      yield Message(
-          recipient=recipient, replyto=replyto, subject=subject, body=body)
+      yield Message(subject=subject, recipient=recipient, replyto=replyto,
+                    body=body)
 
 
 def main():
