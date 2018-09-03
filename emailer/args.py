@@ -13,7 +13,7 @@ def iso_date(date_str):
 def get_parser():
   parser = argparse.ArgumentParser()
   parser.add_argument('-c', '--config-dir', default=os.getcwd(),
-                      help='Directory containing configfile. Default is '
+                      help='Directory containing config file. Default is '
                            'current working directory.')
   parser.add_argument('-k', '--key-name', action='append', dest='key_names',
                       help='Key name matching a key in the config. Default '

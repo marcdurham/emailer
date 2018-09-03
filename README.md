@@ -8,7 +8,6 @@ Data Format
   - This is the only sheet with values that can change for each email
 - `Recipients`: Each row is one recipient
 - `Shortcuts`: Abbreviations for values
-- `Markdown`: Values are parsed with markdown
 
 Usage
 -----

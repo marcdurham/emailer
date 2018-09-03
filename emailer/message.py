@@ -8,8 +8,7 @@ from .recipient import Recipient
 @dataclasses.dataclass(frozen=True)
 class Message():
   subject: str = ''
-  sender: Recipient = None
-  receiver: Recipient = None
+  recipient: Recipient = None
   replyto: Recipient = None
   body: str = ''
 
@@ -17,10 +16,8 @@ class Message():
   def email_message(self):
     message = email.message.EmailMessage()
     message['Subject'] = self.subject
-    if self.sender:
-      message['From'] = self.sender.header
-    if self.receiver:
-      message['To'] = self.receiver.header
+    if self.recipient:
+      message['To'] = self.recipient.header
     if self.replyto:
       message['Reply-To'] = self.replyto.header
     # TODO: Figure out what cte is and whether it is necessary

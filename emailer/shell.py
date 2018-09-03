@@ -13,11 +13,14 @@ def get_messages(data, date, group):
   for email in emails:
     values = composer.replace_value({**email, **shortcuts})
     subject = composer.substitute_for_key('subject', values)
-    body = composer.substitute_for_key('body', values)
+    text_body = composer.substitute_for_key('body', values)
     # Convert newlines to <br> with hard_wrap=True
-    formatted_body = mistune.markdown(body, hard_wrap=True)
+    markdown_body = mistune.markdown(text_body, hard_wrap=True)
     for recipient in recipients:
-      yield Message(receiver=recipient, subject=subject, body=formatted_body)
+      body = composer.mark_text(markdown_body, recipient.highlights, values)
+      replyto = composer.get_replyto(values)
+      yield Message(
+          recipient=recipient, replyto=replyto, subject=subject, body=body)
 
 
 def main():
