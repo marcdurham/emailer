@@ -2,6 +2,9 @@ import argparse
 import datetime
 import logging
 import os
+import sys
+
+from . import __version__
 
 
 def iso_date(date_str):
@@ -24,6 +27,8 @@ def get_parser():
                            'default is today.')
   parser.add_argument('-v', '--verbose', action='store_true',
                       help='Display more logging output')
+  parser.add_argument('-V', '--version', action='store_true',
+                      help='Print the current emailer module version.')
   parser.add_argument('--active', action='store_true',
                       help='Send emails to all active recipients.')
   parser.add_argument('--dryrun', action='store_true',
@@ -56,3 +61,9 @@ def get_date(date, group):
   if group == 'dryrun':
     return date - datetime.timedelta(days=1)
   return date
+
+
+def print_version(options):
+  if options.version:
+    return sys.stdout.write('{}\n'.format(__version__))
+  return None

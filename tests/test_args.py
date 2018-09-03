@@ -2,10 +2,11 @@ import argparse
 import datetime
 import logging
 import os
+import sys
 
 import pytest
 
-from emailer import args
+from emailer import args, __version__
 
 
 def test_args_returns_argument_parser_instance():
@@ -23,6 +24,7 @@ def test_args_defaults():
   assert options.key_names is None
   assert options.date == datetime.date.today()
   assert not options.verbose
+  assert not options.version
   assert not options.active
   assert not options.dryrun
   assert not options.test
@@ -38,6 +40,11 @@ def test_key_names_collects_values():
 def test_verbose_stores_true_if_passed():
   assert args.get_options(['--verbose']).verbose
   assert args.get_options(['-v']).verbose
+
+
+def test_version_stores_true_if_passed():
+  assert args.get_options(['--version']).version
+  assert args.get_options(['-V']).version
 
 
 def test_date_parses_date_if_valid():
@@ -63,3 +70,9 @@ def test_get_groups_collects_groups():
 def test_get_log_level_returns_info_for_verbose_and_warning_by_default(stub):
   assert args.get_log_level(stub(verbose=True)) == logging.INFO
   assert args.get_log_level(stub(verbose=False)) == logging.WARNING
+
+
+def test_print_version_calls_print_with_version(monkeypatch, stub):
+  monkeypatch.setattr(sys.stdout, 'write', lambda x: x)
+  assert args.print_version(stub(version=True)) == '{}\n'.format(__version__)
+  assert args.print_version(stub(version=False)) == None

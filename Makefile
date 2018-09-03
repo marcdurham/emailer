@@ -28,7 +28,7 @@ cover:
 	pipenv run coverage run -m pytest
 	pipenv run coverage report
 
-upload: install test lint cover
+upload: install tox cover lint
 	python3.7 setup.py sdist bdist_wheel
 	twine upload dist/*
 	make clean
