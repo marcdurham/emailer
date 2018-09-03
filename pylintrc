@@ -8,3 +8,6 @@ disable=
   redefined-outer-name,  # Pytest fixtures are named the same
   missing-docstring,  # Not necessary
   unsubscriptable-object,  # Dictionaries defaulted to None
+
+[SIMILARITIES]
+ignore-imports=yes  # Test files and module under test often have same imports

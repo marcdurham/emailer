@@ -75,4 +75,4 @@ def test_get_log_level_returns_info_for_verbose_and_warning_by_default(stub):
 def test_print_version_calls_print_with_version(monkeypatch, stub):
   monkeypatch.setattr(sys.stdout, 'write', lambda x: x)
   assert args.print_version(stub(version=True)) == '{}\n'.format(__version__)
-  assert args.print_version(stub(version=False)) == None
+  assert args.print_version(stub(version=False)) is None
