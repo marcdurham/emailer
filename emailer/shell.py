@@ -28,6 +28,7 @@ def main():
   logging.basicConfig(level=args.get_log_level(options))
   config_path = config.find_config_file(options.config_dir)
   config_obj = config.load_from_file(config_path)
+  config_obj.validate()
   creds = auth.creds(config_obj.serialized_creds, config_obj.client_secret)
   config_obj = config_obj.set_serialized_creds(auth.serialize(creds))
   config_obj.save_to_file(config_path)

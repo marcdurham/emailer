@@ -46,7 +46,7 @@ def parse_recipients_in_group(data, group):
 
 
 def parse_general(data):
-  # Ignore first row as header
   if data is None:
     return {}
+  # Ignore first row as header
   return {row[0]: row[1] for row in data[1:]}
