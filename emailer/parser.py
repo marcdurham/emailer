@@ -29,15 +29,14 @@ def parse_recipients(data):
   for row in data[1:]:
     highlights = []
     groups = []
-    for header, value in zip(keys[2:], row[2:]):
+    for header, value in zip(keys[1:], row[1:]):
       clean_header = header.strip().lower()
       clean_value = value.strip()
       if 'highlight' in clean_header and clean_value:
         highlights.append(clean_value)
       elif clean_value != '':
         groups.append(clean_header)
-    yield Recipient(name=row[0],
-                    email=row[1],
+    yield Recipient(email=row[0],
                     highlights=tuple(highlights),
                     groups=tuple(groups))
 

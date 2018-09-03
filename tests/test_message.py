@@ -14,9 +14,9 @@ def test_message_subject_is_in_email_message():
 
 
 def test_message_sender_receiver_replyto_is_in_email_message():
-  sender = Recipient('Sender', 'sender@example.com')
-  receiver = Recipient('To', 'to@example.com')
-  replyto = Recipient('Reply', 'replyto@example.com')
+  sender = Recipient('sender@example.com')
+  receiver = Recipient('to@example.com')
+  replyto = Recipient('replyto@example.com')
   message = Message(sender=sender, receiver=receiver, replyto=replyto)
   assert message.email_message['From'] == str(sender.header)
   assert message.email_message['To'] == str(receiver.header)

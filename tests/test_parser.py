@@ -59,8 +59,8 @@ def test_parse_emails_with_date_returns_empty_if_nonexistent():
 
 def test_parse_recipients_returns_list_of_recipients_no_default_values():
   res = parser.parse_recipients([
-      ['Name', 'Email'],
-      ['Daniel', 'daniel@example.com'],
+      ['Email'],
+      ['daniel@example.com'],
       ])
   for recipient in res:
     assert isinstance(recipient, Recipient)
@@ -70,44 +70,44 @@ def test_parse_recipients_returns_list_of_recipients_no_default_values():
 
 def test_parse_recipients_case_insensitive_highlights():
   res = list(parser.parse_recipients([
-      ['Name', 'Email', 'Highlight'],
-      ['Daniel', 'daniel@example.com', 'Hi'],
+      ['Email', 'Highlight'],
+      ['daniel@example.com', 'Hi'],
       ]))
   assert res[0].highlights == ('Hi',)
 
 
 def test_parse_recipients_skip_empty_highlights():
   res = list(parser.parse_recipients([
-      ['Name', 'Email', 'Highlight'],
-      ['Daniel', 'daniel@example.com', ''],
+      ['Email', 'Highlight'],
+      ['daniel@example.com', ''],
       ]))
   assert res[0].highlights == ()
 
 
 def test_parse_recipients_lower_case_groups():
   res = list(parser.parse_recipients([
-      ['Name', 'Email', 'Active'],
-      ['Daniel', 'daniel@example.com', 'X'],
+      ['Email', 'Active'],
+      ['daniel@example.com', 'X'],
       ]))
   assert res[0].groups == ('active',)
 
 
 def test_parse_recipients_skip_empty_groups():
   res = list(parser.parse_recipients([
-      ['Name', 'Email', 'Active'],
-      ['Daniel', 'daniel@example.com', ''],
+      ['Email', 'Active'],
+      ['daniel@example.com', ''],
       ]))
   assert res[0].groups == ()
 
 
 def test_parse_recipients_in_group_skips_those_not_in_group():
   res = list(parser.parse_recipients_in_group([
-      ['Name', 'Email', 'Active'],
-      ['Daniel', 'daniel@example.com', 'X'],
-      ['Paul', 'paul@example.com', ''],
+      ['Email', 'Active'],
+      ['daniel@example.com', 'X'],
+      ['paul@example.com', ''],
       ], 'active'))
   assert len(res) == 1
-  assert res[0].name == 'Daniel'
+  assert res[0].email == 'daniel@example.com'
 
 
 def test_parse_general_returns_generic_dict():

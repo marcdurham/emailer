@@ -10,10 +10,11 @@ def get_messages(data, date, group):
   emails = parser.parse_emails_for_date(data['Emails'], date)
   recipients = parser.parse_recipients_in_group(data['Recipients'], group)
   shortcuts = parser.parse_general(data['Shortcuts'])
-  markdown = parser.parse_general(data['Markdown'])
   for email in emails:
-    subject = composer.compose_email_subject(email, shortcuts, markdown)
-    body = composer.compose_email_body(email, shortcuts, markdown)
+    values = composer.replace_value({**email, **shortcuts})
+    subject = composer.substitute_for_key('subject', values)
+    body = composer.substitute_for_key('body', values)
+    # Convert newlines to <br> with hard_wrap=True
     formatted_body = mistune.markdown(body, hard_wrap=True)
     for recipient in recipients:
       yield Message(receiver=recipient, subject=subject, body=formatted_body)

@@ -14,18 +14,9 @@ def recursively_replace(template, values):
   return current_template
 
 
-def compose_email_subject(email, shortcuts, markdown):
-  values = {**email, **shortcuts, **markdown}
-  subject = values.get('subject')
-  if subject:
-    return recursively_replace(subject, values)
-  return None
+def substitute_for_key(key, values):
+  return recursively_replace(values.get(key, ''), values)
 
 
-# TODO: Refactor.
-def compose_email_body(email, shortcuts, markdown):
-  values = {**email, **shortcuts, **markdown}
-  subject = values.get('body')
-  if subject:
-    return recursively_replace(subject, values)
-  return None
+def replace_value(values):
+  return {k: values.get(v, v) for k, v in values.items()}

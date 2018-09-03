@@ -15,5 +15,5 @@ def test_recipient_in_group_if_and_only_if_in():
 
 
 def test_recipient_email_header():
-  assert Recipient('Daniel', 'daniel@example.com').header == (
-      email.headerregistry.Address('Daniel', 'daniel', 'example.com'))
+  assert Recipient('daniel@example.com').header == (
+      email.headerregistry.Address(addr_spec='daniel@example.com'))
