@@ -7,14 +7,15 @@ from .message import Message
 def get_messages(data, date, group):
   emails = parser.parse_emails_for_date(data['Emails'], date)
   recipients = parser.parse_recipients_in_group(data['Recipients'], group)
+  subject_prefix = composer.get_prefix_for_group(group)
   for email in emails:
-    raw_subject = composer.substitute_for_key('subject', email)
-    subject = composer.prepend_prefix(raw_subject, group, email)
-    text_body = composer.substitute_for_key('body', email)
+    values = composer.replace_values(email)
+    subject = subject_prefix + composer.substitute_for_key('subject', values)
+    text_body = composer.substitute_for_key('body', values)
     markdown_body = composer.markdown(text_body)
     for recipient in recipients:
-      body = composer.mark_text(markdown_body, recipient.highlights, email)
-      replyto = composer.get_replyto(email)
+      body = composer.mark_text(markdown_body, recipient.highlights, values)
+      replyto = composer.get_replyto(values)
       yield Message(subject=subject, recipient=recipient, replyto=replyto,
                     body=body)
 

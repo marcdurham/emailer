@@ -1,13 +1,12 @@
+from string import Template
+
 import mistune
 
 from .recipient import Recipient
 
 
 def replace(text, values):
-  class Default(dict):
-    def __missing__(self, key):
-      return '{' + key + '}'
-  return text.format_map(Default(values))
+  return Template(text).safe_substitute(values)
 
 
 def recursively_replace(text, values):
@@ -23,7 +22,7 @@ def substitute_for_key(key, values):
   return recursively_replace(values.get(key, ''), values)
 
 
-def replace_value(values):
+def replace_values(values):
   return {k: values.get(v, v) for k, v in values.items()}
 
 
@@ -39,8 +38,12 @@ def mark_text(text, highlights, values):
   return text
 
 
-def prepend_prefix(text, key, values):
-  return values.get(f'{key}-prefix', '') + text
+def get_prefix_for_group(group):
+  if group == 'dryrun':
+    return '[DRYRUN] '
+  if group == 'test':
+    return '[TEST] '
+  return ''
 
 
 def get_replyto(values):

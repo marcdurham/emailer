@@ -17,7 +17,7 @@ def parse_emails(original_data):
 
 def parse_emails_for_date(data, target_date):
   for email in parse_emails(data):
-    if email['send-date'] == target_date:
+    if email['send_date'] == target_date:
       yield email
 
 

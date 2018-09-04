@@ -20,55 +20,55 @@ def test_transpose_fills_with_empty_string():
 
 def test_parse_emails_replace_empty_string_with_default():
   res = list(parser.parse_emails([
-      ['send-date', '', '2018-01-01'],
+      ['send_date', '', '2018-01-01'],
       ['value', 'hi', ''],
       ]))
   assert res == [{
-      'send-date': '2018-01-01',
+      'send_date': '2018-01-01',
       'value': 'hi',
       }]
 
 
 def test_parse_emails_fills_rest_with_default():
   res = list(parser.parse_emails([
-      ['send-date', '', '2018-01-01'],
+      ['send_date', '', '2018-01-01'],
       ['other', 't']  # Shortened row
       ]))
   assert res == [{
-      'send-date': '2018-01-01',
+      'send_date': '2018-01-01',
       'other': 't',
       }]
 
 
 def test_parse_emails_empty_for_no_default():
   res = list(parser.parse_emails([
-      ['send-date', '', '2018-01-01'],
+      ['send_date', '', '2018-01-01'],
       ['nodefault'],  # Shortened row
       ]))
   assert res == [{
-      'send-date': '2018-01-01',
+      'send_date': '2018-01-01',
       'nodefault': '',
       }]
 
 
 def test_parse_emails_returns_multiple_emails_for_same_date():
   res = list(parser.parse_emails([
-      ['send-date', '', '2018-01-01', '2018-01-01'],
+      ['send_date', '', '2018-01-01', '2018-01-01'],
       ]))
   assert len(res) == 2
 
 
 def test_parse_emails_with_date_returns_only_that_date():
   res = list(parser.parse_emails_for_date([
-      ['send-date', '', '2018-01-01', '2018-01-02'],
+      ['send_date', '', '2018-01-01', '2018-01-02'],
       ], '2018-01-02'))
   assert len(res) == 1
-  assert res[0] == {'send-date': '2018-01-02'}
+  assert res[0] == {'send_date': '2018-01-02'}
 
 
 def test_parse_emails_with_date_returns_empty_if_nonexistent():
   res = list(parser.parse_emails_for_date([
-      ['send-date'],
+      ['send_date'],
       ], '2018-01-02'))
   assert not res
 
