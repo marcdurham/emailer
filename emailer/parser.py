@@ -1,41 +1,30 @@
-import datetime
 import itertools
 
 from .recipient import Recipient
 
 
-# TODO: Refactor
-def parse_emails(data):
-  # Only add emails with send-date filled in, minus name and default columns
-  num_emails = len(data[0]) - 2
-  if num_emails <= 0:
-    return
-  emails = [dict() for _ in range(num_emails)]
+def transpose(lists):
+  return (vals for vals in itertools.zip_longest(*lists, fillvalue=''))
+
+
+def parse_emails(original_data):
+  data = transpose(original_data)
+  keys = next(data, '')
+  defaults = next(data, '')
   for row in data:
-    name = row[0]
-    if len(row) >= 2:
-      default = row[1]
-    else:
-      default = ''
-    for email, value in itertools.zip_longest(emails, row[2:]):
-      if value:
-        email[name] = value
-      else:
-        email[name] = default
-  for email in emails:
-    date = datetime.date.fromisoformat(email['send-date'])
-    yield date, email
+    yield {k: r if r else d for k, r, d in zip(keys, row, defaults)}
 
 
 def parse_emails_for_date(data, target_date):
-  for date, values in parse_emails(data):
-    if date == target_date:
-      yield values
+  for email in parse_emails(data):
+    if email['send-date'] == target_date:
+      yield email
 
 
 def parse_recipients(data):
   keys = data[0]
   for row in data[1:]:
+    email = row[0]
     highlights = []
     groups = []
     for header, value in zip(keys[1:], row[1:]):
@@ -45,7 +34,7 @@ def parse_recipients(data):
         highlights.append(clean_value)
       elif clean_value != '':
         groups.append(clean_header)
-    yield Recipient(email=row[0],
+    yield Recipient(email=email,
                     highlights=tuple(highlights),
                     groups=tuple(groups))
 

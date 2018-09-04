@@ -7,12 +7,6 @@ import sys
 from . import __version__
 
 
-def iso_date(date_str):
-  if date_str:
-    return datetime.date.fromisoformat(date_str)
-  return datetime.date.today()
-
-
 def get_parser():
   parser = argparse.ArgumentParser()
   parser.add_argument('-c', '--config-dir', default=os.getcwd(),
@@ -21,8 +15,7 @@ def get_parser():
   parser.add_argument('-k', '--key-name', action='append', dest='key_names',
                       help='Key name matching a key in the config. Default '
                            'is all available key names.')
-  # Default string is passed into iso_date method.
-  parser.add_argument('-d', '--date', type=iso_date, default='',
+  parser.add_argument('-d', '--date', default=datetime.date.today().isoformat(),
                       help='Date for which to send emails (YYYY-MM-DD). The '
                            'default is today.')
   parser.add_argument('-v', '--verbose', action='store_true',
@@ -57,10 +50,11 @@ def get_groups(options):
     yield 'test'
 
 
-def get_date(date, group):
+def get_date(options, group):
   if group == 'dryrun':
-    return date - datetime.timedelta(days=1)
-  return date
+    date = datetime.date.fromisoformat(options.date)
+    return (date - datetime.timedelta(days=1)).isoformat()
+  return options.date
 
 
 def print_version(options):

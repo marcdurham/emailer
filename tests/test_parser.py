@@ -1,7 +1,21 @@
-import datetime
-
 from emailer import parser
 from emailer.recipient import Recipient
+
+
+def test_transpose_flips_list_of_lists():
+  assert list(parser.transpose([
+      [1, 2],
+      [3, 4]])) == [
+          (1, 3),
+          (2, 4)]
+
+
+def test_transpose_fills_with_empty_string():
+  assert list(parser.transpose([
+      [1],
+      [3, 4]])) == [
+          (1, 3),
+          ('', 4)]
 
 
 def test_parse_emails_replace_empty_string_with_default():
@@ -9,10 +23,10 @@ def test_parse_emails_replace_empty_string_with_default():
       ['send-date', '', '2018-01-01'],
       ['value', 'hi', ''],
       ]))
-  assert res == [(datetime.date(2018, 1, 1), {
+  assert res == [{
       'send-date': '2018-01-01',
       'value': 'hi',
-      })]
+      }]
 
 
 def test_parse_emails_fills_rest_with_default():
@@ -20,10 +34,10 @@ def test_parse_emails_fills_rest_with_default():
       ['send-date', '', '2018-01-01'],
       ['other', 't']  # Shortened row
       ]))
-  assert res == [(datetime.date(2018, 1, 1), {
+  assert res == [{
       'send-date': '2018-01-01',
       'other': 't',
-      })]
+      }]
 
 
 def test_parse_emails_empty_for_no_default():
@@ -31,10 +45,10 @@ def test_parse_emails_empty_for_no_default():
       ['send-date', '', '2018-01-01'],
       ['nodefault'],  # Shortened row
       ]))
-  assert res == [(datetime.date(2018, 1, 1), {
+  assert res == [{
       'send-date': '2018-01-01',
       'nodefault': '',
-      })]
+      }]
 
 
 def test_parse_emails_returns_multiple_emails_for_same_date():
@@ -47,7 +61,7 @@ def test_parse_emails_returns_multiple_emails_for_same_date():
 def test_parse_emails_with_date_returns_only_that_date():
   res = list(parser.parse_emails_for_date([
       ['send-date', '', '2018-01-01', '2018-01-02'],
-      ], datetime.date(2018, 1, 2)))
+      ], '2018-01-02'))
   assert len(res) == 1
   assert res[0] == {'send-date': '2018-01-02'}
 
@@ -55,7 +69,7 @@ def test_parse_emails_with_date_returns_only_that_date():
 def test_parse_emails_with_date_returns_empty_if_nonexistent():
   res = list(parser.parse_emails_for_date([
       ['send-date'],
-      ], datetime.date(2018, 1, 2)))
+      ], '2018-01-02'))
   assert not res
 
 

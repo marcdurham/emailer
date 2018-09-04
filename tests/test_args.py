@@ -4,8 +4,6 @@ import logging
 import os
 import sys
 
-import pytest
-
 from emailer import args, __version__
 
 
@@ -22,7 +20,7 @@ def test_args_defaults():
   options = args.get_options([])
   assert options.config_dir == os.getcwd()
   assert options.key_names is None
-  assert options.date == datetime.date.today()
+  assert options.date == datetime.date.today().isoformat()
   assert not options.verbose
   assert not options.version
   assert not options.active
@@ -47,18 +45,13 @@ def test_version_stores_true_if_passed():
   assert args.get_options(['-V']).version
 
 
-def test_date_parses_date_if_valid():
-  assert args.get_options(
-      ['--date', '2018-04-04']).date == datetime.date(2018, 4, 4)
-  with pytest.raises(SystemExit, message='invalid'):
-    args.get_options(['--date', 'wrong'])
+def test_date_returns_date_if_valid():
+  assert args.get_options(['--date', '2018-04-04']).date == '2018-04-04'
 
 
-def test_get_date_returns_one_day_earlier_for_dryrun_group():
-  fourth = datetime.date(2018, 4, 4)
-  fifth = datetime.date(2018, 4, 5)
-  assert args.get_date(fifth, 'dryrun') == fourth
-  assert args.get_date(fifth, 'not-dryrun') == fifth
+def test_get_date_returns_one_day_earlier_for_dryrun_group(stub):
+  assert args.get_date(stub(date='2018-04-05'), 'dryrun') == '2018-04-04'
+  assert args.get_date(stub(date='2018-04-05'), 'not') == '2018-04-05'
 
 
 def test_get_groups_collects_groups():

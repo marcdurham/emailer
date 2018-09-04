@@ -36,7 +36,7 @@ def main():
   for key in keys:
     data = fetcher.values(key, sheets)
     for group in groups:
-      date = args.get_date(options.date, group)
+      date = args.get_date(options, group)
       messages = get_messages(data, date, group)
       sender.send_messages(messages, gmail)
 

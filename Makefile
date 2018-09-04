@@ -1,4 +1,4 @@
-dev: install
+dev: install tox lint cover
 	pipenv update
 	ctags
 
