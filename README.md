@@ -29,7 +29,6 @@ Usage
       --test                Send emails only to test recipients.
 * Enable the [Gmail](https://developers.google.com/gmail/api/quickstart/python)
   and [Sheets](https://developers.google.com/sheets/api/quickstart/python) APIs.
-* Create local config with `email --sample-config >> ~/.emailer/config.yml`
-    * The key is the long entry in the URL: `https://docs.google.com/spreadsheets/<key>/edit`
-* The most used command is likely `email -t`, this sends a test email to the sender
-
+* Set up a config json file with `--setup-config` (TODO).
+    * The spreadsheet key is the long entry in the URL:
+      `https://docs.google.com/spreadsheets/<key>/edit`
