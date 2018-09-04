@@ -4,18 +4,27 @@ import itertools
 from .recipient import Recipient
 
 
-def _fill_defaults(values, defaults):
-  return (v if v != '' else d
-          for v, d in itertools.zip_longest(values, defaults, fillvalue=''))
-
-
+# TODO: Refactor
 def parse_emails(data):
-  keys = data[0]
-  defaults = data[1]
-  for row in data[2:]:
-    values = _fill_defaults(row, defaults)
-    date = datetime.date.fromisoformat(row[0])
-    yield date, {k: v for k, v in zip(keys, values)}
+  # Only add emails with send-date filled in, minus name and default columns
+  num_emails = len(data[0]) - 2
+  if num_emails <= 0:
+    return
+  emails = [dict() for _ in range(num_emails)]
+  for row in data:
+    name = row[0]
+    if len(row) >= 2:
+      default = row[1]
+    else:
+      default = ''
+    for email, value in itertools.zip_longest(emails, row[2:]):
+      if value:
+        email[name] = value
+      else:
+        email[name] = default
+  for email in emails:
+    date = datetime.date.fromisoformat(email['send-date'])
+    yield date, email
 
 
 def parse_emails_for_date(data, target_date):
@@ -43,10 +52,3 @@ def parse_recipients(data):
 
 def parse_recipients_in_group(data, group):
   return (r for r in parse_recipients(data) if r.in_group(group))
-
-
-def parse_general(data):
-  if data is None:
-    return {}
-  # Ignore first row as header
-  return {row[0]: row[1] for row in data[1:]}
