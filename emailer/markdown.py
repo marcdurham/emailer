@@ -1,9 +1,6 @@
+import re
+
 import mistune
-
-
-def convert(text):
-  # Convert newlines to <br> with hard_wrap=True
-  return mistune.markdown(text, hard_wrap=True)
 
 
 def mark_text(text, highlights, values):
@@ -11,3 +8,41 @@ def mark_text(text, highlights, values):
     mark = values.get(highlight, highlight)
     text = text.replace(mark, f'<mark>{mark}</mark>')
   return text
+
+
+def simple_table(body):
+  return f'<table><tbody>\n{body}</tbody>\n</table>\n'
+
+class SimpleTableBlockLexer(mistune.BlockLexer):
+  def enable_simple_table(self):
+    self.rules.simple_table = re.compile(
+        r'((?:.*\|.*(?:\n|$))+)\n*')
+    idx = self.default_rules.index('nptable')
+    self.default_rules.insert(idx + 1, 'simple_table')
+
+  def parse_simple_table(self, matches):
+    cells = re.sub(r'\n$', '', matches.group(1))
+    cells = cells.split('\n')
+    for i, values in enumerate(cells):
+      cells[i] = re.split(r' *(?<!\\)\| *', values)
+    self.tokens.append({
+        'type': 'simple_table',
+        'cells': cells})
+
+class SimpleTableMarkdown(mistune.Markdown):
+  def output_simple_table(self):
+    body = self.renderer.placeholder()
+    for row in self.token['cells']:
+      cell = self.renderer.placeholder()
+      for value in row:
+        cell += self.renderer.table_cell(
+            self.inline(value), header=False, align=None)
+      body += self.renderer.table_row(cell)
+    return simple_table(body)
+
+
+def convert(text):
+  block = SimpleTableBlockLexer(mistune.BlockGrammar())
+  block.enable_simple_table()
+  markdown = SimpleTableMarkdown(block=block, hard_wrap=True)
+  return markdown(text)

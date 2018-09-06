@@ -1,9 +1,15 @@
 from emailer import markdown
 
 
-def test_markdown_replaces_newline_with_br():
+def test_markdown_converts_newline_to_br():
   assert '<br>' not in markdown.convert('a b')
   assert '<br>' in markdown.convert('a\nb')
+
+
+def test_markdown_converts_vertical_pipes_to_table_without_header():
+  assert '<table>' in markdown.convert('a|b')
+  assert '<table>' in markdown.convert('#Hi\na|b')
+  assert '<thead>' not in markdown.convert('a|b')
 
 
 def test_mark_text_puts_mark_tags_around_text():
