@@ -1,6 +1,7 @@
 import itertools
 
 from .recipient import Recipient
+from .name import DATE
 
 
 def transpose(lists):
@@ -17,7 +18,7 @@ def parse_emails(original_data):
 
 def parse_emails_for_date(data, target_date):
   for email in parse_emails(data):
-    if email['send_date'] == target_date:
+    if email[DATE] == target_date:
       yield email
 
 

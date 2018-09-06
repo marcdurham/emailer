@@ -1,7 +1,9 @@
 import logging
 
-from . import api, args, auth, composer, config, fetcher, parser, sender
+from . import (api, args, auth, composer, config, fetcher, markdown, parser,
+               sender)
 from .message import Message
+from .name import SUBJECT, BODY
 
 
 def get_messages(data, date, group):
@@ -10,11 +12,11 @@ def get_messages(data, date, group):
   subject_prefix = composer.get_prefix_for_group(group)
   for email in emails:
     values = composer.replace_values(email)
-    subject = subject_prefix + composer.substitute_for_key('subject', values)
-    text_body = composer.substitute_for_key('body', values)
-    markdown_body = composer.markdown(text_body)
+    subject = subject_prefix + composer.substitute_for_key(SUBJECT, values)
+    text_body = composer.substitute_for_key(BODY, values)
+    markdown_body = markdown.convert(text_body)
     for recipient in recipients:
-      body = composer.mark_text(markdown_body, recipient.highlights, values)
+      body = markdown.mark_text(markdown_body, recipient.highlights, values)
       replyto = composer.get_replyto(values)
       yield Message(subject=subject, recipient=recipient, replyto=replyto,
                     body=body)

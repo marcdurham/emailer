@@ -1,7 +1,6 @@
 from string import Template
 
-import mistune
-
+from .name import REPLY_TO
 from .recipient import Recipient
 
 
@@ -26,18 +25,6 @@ def replace_values(values):
   return {k: values.get(v, v) for k, v in values.items()}
 
 
-def markdown(text):
-  # Convert newlines to <br> with hard_wrap=True
-  return mistune.markdown(text, hard_wrap=True)
-
-
-def mark_text(text, highlights, values):
-  for highlight in highlights:
-    mark = values.get(highlight, highlight)
-    text = text.replace(mark, f'<mark>{mark}</mark>')
-  return text
-
-
 def get_prefix_for_group(group):
   if group == 'dryrun':
     return '[DRYRUN] '
@@ -47,7 +34,7 @@ def get_prefix_for_group(group):
 
 
 def get_replyto(values):
-  replyto_email = values.get('replyto')
+  replyto_email = values.get(REPLY_TO)
   if replyto_email:
     return Recipient(replyto_email)
   return None
