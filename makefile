@@ -1,6 +1,8 @@
 .PHONY: dev update init install travis run test tox lint cover upload clean
 
-dev: install update tox lint cover
+dev: install update test_all
+
+test_all: tox lint cover
 
 update:
 	pipenv update
@@ -10,7 +12,7 @@ init: install
 	pipenv install --python 3.7 --dev
 
 install:
-	pip install --quiet --user --upgrade pipenv tox twine
+	pip install --quiet --user --upgrade pipenv tox twine wheel
 
 travis:
 	pip install --upgrade pipenv
@@ -32,7 +34,7 @@ cover:
 	pipenv run coverage run -m pytest
 	pipenv run coverage report
 
-upload: install tox cover lint
+upload: install test_all
 	python3.7 setup.py sdist bdist_wheel
 	twine upload dist/*
 	make clean
