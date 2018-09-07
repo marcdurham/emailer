@@ -1,0 +1,20 @@
+{
+  "client_secret": {
+    "installed": {
+      "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+      "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+      "client_id": "YOUR_CLIENT_ID.apps.googleusercontent.com",
+      "client_secret": "YOUR_SECRET_KEY",
+      "project_id": "YOUR_PROJECT_ID",
+      "redirect_uris": [
+        "urn:ietf:wg:oauth:2.0:oob",
+        "http://localhost"
+      ],
+      "token_uri": "https://www.googleapis.com/oauth2/v3/token"
+    }
+  },
+  "keys": {
+    "testkey": "1PAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA9I"
+  },
+  "serialized_creds": {}
+}
