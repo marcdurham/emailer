@@ -26,6 +26,7 @@ def main():
   options = args.get_options()
   logging.basicConfig(level=args.get_log_level(options))
   args.print_version(options)
+  args.print_sample_config(options)
   config_path = config.find_config_file(options.config_dir)
   config_obj = config.load_from_file(config_path)
   config_obj.validate()

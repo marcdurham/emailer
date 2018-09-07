@@ -1,8 +1,8 @@
 import argparse
+import builtins
 import datetime
 import logging
 import os
-import sys
 
 from emailer import args, __version__
 
@@ -22,6 +22,7 @@ def test_args_defaults():
   assert options.key_names is None
   assert options.date == datetime.date.today().isoformat()
   assert not options.verbose
+  assert not options.sample_config
   assert not options.version
   assert not options.active
   assert not options.dryrun
@@ -66,6 +67,12 @@ def test_get_log_level_returns_info_for_verbose_and_warning_by_default(stub):
 
 
 def test_print_version_calls_print_with_version(monkeypatch, stub):
-  monkeypatch.setattr(sys.stdout, 'write', lambda x: x)
-  assert args.print_version(stub(version=True)) == f'{__version__}\n'
-  assert args.print_version(stub(version=False)) is None
+  monkeypatch.setattr(builtins, 'print', lambda x: x)
+  assert __version__ not in args.print_version(stub(version=False))
+  assert __version__ in args.print_version(stub(version=True))
+
+
+def test_sample_config_prints_config(monkeypatch, stub):
+  monkeypatch.setattr(builtins, 'print', lambda x: x)
+  assert 'keys' not in args.print_sample_config(stub(sample_config=False))
+  assert 'keys' in args.print_sample_config(stub(sample_config=True))

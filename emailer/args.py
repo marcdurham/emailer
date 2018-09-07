@@ -2,9 +2,12 @@ import argparse
 import datetime
 import logging
 import os
-import sys
 
 from . import __version__
+
+
+_SAMPLE_CONFIG_PATH = os.path.join(
+    os.path.dirname(__file__), 'sample-emailer.json')
 
 
 def get_parser():
@@ -22,6 +25,9 @@ def get_parser():
                       help='Display more logging output')
   parser.add_argument('-V', '--version', action='store_true',
                       help='Print the current emailer module version.')
+  parser.add_argument('--sample-config', action='store_true',
+                      help='Print a sample config. Save as emailer.json or '
+                           '.emailer.json.')
   parser.add_argument('--active', action='store_true',
                       help='Send emails to all active recipients.')
   parser.add_argument('--dryrun', action='store_true',
@@ -59,5 +65,12 @@ def get_date(options, group):
 
 def print_version(options):
   if options.version:
-    return sys.stdout.write(f'{__version__}\n')
-  return None
+    return print(f'{__version__}')
+  return ''
+
+
+def print_sample_config(options):
+  if options.sample_config:
+    with open(_SAMPLE_CONFIG_PATH, 'r') as sample_config:
+      return print(sample_config.read())
+  return ''
