@@ -50,8 +50,8 @@ def test_date_returns_date_if_valid():
   assert args.get_options(['--date', '2018-04-04']).date == '2018-04-04'
 
 
-def test_get_date_returns_one_day_earlier_for_dryrun_group(stub):
-  assert args.get_date(stub(date='2018-04-05'), 'dryrun') == '2018-04-04'
+def test_get_date_returns_one_day_later_for_dryrun_group(stub):
+  assert args.get_date(stub(date='2018-04-05'), 'dryrun') == '2018-04-06'
   assert args.get_date(stub(date='2018-04-05'), 'not') == '2018-04-05'
 
 

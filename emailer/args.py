@@ -56,7 +56,7 @@ def get_groups(options):
 def get_date(options, group):
   if group == 'dryrun':
     date = datetime.date.fromisoformat(options.date)
-    return (date - datetime.timedelta(days=1)).isoformat()
+    return (date + datetime.timedelta(days=1)).isoformat()
   return options.date
 
 
