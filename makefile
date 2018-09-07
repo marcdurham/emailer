@@ -1,4 +1,8 @@
-dev: install tox lint cover
+.PHONY: dev update init install travis run test tox lint cover upload clean
+
+dev: install update tox lint cover
+
+update:
 	pipenv update
 	ctags
 

@@ -2,12 +2,9 @@ import argparse
 import datetime
 import logging
 import os
+from importlib import resources
 
-from . import __version__
-
-
-_SAMPLE_CONFIG_PATH = os.path.join(
-    os.path.dirname(__file__), 'sample-emailer.json')
+import emailer
 
 
 def get_parser():
@@ -65,12 +62,11 @@ def get_date(options, group):
 
 def print_version(options):
   if options.version:
-    return print(f'{__version__}')
+    return print(f'{emailer.__version__}')
   return ''
 
 
 def print_sample_config(options):
   if options.sample_config:
-    with open(_SAMPLE_CONFIG_PATH, 'r') as sample_config:
-      return print(sample_config.read())
+    return print(resources.read_text(emailer, 'sample-emailer.json'))
   return ''
