@@ -1,6 +1,5 @@
 from string import Template
 
-from .name import REPLY_TO
 from .recipient import Recipient
 
 
@@ -33,8 +32,8 @@ def get_prefix_for_group(group):
   return ''
 
 
-def get_replyto(values):
-  replyto_email = values.get(REPLY_TO)
-  if replyto_email:
-    return Recipient(replyto_email)
+def get_recipient(key, values):
+  email = values.get(key)
+  if email:
+    return Recipient(email)
   return None

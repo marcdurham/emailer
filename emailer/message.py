@@ -8,6 +8,7 @@ from .recipient import Recipient
 @dataclasses.dataclass(frozen=True)
 class Message():
   subject: str = ''
+  sender: Recipient = None
   recipient: Recipient = None
   replyto: Recipient = None
   body: str = ''
@@ -16,10 +17,12 @@ class Message():
   def email_message(self):
     message = email.message.EmailMessage()
     message['Subject'] = self.subject
+    if self.sender:
+      message['From'] = self.sender.email
     if self.recipient:
-      message['To'] = self.recipient.header
+      message['To'] = self.recipient.email
     if self.replyto:
-      message['Reply-To'] = self.replyto.header
+      message['Reply-To'] = self.replyto.email
     # TODO: Figure out what cte is and whether it is necessary
     message.set_content(self.body, subtype='html', cte='quoted-printable')
     return message

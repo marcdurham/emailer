@@ -41,4 +41,4 @@ def parse_recipients(data):
 
 
 def parse_recipients_in_group(data, group):
-  return (r for r in parse_recipients(data) if r.in_group(group))
+  return (r for r in parse_recipients(data) if group in r.groups)

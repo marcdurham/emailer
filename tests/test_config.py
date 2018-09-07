@@ -5,6 +5,7 @@ import pytest
 
 from emailer import config
 from emailer.config import Config
+from emailer.recipient import Recipient
 
 
 def test_set_new_serialized_creds():
@@ -53,6 +54,14 @@ def test_get_keys_returns_all_keys_by_default():
   assert list(conf.get_keys()) == [1, 2]
   assert list(conf.get_keys(None)) == [1, 2]
   assert list(conf.get_keys(['a'])) == [1]
+
+
+def test_get_extra_recipients_for_group_returns_recipient_if_in_group():
+  assert Config(extra_emails=None).get_extra_recipients_for_group('') == []
+  assert (Config(extra_emails={'a': 'b'}).get_extra_recipients_for_group('')
+          == [])
+  assert (Config(extra_emails={'a': 'b'}).get_extra_recipients_for_group('a')
+          == [Recipient('b')])
 
 
 def test_save_updates_config_file_with_data(tmpdir):

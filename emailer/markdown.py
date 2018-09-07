@@ -3,15 +3,17 @@ import re
 import mistune
 
 
+def highlight_text(text, colour='yellow'):
+  return f'<strong style="background-color: {colour}">{text}</strong>'
+
+
 def mark_text(text, highlights, values):
   for highlight in highlights:
     mark = values.get(highlight, highlight)
-    text = text.replace(mark, f'<mark>{mark}</mark>')
+    if mark:
+      text = text.replace(mark, highlight_text(mark))
   return text
 
-
-def simple_table(body):
-  return f'<table><tbody>\n{body}</tbody>\n</table>\n'
 
 class SimpleTableBlockLexer(mistune.BlockLexer):
   def enable_simple_table(self):
@@ -29,6 +31,7 @@ class SimpleTableBlockLexer(mistune.BlockLexer):
         'type': 'simple_table',
         'cells': cells})
 
+
 class SimpleTableMarkdown(mistune.Markdown):
   def output_simple_table(self):
     body = self.renderer.placeholder()
@@ -38,7 +41,7 @@ class SimpleTableMarkdown(mistune.Markdown):
         cell += self.renderer.table_cell(
             self.inline(value), header=False, align=None)
       body += self.renderer.table_row(cell)
-    return simple_table(body)
+    return f'<table><tbody>{body}</tbody></table>\n'
 
 
 def convert(text):

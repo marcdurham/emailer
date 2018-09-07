@@ -14,11 +14,13 @@ def test_message_subject_is_in_email_message():
 
 
 def test_message_recipient_replyto_is_in_email_message():
+  sender = Recipient('sender')
   recipient = Recipient('to@example.com')
   replyto = Recipient('replyto@example.com')
-  message = Message(recipient=recipient, replyto=replyto)
-  assert message.email_message['To'] == str(recipient.header)
-  assert message.email_message['Reply-To'] == str(replyto.header)
+  message = Message(sender=sender, recipient=recipient, replyto=replyto)
+  assert message.email_message['From'] == sender.email
+  assert message.email_message['To'] == recipient.email
+  assert message.email_message['Reply-To'] == replyto.email
 
 
 def test_message_body():

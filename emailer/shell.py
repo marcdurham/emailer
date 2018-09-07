@@ -3,23 +3,29 @@ import logging
 from . import (api, args, auth, composer, config, fetcher, markdown, parser,
                sender)
 from .message import Message
-from .name import SUBJECT, BODY
+from .name import SUBJECT, BODY, FROM, REPLY_TO
 
 
-def get_messages(data, date, group):
+def get_message_for_recipient(recipient, subject, markdown_body, values):
+  body = markdown.mark_text(markdown_body, recipient.highlights, values)
+  sender = composer.get_recipient(FROM, values)
+  replyto = composer.get_recipient(REPLY_TO, values)
+  return Message(subject=subject, sender=sender, recipient=recipient,
+                 replyto=replyto, body=body)
+
+
+def get_messages(data, date, group, extra_recipients):
   emails = parser.parse_emails_for_date(data['Emails'], date)
   recipients = parser.parse_recipients_in_group(data['Recipients'], group)
+  all_recipients = [*recipients, *extra_recipients]
   subject_prefix = composer.get_prefix_for_group(group)
   for email in emails:
     values = composer.replace_values(email)
     subject = subject_prefix + composer.substitute_for_key(SUBJECT, values)
     text_body = composer.substitute_for_key(BODY, values)
     markdown_body = markdown.convert(text_body)
-    for recipient in recipients:
-      body = markdown.mark_text(markdown_body, recipient.highlights, values)
-      replyto = composer.get_replyto(values)
-      yield Message(subject=subject, recipient=recipient, replyto=replyto,
-                    body=body)
+    for recipient in all_recipients:
+      yield get_message_for_recipient(recipient, subject, markdown_body, values)
 
 
 def main():
@@ -41,7 +47,8 @@ def main():
     data = fetcher.values(key, sheets)
     for group in groups:
       date = args.get_date(options, group)
-      messages = get_messages(data, date, group)
+      extra_recipients = config_obj.get_extra_recipients_for_group(group)
+      messages = get_messages(data, date, group, extra_recipients)
       sender.send_messages(messages, gmail)
 
 

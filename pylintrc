@@ -8,6 +8,7 @@ disable=
   redefined-outer-name,  # Pytest fixtures are named the same
   missing-docstring,  # Not necessary
   unsubscriptable-object,  # Dictionaries defaulted to None
+  too-few-public-methods, # Thin classes due to dataclasses
 
 [SIMILARITIES]
 ignore-imports=yes  # Test files and module under test often have same imports

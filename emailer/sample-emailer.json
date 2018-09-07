@@ -13,6 +13,11 @@
       "token_uri": "https://www.googleapis.com/oauth2/v3/token"
     }
   },
+  "extra_emails": {
+    "test": [
+      "YOUR_TEST@EMAIL.ADDRESS"
+    ]
+  },
   "keys": {
     "testkey": "1PAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA9I"
   },

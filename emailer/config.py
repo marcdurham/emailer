@@ -2,6 +2,8 @@ import dataclasses  # pylint: disable=wrong-import-order
 import json
 import os.path
 
+from .recipient import Recipient
+
 
 CONFIG_FILES = ['.emailer.json', 'emailer.json']
 
@@ -19,12 +21,18 @@ class Config():
   client_secret: dict = None
   serialized_creds: dict = None
   keys: dict = None
+  extra_emails: dict = None
 
   def validate(self):
     if self.client_secret is None:
       raise InvalidFileContentError(
           'Unable to locate client_secret data: '
           'https://developers.google.com/identity/protocols/OAuth2')
+
+  def get_extra_recipients_for_group(self, group):
+    if self.extra_emails is None:
+      return []
+    return [Recipient(email) for email in self.extra_emails.get(group, [])]
 
   def get_keys(self, names=None):
     if self.keys is None:
