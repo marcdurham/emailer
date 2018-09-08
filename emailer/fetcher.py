@@ -1,11 +1,11 @@
-def values(key, sheets):
+def values(sheet_id, sheets):
   res = {}
   metadata = sheets.spreadsheets().get(
-      spreadsheetId=key, fields='sheets.properties.title').execute()
+      spreadsheetId=sheet_id, fields='sheets.properties.title').execute()
   for prop in metadata['sheets']:
     title = prop['properties']['title']
     sheet_data = sheets.spreadsheets().values().get(
-        spreadsheetId=key,
+        spreadsheetId=sheet_id,
         range=title,
         fields='values',
         valueRenderOption='FORMATTED_VALUE').execute()

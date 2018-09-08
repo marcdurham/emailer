@@ -41,10 +41,10 @@ def main():
   config_obj.save_to_file(config_path)
   gmail = api.gmail(creds)
   sheets = api.sheets(creds)
-  keys = config_obj.get_keys(options.key_names)
+  sheet_ids = config_obj.get_keys(options.key_names)
   groups = args.get_groups(options)
-  for key in keys:
-    data = fetcher.values(key, sheets)
+  for sheet_id in sheet_ids:
+    data = fetcher.values(sheet_id, sheets)
     for group in groups:
       date = args.get_date(options, group)
       extra_recipients = config_obj.get_extra_recipients_for_group(group)
