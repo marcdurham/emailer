@@ -4,7 +4,7 @@ import mistune
 
 
 def highlight_text(text, colour='yellow'):
-  return f'<strong style="background-color: {colour}">{text}</strong>'
+  return f'<span style="background-color: {colour}">{text}</span>'
 
 
 def mark_text(text, highlights, values):
