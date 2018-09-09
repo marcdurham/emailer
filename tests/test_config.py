@@ -56,6 +56,11 @@ def test_get_keys_returns_all_keys_by_default():
   assert list(conf.get_keys(['a'])) == [1]
 
 
+def test_get_extra_values_returns_extra_values_if_any():
+  assert Config(extra_values=None).get_extra_values() == {}
+  assert Config(extra_values={1: 2}).get_extra_values() == {1: 2}
+
+
 def test_get_extra_recipients_for_group_returns_recipient_if_in_group():
   assert Config(extra_emails=None).get_extra_recipients_for_group('') == []
   assert (Config(extra_emails={'a': 'b'}).get_extra_recipients_for_group('')

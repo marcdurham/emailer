@@ -1,4 +1,5 @@
 {
+  "_comment": "This file's name should be emailer.json or .emailer.json",
   "client_secret": {
     "installed": {
       "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
@@ -15,11 +16,16 @@
   },
   "extra_emails": {
     "test": [
-      "YOUR_TEST@EMAIL.ADDRESS"
+      "OPTIONAL TEST RECIPIENT <EMAIL@ADDRESS>"
     ]
+  },
+  "extra_values": {
+    "email_from": "OPTIONAL SENDER NAME <EMAIL@ADDRESS>"
   },
   "keys": {
     "testkey": "1PAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA9I"
   },
-  "serialized_creds": {}
+  "serialized_creds": {
+    "_comment": "This gets populated programatically"
+  }
 }

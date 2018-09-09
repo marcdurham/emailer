@@ -60,13 +60,13 @@ def get_date(options, group):
   return options.date
 
 
-def print_version(options):
+def get_version(options):
   if options.version:
-    return print(f'{emailer.__version__}')
+    return f'{emailer.__version__}'
   return ''
 
 
-def print_sample_config(options):
+def get_sample_config(options):
   if options.sample_config:
-    return print(resources.read_text(emailer, 'sample-emailer.json'))
+    return resources.read_text(emailer, 'sample-emailer.json')
   return ''

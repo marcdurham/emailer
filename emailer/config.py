@@ -22,6 +22,7 @@ class Config():
   serialized_creds: dict = None
   keys: dict = None
   extra_emails: dict = None
+  extra_values: dict = None
 
   def validate(self):
     if self.client_secret is None:
@@ -33,6 +34,11 @@ class Config():
     if self.extra_emails is None:
       return []
     return [Recipient(email) for email in self.extra_emails.get(group, [])]
+
+  def get_extra_values(self):
+    if self.extra_values is None:
+      return {}
+    return self.extra_values
 
   def get_keys(self, names=None):
     if self.keys is None:

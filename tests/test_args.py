@@ -66,13 +66,11 @@ def test_get_log_level_returns_info_for_verbose_and_warning_by_default(stub):
   assert args.get_log_level(stub(verbose=False)) == logging.WARNING
 
 
-def test_print_version_calls_print_with_version(monkeypatch, stub):
-  monkeypatch.setattr(builtins, 'print', lambda x: x)
-  assert __version__ not in args.print_version(stub(version=False))
-  assert __version__ in args.print_version(stub(version=True))
+def test_get_version_returns_module_version(stub):
+  assert __version__ not in args.get_version(stub(version=False))
+  assert __version__ in args.get_version(stub(version=True))
 
 
-def test_sample_config_prints_config(monkeypatch, stub):
-  monkeypatch.setattr(builtins, 'print', lambda x: x)
-  assert 'keys' not in args.print_sample_config(stub(sample_config=False))
-  assert 'keys' in args.print_sample_config(stub(sample_config=True))
+def test_sample_config_returns_config_file(stub):
+  assert 'keys' not in args.get_sample_config(stub(sample_config=False))
+  assert 'keys' in args.get_sample_config(stub(sample_config=True))
