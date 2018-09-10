@@ -24,17 +24,17 @@ def test_message_recipient_replyto_is_in_email_message():
 
 
 def test_message_body():
-  message = Message(body='<h1>Hi</h1>')
+  message = Message(html_body='<h1>Hi</h1>')
   assert message.email_message.get_content() == '<h1>Hi</h1>\n'
 
 
 def test_message_as_bytes_pass_through():
-  message = Message(subject='Test', body='<h1>Hi</h1>')
+  message = Message(subject='Test', html_body='<h1>Hi</h1>')
   assert message.as_bytes() == message.email_message.as_bytes()
 
 
 def test_message_gmail_api_body():
-  message = Message(body='<h1>Hi</h1>')
+  message = Message(html_body='<h1>Hi</h1>')
   assert message.gmail_body == {
       'raw': base64.urlsafe_b64encode(message.as_bytes()).decode()
   }

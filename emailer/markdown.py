@@ -47,5 +47,6 @@ class SimpleTableMarkdown(mistune.Markdown):
 def convert(text):
   block = SimpleTableBlockLexer(mistune.BlockGrammar())
   block.enable_simple_table()
-  markdown = SimpleTableMarkdown(block=block, hard_wrap=True)
+  markdown = SimpleTableMarkdown(
+      block=block, hard_wrap=True, parse_inline_html=True)
   return markdown(text)

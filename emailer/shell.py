@@ -7,12 +7,13 @@ from .message import Message
 from .name import SUBJECT, BODY, FROM, REPLY_TO
 
 
-def get_message_for_recipient(recipient, subject, markdown_body, values):
-  body = markdown.mark_text(markdown_body, recipient.highlights, values)
+def get_message_for_recipient(recipient, subject, body, values):
+  highlighted_body = markdown.mark_text(body, recipient.highlights, values)
+  html_body = markdown.convert(highlighted_body)
   sender = composer.get_recipient(FROM, values)
   replyto = composer.get_recipient(REPLY_TO, values)
   return Message(subject=subject, sender=sender, recipient=recipient,
-                 replyto=replyto, body=body)
+                 replyto=replyto, html_body=html_body)
 
 
 def get_messages(data, date, group, extra_recipients, extra_values):
@@ -23,10 +24,9 @@ def get_messages(data, date, group, extra_recipients, extra_values):
   for email in emails:
     values = composer.replace_values({**email, **extra_values})
     subject = subject_prefix + composer.substitute_for_key(SUBJECT, values)
-    text_body = composer.substitute_for_key(BODY, values)
-    markdown_body = markdown.convert(text_body)
+    body = composer.substitute_for_key(BODY, values)
     for recipient in all_recipients:
-      yield get_message_for_recipient(recipient, subject, markdown_body, values)
+      yield get_message_for_recipient(recipient, subject, body, values)
 
 
 def main():

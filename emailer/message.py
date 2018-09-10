@@ -11,7 +11,7 @@ class Message():
   sender: Recipient = None
   recipient: Recipient = None
   replyto: Recipient = None
-  body: str = ''
+  html_body: str = ''
 
   @property
   def email_message(self):
@@ -24,7 +24,7 @@ class Message():
     if self.replyto:
       message['Reply-To'] = self.replyto.email
     # TODO: Figure out what cte is and whether it is necessary
-    message.set_content(self.body, subtype='html', cte='quoted-printable')
+    message.set_content(self.html_body, subtype='html', cte='quoted-printable')
     return message
 
   @property
