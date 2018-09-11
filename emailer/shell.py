@@ -1,3 +1,4 @@
+import itertools as it
 import logging
 import sys
 
@@ -29,27 +30,36 @@ def get_messages(data, date, group, extra_recipients, extra_values):
       yield get_message_for_recipient(recipient, subject, body, values)
 
 
-def main():
-  options = args.get_options()
-  logging.basicConfig(level=args.get_log_level(options))
-  sys.stdout.write(args.get_version(options))
-  sys.stdout.write(args.get_sample_config(options))
-  config_path = config.find_config_file(options.config_dir)
+def get_config_and_creds(config_dir):
+  config_path = config.find_config_file(config_dir)
   config_obj = config.load_from_file(config_path)
   config_obj.validate()
   creds = auth.creds(config_obj.serialized_creds, config_obj.client_secret)
   config_obj = config_obj.set_serialized_creds(auth.serialize(creds))
   config_obj.save_to_file(config_path)
-  sheet_ids = config_obj.get_keys(options.key_names)
+  return config_obj, creds
+
+
+def get_options():
+  options = args.get_options()
+  logging.basicConfig(level=args.get_log_level(options))
+  sys.stdout.write(args.get_version(options))
+  sys.stdout.write(args.get_sample_config(options))
+  return options
+
+
+def main():
+  options = get_options()
+  config_obj, creds = get_config_and_creds(options.config_dir)
+  sheet_ids = config_obj.get_keys(options.key_names, options.all_keys)
   groups = args.get_groups(options)
-  for sheet_id in sheet_ids:
+  for sheet_id, group in it.product(sheet_ids, groups):
     data = fetcher.values(sheet_id, api.sheets(creds))
-    for group in groups:
-      date = args.get_date(options, group)
-      extra_recipients = config_obj.get_extra_recipients_for_group(group)
-      extra_values = config_obj.get_extra_values()
-      messages = get_messages(data, date, group, extra_recipients, extra_values)
-      sender.send_messages(messages, api.gmail(creds))
+    date = args.get_date(options, group)
+    extra_recipients = config_obj.get_extra_recipients_for_group(group)
+    extra_values = config_obj.get_extra_values()
+    messages = get_messages(data, date, group, extra_recipients, extra_values)
+    sender.send_messages(messages, api.gmail(creds))
 
 
 if __name__ == '__main__':

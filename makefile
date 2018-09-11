@@ -2,7 +2,7 @@
 
 dev: install update test_all
 
-test_all: tox lint cover
+test_all: test lint cover
 
 update:
 	pipenv update
@@ -34,7 +34,7 @@ cover:
 	pipenv run coverage run -m pytest
 	pipenv run coverage report
 
-upload: install test_all
+upload: install test_all tox
 	python3.7 setup.py sdist bdist_wheel
 	twine upload dist/*
 	make clean

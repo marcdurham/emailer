@@ -14,7 +14,9 @@ def get_parser():
                            'current working directory.')
   parser.add_argument('-k', '--key-name', action='append', dest='key_names',
                       help='Key name matching a key in the config. Default '
-                           'is all available key names.')
+                           'is none.')
+  parser.add_argument('--all-keys', action='store_true',
+                      help='Run for all available keys in config.')
   parser.add_argument('-d', '--date', default=datetime.date.today().isoformat(),
                       help='Date for which to send emails (YYYY-MM-DD). The '
                            'default is today.')

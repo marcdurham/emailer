@@ -1,6 +1,10 @@
 from emailer import markdown
 
 
+def test_markdown_converts_within_span():
+  assert 'strong' in markdown.convert('<span>**a**</span>')
+
+
 def test_markdown_converts_newline_to_br():
   assert '<br>' not in markdown.convert('a b')
   assert '<br>' in markdown.convert('a\nb')

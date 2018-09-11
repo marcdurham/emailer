@@ -40,11 +40,13 @@ class Config():
       return {}
     return self.extra_values
 
-  def get_keys(self, names=None):
+  def get_keys(self, names=None, all_keys=False):
     if self.keys is None:
       raise InvalidFileContentError('No keys dict in config.')
-    if names is None:
+    if all_keys:
       return self.keys.values()
+    if names is None:
+      return []
     return (self.keys[name] for name in names)
 
   def set_serialized_creds(self, serialized_creds):

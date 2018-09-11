@@ -6,6 +6,4 @@ sudo: true
 install:
   - make travis
 script:
-  - make test
-  - make cover
-  - make lint
+  - make test_all

@@ -49,11 +49,11 @@ def test_get_keys_with_invalid_key_dict_raises_invalid_file_content_error():
     config.Config().get_keys()
 
 
-def test_get_keys_returns_all_keys_by_default():
+def test_get_keys_returns_no_keys_by_default_and_all_keys_if_passed():
   conf = Config(keys={'a': 1, 'b': 2})
-  assert list(conf.get_keys()) == [1, 2]
-  assert list(conf.get_keys(None)) == [1, 2]
+  assert list(conf.get_keys()) == []
   assert list(conf.get_keys(['a'])) == [1]
+  assert list(conf.get_keys(all_keys=True)) == [1, 2]
 
 
 def test_get_extra_values_returns_extra_values_if_any():
