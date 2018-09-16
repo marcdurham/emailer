@@ -8,3 +8,6 @@ DATE = 'email_date'
 FROM = 'email_from'
 REPLY_TO = 'email_reply_to'
 SUBJECT = 'email_subject'
+
+# Recipient column names
+HIGHLIGHT = 'highlight'

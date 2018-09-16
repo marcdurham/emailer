@@ -5,7 +5,7 @@ Emailer
 Data Format
 -----------------------
 - `Emails`
-  - First column is names (see special names in `names.py`)
+  - First column is names (see special names in `name.py`)
   - Second column is default values for each name
   - Next column(s) is one email each, with values replaced by default if empty
 - `Recipients`

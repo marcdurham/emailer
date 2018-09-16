@@ -1,11 +1,11 @@
-import itertools
+import itertools as it
 
 from .recipient import Recipient
-from .name import DATE
+from .name import DATE, HIGHLIGHT
 
 
 def transpose(lists):
-  return (vals for vals in itertools.zip_longest(*lists, fillvalue=''))
+  return (vals for vals in it.zip_longest(*lists, fillvalue=''))
 
 
 def parse_emails(original_data):
@@ -35,7 +35,7 @@ def parse_recipients(data):
     for header, value in zip(keys[1:], row[1:]):
       clean_header = header.strip().lower()
       clean_value = value.strip()
-      if 'highlight' in clean_header and clean_value:
+      if HIGHLIGHT in clean_header and clean_value:
         highlights.append(clean_value)
       elif clean_value != '':
         groups.append(clean_header)
