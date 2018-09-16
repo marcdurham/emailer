@@ -29,6 +29,8 @@ def parse_recipients(data):
     return
   keys = data[0]
   for row in data[1:]:
+    if not row or not row[0]:
+      continue
     email = row[0]
     highlights = []
     groups = []

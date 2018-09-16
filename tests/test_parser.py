@@ -93,6 +93,21 @@ def test_parse_recipients_returns_list_of_recipients_no_default_values():
     assert recipient.highlights == ()
 
 
+
+def test_parse_recipients_skips_empty_rows():
+  assert not list(parser.parse_recipients([
+      ['Email'],
+      [],
+      ]))
+
+
+def test_parse_recipients_skips_empty_emails():
+  assert not list(parser.parse_recipients([
+      ['Email'],
+      [''],
+      ]))
+
+
 def test_parse_recipients_case_insensitive_highlights():
   res = list(parser.parse_recipients([
       ['Email', 'Highlight'],
