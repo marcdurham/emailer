@@ -4,26 +4,36 @@ Emailer
 
 Data Format
 -----------------------
-- `Emails`: Each column is one email values overriding default
-- `Recipients`: Each row is one recipient
+- `Emails`
+  - First column is names (see special names in `names.py`)
+  - Second column is default values for each name
+  - Next column(s) is one email each, with values replaced by default if empty
+- `Recipients`
+  - Each row is one recipient made up of:
+    - Email
+    - Groups they are members of
+    - Any number of highlights (this can be a name in the `Emails` sheet)
 
 Usage
 -----
-    usage: email [-h] [-c CONFIG_DIR] [-k KEY_NAMES] [-d DATE] [-v] [-V]
-                 [--active] [--dryrun] [--test]
+    usage: email [-h] [-c CONFIG_DIR] [-k [KEY_NAMES [KEY_NAMES ...]]]
+                 [--all-keys] [-d DATE] [-v] [-V] [--sample-config] [--active]
+                 [--dryrun] [--test]
 
     optional arguments:
       -h, --help            show this help message and exit
       -c CONFIG_DIR, --config-dir CONFIG_DIR
                             Directory containing config file. Default is current
                             working directory.
-      -k KEY_NAMES, --key-name KEY_NAMES
-                            Key name matching a key in the config. Default is all
-                            available key names.
+      -k [KEY_NAMES [KEY_NAMES ...]], --key-names [KEY_NAMES [KEY_NAMES ...]]
+                            Key name(s) matching key(s) in the config.
+      --all-keys            Run for all available keys in config.
       -d DATE, --date DATE  Date for which to send emails (YYYY-MM-DD). The
                             default is today.
       -v, --verbose         Display more logging output
       -V, --version         Print the current emailer module version.
+      --sample-config       Print a sample config. Save as emailer.json or
+                            .emailer.json.
       --active              Send emails to all active recipients.
       --dryrun              Send emails one day early to dryrun recipients.
       --test                Send emails only to test recipients.
