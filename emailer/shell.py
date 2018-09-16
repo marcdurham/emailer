@@ -5,7 +5,7 @@ import sys
 from . import (api, args, auth, composer, config, fetcher, markdown, parser,
                sender)
 from .message import Message
-from .name import SUBJECT, BODY, FROM, REPLY_TO
+from .name import SUBJECT, BODY, FROM, REPLY_TO, EMAILS, RECIPIENTS
 
 
 def get_message_for_recipient(recipient, subject, body, values):
@@ -18,8 +18,8 @@ def get_message_for_recipient(recipient, subject, body, values):
 
 
 def get_messages(data, date, group, extra_recipients, extra_values):
-  emails = parser.parse_emails_for_date(data['Emails'], date)
-  recipients = parser.parse_recipients_in_group(data['Recipients'], group)
+  emails = parser.parse_emails_for_date(data[EMAILS], date)
+  recipients = parser.parse_recipients_in_group(data[RECIPIENTS], group)
   all_recipients = [*recipients, *extra_recipients]
   subject_prefix = composer.get_prefix_for_group(group)
   for email in emails:

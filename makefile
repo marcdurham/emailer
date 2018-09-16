@@ -1,4 +1,4 @@
-.PHONY: dev update init install travis run test tox lint cover upload clean
+.PHONY: dev test_all update init install travis run test lint cover upload clean
 
 dev: install update test_all
 
@@ -24,9 +24,6 @@ run:
 test:
 	pipenv run pytest tests
 
-tox:
-	tox
-
 lint:
 	pipenv run pylint emailer tests/*
 
@@ -34,7 +31,8 @@ cover:
 	pipenv run coverage run -m pytest
 	pipenv run coverage report
 
-upload: install test_all tox
+upload: install test_all
+	tox
 	python3.7 setup.py sdist bdist_wheel
 	twine upload dist/*
 	make clean

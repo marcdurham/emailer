@@ -1,3 +1,8 @@
+# Sheet names
+EMAILS = 'Emails'
+RECIPIENTS = 'Recipients'
+
+# Special variable names
 BODY = 'email_body'
 DATE = 'email_date'
 FROM = 'email_from'
