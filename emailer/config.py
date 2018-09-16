@@ -44,10 +44,10 @@ class Config():
     if self.keys is None:
       raise InvalidFileContentError('No keys dict in config.')
     if all_keys:
-      return self.keys.values()
-    if names is None:
-      return []
-    return (self.keys[name] for name in names)
+      names = self.keys.keys()
+    elif names is None:
+      names = []
+    return set(self.keys[name] for name in names)
 
   def set_serialized_creds(self, serialized_creds):
     return dataclasses.replace(self, serialized_creds=serialized_creds)

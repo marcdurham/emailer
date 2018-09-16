@@ -44,6 +44,11 @@ def test_validate_fails_without_valid_client_secret_config():
     config.Config().validate()
 
 
+def test_get_keys_returns_only_unique_keys():
+  assert list(Config(keys={'a': 1, 'b': 1}).get_keys(['a', 'b'])) == [1]
+  assert list(Config(keys={'a': 1, 'b': 1}).get_keys(all_keys=True)) == [1]
+
+
 def test_get_keys_with_invalid_key_dict_raises_invalid_file_content_error():
   with pytest.raises(config.InvalidFileContentError):
     config.Config().get_keys()

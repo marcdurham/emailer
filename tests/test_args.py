@@ -30,10 +30,10 @@ def test_args_defaults():
 
 
 def test_key_names_collects_values():
-  assert args.get_options(['--key-name', 'a']).key_names == ['a']
+  assert args.get_options(['--key-names', 'a']).key_names == ['a']
   assert args.get_options(['-k', 'a']).key_names == ['a']
-  assert args.get_options(
-      ['--key-name', 'a', '-k', 'b']).key_names == ['a', 'b']
+  assert args.get_options(['--key-names', 'a', 'b']).key_names == ['a', 'b']
+  assert args.get_options(['-k', 'a', 'b']).key_names == ['a', 'b']
 
 
 def test_verbose_stores_true_if_passed():

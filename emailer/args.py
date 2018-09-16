@@ -12,9 +12,8 @@ def get_parser():
   parser.add_argument('-c', '--config-dir', default=os.getcwd(),
                       help='Directory containing config file. Default is '
                            'current working directory.')
-  parser.add_argument('-k', '--key-name', action='append', dest='key_names',
-                      help='Key name matching a key in the config. Default '
-                           'is none.')
+  parser.add_argument('-k', '--key-names', nargs='*',
+                      help='Key name(s) matching key(s) in the config.')
   parser.add_argument('--all-keys', action='store_true',
                       help='Run for all available keys in config.')
   parser.add_argument('-d', '--date', default=datetime.date.today().isoformat(),

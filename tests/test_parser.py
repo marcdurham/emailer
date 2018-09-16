@@ -74,6 +74,14 @@ def test_parse_emails_with_date_returns_empty_if_nonexistent():
   assert not res
 
 
+def test_parse_emails_with_date_returns_empty_if_none():
+  assert not list(parser.parse_emails_for_date(None, ''))
+
+
+def test_parse_recipients_returns_empty_if_none():
+  assert not list(parser.parse_recipients(None))
+
+
 def test_parse_recipients_returns_list_of_recipients_no_default_values():
   res = parser.parse_recipients([
       ['Email'],

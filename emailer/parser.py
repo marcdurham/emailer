@@ -17,12 +17,16 @@ def parse_emails(original_data):
 
 
 def parse_emails_for_date(data, target_date):
+  if not data:
+    return
   for email in parse_emails(data):
     if email[DATE] == target_date:
       yield email
 
 
 def parse_recipients(data):
+  if not data:
+    return
   keys = data[0]
   for row in data[1:]:
     email = row[0]
