@@ -16,6 +16,11 @@ def test_markdown_converts_vertical_pipes_to_table_without_header():
   assert '<thead>' not in markdown.convert('a|b')
 
 
+def test_mark_text_only_highlights_unique_entries():
+  highlighted = markdown.mark_text('A', ['A', 'A'], {})
+  assert highlighted.count('</span>') == 1
+
+
 def test_mark_text_puts_mark_tags_around_text():
   assert 'color' not in markdown.mark_text('b', [''], {})
   assert 'color' not in markdown.mark_text('', ['b'], {})

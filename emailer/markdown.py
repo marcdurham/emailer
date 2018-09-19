@@ -8,7 +8,7 @@ def highlight_text(text, colour='yellow'):
 
 
 def mark_text(text, highlights, values):
-  for highlight in highlights:
+  for highlight in set(highlights):
     mark = values.get(highlight, highlight)
     if mark:
       text = text.replace(mark, highlight_text(mark))
