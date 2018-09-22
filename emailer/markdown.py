@@ -3,16 +3,29 @@ import re
 import mistune
 
 
-def highlight_text(text, colour='yellow'):
-  return f'<span style="background-color: {colour}">{text}</span>'
-
-
 def mark_text(text, highlights, values):
   for highlight in set(highlights):
     mark = values.get(highlight, highlight)
     if mark:
-      text = text.replace(mark, highlight_text(mark))
+      text = text.replace(mark, f'<<{mark}>>')
   return text
+
+
+class HighlightRenderer(mistune.Renderer):
+  def highlight(self, text, colour='yellow'):
+    return f'<span style="background-color: {colour}">{text}</span>'
+
+
+class HighlightInlineLexer(mistune.InlineLexer):
+  def enable_highlight(self):
+    self.rules.highlight = re.compile(r'<<([\s\S]*)>>(?!>)')
+    idx = self.default_rules.index('link')
+    self.default_rules.insert(idx + 1, 'highlight')
+
+  def output_highlight(self, m):
+    text = m.group(1)
+    text = self.output(text)
+    return self.renderer.highlight(text)
 
 
 class SimpleTableBlockLexer(mistune.BlockLexer):
@@ -45,8 +58,11 @@ class SimpleTableMarkdown(mistune.Markdown):
 
 
 def convert(text):
+  renderer = HighlightRenderer()
+  inline = HighlightInlineLexer(
+      renderer, hard_wrap=True, parse_inline_html=True)
+  inline.enable_highlight()
   block = SimpleTableBlockLexer(mistune.BlockGrammar())
   block.enable_simple_table()
-  markdown = SimpleTableMarkdown(
-      block=block, hard_wrap=True, parse_inline_html=True)
+  markdown = SimpleTableMarkdown(inline=inline, block=block)
   return markdown(text)
