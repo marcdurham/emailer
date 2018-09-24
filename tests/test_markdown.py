@@ -21,9 +21,13 @@ def test_markdown_converts_highlights():
   assert 'color' not in markdown.convert('<a>')
 
 
-def test_markdown_converts_parses_highlights_inline():
+def test_markdown_converts_inline_within_highlights():
   assert 'strong' not in markdown.convert('<<b>>')
   assert 'strong' in markdown.convert('<<**b**>>')
+
+
+def test_markdown_converts_multiline_highlights():
+  assert 'color' in markdown.convert('<<a\nb>>')
 
 
 def test_mark_text_respects_word_boundaries():
