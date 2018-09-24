@@ -5,13 +5,13 @@ Emailer
 Data Format
 -----------------------
 - `Emails`
-  - First column is names (see special names in `name.py`)
+  - First column is names (see special names in `emailer/name.py`)
   - Second column is default values for each name
   - Next column(s) is one email each, with values replaced by default if empty
 - `Recipients`
   - Each row is one recipient made up of:
     - Email
-    - Groups they are members of
+    - Groups they are members of (e.g. Active, Dryrun)
     - Any number of highlights (this can be a name in the `Emails` sheet)
 
 Usage
