@@ -21,17 +21,17 @@ def get_parser():
                            'default is today.')
   parser.add_argument('-v', '--verbose', action='store_true',
                       help='Display more logging output')
-  parser.add_argument('-V', '--version', action='store_true',
-                      help='Print the current emailer module version.')
-  parser.add_argument('--sample-config', action='store_true',
-                      help='Print a sample config. Save as emailer.json or '
-                           '.emailer.json.')
   parser.add_argument('--active', action='store_true',
                       help='Send emails to all active recipients.')
   parser.add_argument('--dryrun', action='store_true',
                       help='Send emails one day early to dryrun recipients.')
   parser.add_argument('--test', action='store_true',
                       help='Send emails only to test recipients.')
+  parser.add_argument('-V', '--version', action='store_true',
+                      help='Print the current emailer module version and exit.')
+  parser.add_argument('--sample-config', action='store_true',
+                      help='Print a sample config. Save as emailer.json or '
+                           '.emailer.json and exit.')
   return parser
 
 
@@ -61,13 +61,9 @@ def get_date(options, group):
   return options.date
 
 
-def get_version(options):
-  if options.version:
-    return f'{emailer.__version__}'
-  return ''
+def get_version():
+  return f'{emailer.__version__}'
 
 
-def get_sample_config(options):
-  if options.sample_config:
-    return resources.read_text(emailer, 'sample-emailer.json')
-  return ''
+def get_sample_config():
+  return resources.read_text(emailer, 'sample-emailer.json')

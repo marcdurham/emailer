@@ -1,6 +1,5 @@
 import itertools as it
 import logging
-import sys
 
 from . import (api, args, auth, composer, config, fetcher, markdown, parser,
                sender)
@@ -43,13 +42,10 @@ def get_config_and_creds(config_dir):
 def get_options():
   options = args.get_options()
   logging.basicConfig(level=args.get_log_level(options))
-  sys.stdout.write(args.get_version(options))
-  sys.stdout.write(args.get_sample_config(options))
   return options
 
 
-def main():
-  options = get_options()
+def process_sheets(options):
   config_obj, creds = get_config_and_creds(options.config_dir)
   sheet_ids = config_obj.get_keys(options.key_names, options.all_keys)
   groups = args.get_groups(options)
@@ -60,6 +56,16 @@ def main():
     extra_values = config_obj.get_extra_values()
     messages = get_messages(data, date, group, extra_recipients, extra_values)
     sender.send_messages(messages, api.gmail(creds))
+
+
+def main():
+  options = get_options()
+  if options.version:
+    print(args.get_version())
+  elif options.sample_config:
+    print(args.get_sample_config())
+  else:
+    process_sheets(options)
 
 
 if __name__ == '__main__':
