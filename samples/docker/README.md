@@ -16,21 +16,27 @@ Copy the files in this folder into your server, in the "emailer" folder in your 
 * `docker-compose.yml` - tells docker how to setup the volumes and build the file
 * `Dockerfile` - sets up Python, installs emailer, and runs emailer
 
-## 3. Setup emailer
-
-Copy the [emailer/sample-emailer.json](../../emailer/sample-emailer.json) file to your server and rename it `~/emailer/emailer.json`.
-
-Then replace the apropriate fields.
-
-Also open up `Dockerfile` and replace `mykey` with `testkey` or whatever you named the key under `keys` it in your `emailer.json`.
-
-## 4. Build the docker container
+## 3. Build the docker container
 
 Run `docker-compose build` from inside the `~/emailer/` folder.
 
 This will download python, and install emailer and it's depenencies into a container.  So it won't mess with your system's python environment.
 
 Docker Compose is being used, because it is good at passing variables to `docker run` like the volume, and naming the container.
+
+## 4. Setup the config file
+
+Run `docker-compose run --rm emailer /bin/sh`
+This will put you in a shell in the docker container.
+
+Now run `email --sample-config > emailer.json` to create a config file.
+
+Finally type `exit` to exit the docker container.
+
+Now open the `emailer.json` file and replace the appropriate fields.
+Under `keys` there is a `testkey`, each key can be a different Google Sheet schedule so you can run schedules for multiple groups.  For example `"springfield": "ABC"` for a Google sheet who's id is "ABC" that represents Springfield's schedule.
+
+Also open up `Dockerfile` and replace `testkey` with whatever you named the key. (ex. `springfield`)
 
 ## 5. Run emailer to make sure it has OAuth access.
 
@@ -50,6 +56,8 @@ In the following command, `55 18 * * *` means at minute 55 of the hour 18, or 2:
 * Type: `55 18 * * * $HOME/emailer/cron.sh >> $HOME/emailer/log.log 2>&1`
 * Then press ESC
 * Now type ZZ
+
+Note: The time 2:55pm is based on whatever the system's timezone is.  You can double check this by running `date` and it will say something like "Wed Sep 26 22:53:45 PDT 2018" where "PDT" means the server is set to Pacific Daylight Time timezone.
 
 Any errors will be saved in the `~/emailer/log.log` file.  And you can look at the time of the file or `sudo grep cron /var/log/syslog` to see when the command last ran.
 
