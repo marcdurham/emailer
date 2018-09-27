@@ -30,6 +30,7 @@ Run `docker-compose run --rm emailer /bin/sh`
 This will put you in a shell in the docker container.
 
 Now run `email --sample-config > emailer.json` to create a config file.
+The file will be saved outside the container because the docker-compose file maps the local folder to the folder in the container.
 
 Finally type `exit` to exit the docker container.
 
