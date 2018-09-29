@@ -20,4 +20,5 @@ def test_send_message_calls_correct_api(stub, gmail):
 
 def test_send_messages_sends_all_messages(stub, gmail):
   messages = [stub(gmail_body=n) for n in range(5)]
-  assert sender.send_messages(messages, gmail) == [('me', n) for n in range(5)]
+  assert list(sender.send_messages(messages, gmail)) == [
+      ('me', n) for n in range(5)]

@@ -8,4 +8,4 @@ def send_message(message, gmail):
 
 
 def send_messages(messages, gmail):
-  return [send_message(m, gmail) for m in messages]
+  return (send_message(m, gmail) for m in messages)

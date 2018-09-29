@@ -1,5 +1,6 @@
 import itertools as it
 import logging
+import time
 
 from . import (api, args, auth, composer, config, fetcher, markdown, parser,
                sender)
@@ -55,7 +56,12 @@ def process_sheets(options):
     extra_recipients = config_obj.get_extra_recipients_for_group(group)
     extra_values = config_obj.get_extra_values()
     messages = get_messages(data, date, group, extra_recipients, extra_values)
-    sender.send_messages(messages, api.gmail(creds))
+    for _ in sender.send_messages(messages, api.gmail(creds)):
+      # Attempt to avoid 500: Backend Error.
+      # TODO: Add a command-line arg to set this, default to 1 second.
+      # TODO: Consider exponential backoff if it doesn't work, i.e. change this
+      #       to call message.send() in a try/except block.
+      time.sleep(1)
 
 
 def main():
