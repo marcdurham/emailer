@@ -23,7 +23,7 @@ class Message():
       message['To'] = self.recipient.email
     if self.replyto:
       message['Reply-To'] = self.replyto.email
-    # TODO: Figure out what cte is and whether it is necessary
+    # CTE: https://en.wikipedia.org/wiki/MIME#Content-Transfer-Encoding
     message.set_content(self.html_body, subtype='html', cte='quoted-printable')
     return message
 
