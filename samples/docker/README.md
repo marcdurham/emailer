@@ -12,7 +12,6 @@ Ubuntu install instructions here: https://docs.docker.com/install/linux/docker-c
 
 Copy the files in this folder into your server, in the "emailer" folder in your home folder (`~/emailer/`).
 
-* `cron.sh` - needed because cron doesn't know your PATH
 * `docker-compose.yml` - tells docker how to setup the volumes and build the file
 * `Dockerfile` - sets up Python, installs emailer, and runs emailer
 
@@ -54,7 +53,9 @@ On the server type `crontab -e`.  This will probably open up your cron in VIM, s
 In the following command, `55 18 * * *` means at minute 55 of the hour 18, or 2:55pm every day.  So change those numbers as you see fit.
 
 * Press the down arrow until you get to the bottom.  Then press 'o' to start a new line.
-* Type: `55 18 * * * $HOME/emailer/cron.sh >> $HOME/emailer/log.log 2>&1`
+* Type: `PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin`
+* Press Enter
+* Type: `55 18 * * * cd $HOME/emailer && docker-compose run emailer >> $HOME/emailer/log.log 2>&1`
 * Then press ESC
 * Now type ZZ
 
