@@ -55,12 +55,12 @@ In the following command, `55 18 * * *` means at minute 55 of the hour 18, or 2:
 * Press the down arrow until you get to the bottom.  Then press 'o' to start a new line.
 * Type: `PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin`
 * Press Enter
-* Type: `55 18 * * * cd $HOME/emailer && docker-compose run emailer >> $HOME/emailer/log.log 2>&1`
+* Type: `55 18 * * * cd $HOME/emailer && docker-compose run emailer >> emailer.log 2>&1`
 * Then press ESC
 * Now type ZZ
 
 Note: The time 2:55pm is based on whatever the system's timezone is.  You can double check this by running `date` and it will say something like "Wed Sep 26 22:53:45 PDT 2018" where "PDT" means the server is set to Pacific Daylight Time timezone.
 
-Any errors will be saved in the `~/emailer/log.log` file.  And you can look at the time of the file or `sudo grep cron /var/log/syslog` to see when the command last ran.
+Any errors will be saved in the `~/emailer/emailer.log` file.  And you can look at the time of the file or `sudo grep cron /var/log/syslog` to see when the command last ran.
 
 Hope that helps!
