@@ -39,7 +39,8 @@ Usage
       --test                Send emails only to test recipients.
 * Enable the [Gmail](https://developers.google.com/gmail/api/quickstart/python)
   and [Sheets](https://developers.google.com/sheets/api/quickstart/python) APIs.
+  * Download `credentials.json` to be used in the config file.
 * Set up a config json file using `--sample-config`
-    * Save the result as `emailer.json` in home dir.
-    * The spreadsheet key is the long entry in the URL:
-      `https://docs.google.com/spreadsheets/<key>/edit`
+  * Save the result as `emailer.json` in home dir.
+  * The spreadsheet key is the long entry in the URL:
+    `https://docs.google.com/spreadsheets/<key>/edit`
