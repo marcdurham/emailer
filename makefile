@@ -24,6 +24,9 @@ run:
 test:
 	pipenv run pytest tests
 
+#sync_dev:
+#	pipenv sync --dev
+
 lint:
 	pipenv run pylint emailer tests/*
 
