@@ -1,40 +1,25 @@
-.PHONY: dev test_all update init install travis run test lint cover upload clean
+.PHONY: dev init test_all test lint cover upload clean travis
 
-dev: install update test_all
-
-test_all: test lint cover
-
-update:
+dev: test_all
 	pipenv update
-	ctags
 
-init: install
+init:
+	pip install --user --upgrade pipenv tox twine wheel
 	pipenv install --python 3.7 --dev
 
-install:
-	pip install --quiet --user --upgrade pipenv tox twine wheel
-
-travis:
-	pip install --upgrade pipenv
-	pipenv install --dev --skip-lock
-
-run:
-	pipenv run email --test -v -k testkey --date=$d
+test_all: test lint cover
 
 test:
 	pipenv run pytest tests
 
-#sync_dev:
-#	pipenv sync --dev
-
 lint:
-	pipenv run pylint emailer tests/*
+	pipenv run pylint emailer tests
 
 cover:
 	pipenv run coverage run -m pytest
 	pipenv run coverage report
 
-upload: install test_all
+upload: test_all
 	tox
 	python3.7 setup.py sdist bdist_wheel
 	twine upload dist/*
@@ -42,3 +27,7 @@ upload: install test_all
 
 clean:
 	rm -rf build dist
+
+travis:
+	pip install --upgrade pipenv
+	pipenv install --dev --skip-lock
