@@ -50,6 +50,8 @@ Setup
 
 Development
 -----------
-* Initialize with `make init` to install global dependencies.
-  * Manually run and skip `twine` and `wheel` if you don't need packaging.
-* Use `make` or `make dev` to run all tests and update `Pipfile.lock`.
+* `pipenv` can be installed using [pipx](https://github.com/cs01/pipx).
+    * For packaging, `tox` and `twine` are also necessary.
+* Use `make init` to initialize the dev virtual environment.
+* Use `make` to run all tests, including lint and coverage.
+* If necessary, use `pipenv update` to update `Pipfile.lock`.

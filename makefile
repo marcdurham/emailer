@@ -1,19 +1,15 @@
 .PHONY: dev init test_all test lint cover upload clean travis
 
-dev: test_all
-	pipenv update
+test_all: test lint cover
 
 init:
-	pip install --user --upgrade pipenv tox twine wheel
 	pipenv install --python 3.7 --dev
-
-test_all: test lint cover
 
 test:
 	pipenv run pytest tests
 
 lint:
-	pipenv run pylint emailer tests
+	pipenv run pylint emailer tests/*
 
 cover:
 	pipenv run coverage run -m pytest
