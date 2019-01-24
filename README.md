@@ -37,6 +37,9 @@ Usage
       --active              Send emails to all active recipients.
       --dryrun              Send emails one day early to dryrun recipients.
       --test                Send emails only to test recipients.
+
+Setup
+-----
 * Enable the [Gmail](https://developers.google.com/gmail/api/quickstart/python)
   and [Sheets](https://developers.google.com/sheets/api/quickstart/python) APIs.
   * Download `credentials.json` to be used in the config file.
@@ -44,3 +47,9 @@ Usage
   * Save the result as `emailer.json` in home dir.
   * The spreadsheet key is the long entry in the URL:
     `https://docs.google.com/spreadsheets/<key>/edit`
+
+Development
+-----------
+* Initialize with `make init` to install global dependencies.
+  * Manually run and skip `twine` and `wheel` if you don't need packaging.
+* Use `make` or `make dev` to run all tests and update `Pipfile.lock`.
