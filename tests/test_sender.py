@@ -24,5 +24,5 @@ def test_send_messages_sends_all_messages(stub, gmail):
       ('me', n) for n in range(5)]
 
 
-def test_send_messages_does_nothing_if_skip_send():
-  assert sender.send_messages(['hi'], None, skip_send=True) == []
+def test_send_message_returns_none_if_skip_send():
+  assert sender.send_message('hi', None, skip_send=True) is None
