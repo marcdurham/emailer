@@ -27,6 +27,7 @@ def test_args_defaults():
   assert not options.dryrun
   assert not options.test
   assert not options.all_keys
+  assert not options.skip_send
 
 
 def test_key_names_collects_values():

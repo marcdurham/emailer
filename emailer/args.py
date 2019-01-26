@@ -32,6 +32,8 @@ def get_parser():
   parser.add_argument('--sample-config', action='store_true',
                       help='Print a sample config. Save as emailer.json or '
                            '.emailer.json and exit.')
+  parser.add_argument('--skip-send', action='store_true',
+                      help='Avoid actually sending emails, useful for testing.')
   return parser
 
 

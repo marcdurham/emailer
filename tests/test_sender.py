@@ -22,3 +22,7 @@ def test_send_messages_sends_all_messages(stub, gmail):
   messages = [stub(gmail_body=n) for n in range(5)]
   assert list(sender.send_messages(messages, gmail)) == [
       ('me', n) for n in range(5)]
+
+
+def test_send_messages_does_nothing_if_skip_send():
+  assert sender.send_messages(['hi'], None, skip_send=True) == []

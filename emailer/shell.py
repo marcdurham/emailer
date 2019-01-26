@@ -27,6 +27,7 @@ def get_messages(data, date, group, extra_recipients, extra_values):
     values = composer.replace_values({**email, **extra_values})
     subject = subject_prefix + composer.substitute_for_key(SUBJECT, values)
     body = composer.substitute_for_key(BODY, values)
+    logging.info(body)
     for recipient in all_recipients:
       yield get_message_for_recipient(recipient, subject, body, values)
 
@@ -57,7 +58,9 @@ def process_sheets(options):
     extra_recipients = config_obj.get_extra_recipients_for_group(group)
     extra_values = config_obj.get_extra_values()
     messages = get_messages(data, date, group, extra_recipients, extra_values)
-    for _ in sender.send_messages(messages, api.gmail(creds)):
+    for _ in sender.send_messages(messages,
+                                  api.gmail(creds),
+                                  skip_send=options.skip_send):
       # Attempt to avoid 500: Backend Error.
       # TODO: Add a command-line arg to set this, default to 1 second.
       # TODO: Consider exponential backoff if it doesn't work, i.e. change this

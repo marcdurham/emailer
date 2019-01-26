@@ -7,5 +7,7 @@ def send_message(message, gmail):
       userId='me', body=message.gmail_body).execute()
 
 
-def send_messages(messages, gmail):
+def send_messages(messages, gmail, skip_send=False):
+  if skip_send:
+    return []
   return (send_message(m, gmail) for m in messages)
