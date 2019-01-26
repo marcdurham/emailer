@@ -44,7 +44,9 @@ def get_config_and_creds(config_dir):
 
 def get_options():
   options = args.get_options()
-  logging.basicConfig(stream=sys.stdout, level=args.get_log_level(options))
+  logging.basicConfig(stream=sys.stdout,
+                      level=args.get_log_level(options),
+                      format='%(asctime)s:%(levelname)s:%(name)s:%(message)s')
   return options
 
 
