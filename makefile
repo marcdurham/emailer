@@ -1,4 +1,4 @@
-.PHONY: dev init test_all test lint cover upload clean travis
+.PHONY: test_all init test lint cover upload clean travis
 
 test_all: test lint cover
 
