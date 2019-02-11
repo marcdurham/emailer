@@ -1,4 +1,3 @@
-import base64
 import dataclasses  # pylint: disable=wrong-import-order
 import email.message
 
@@ -27,9 +26,5 @@ class Message():
     message.set_content(self.html_body, subtype='html', cte='quoted-printable')
     return message
 
-  @property
-  def gmail_body(self):
-    return {'raw': base64.urlsafe_b64encode(self.as_bytes()).decode()}
-
-  def as_bytes(self):
-    return self.email_message.as_bytes()
+  def __bytes__(self):
+    return bytes(self.email_message)

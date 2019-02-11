@@ -1,10 +1,10 @@
-import itertools as it
 import logging
 import sys
 import time
 
-from . import (api, args, auth, composer, config, fetcher, markdown, parser,
-               sender)
+from . import api, args, auth, composer, config, fetcher, markdown, parser
+from .gmailsender import GmailSender
+from .send import send_message
 from .message import Message
 from .name import SUBJECT, BODY, FROM, REPLY_TO, EMAILS, RECIPIENTS
 
@@ -42,41 +42,36 @@ def get_config_and_creds(config_dir):
   return config_obj, creds
 
 
-def get_options():
-  options = args.get_options()
-  logging.basicConfig(stream=sys.stdout,
-                      level=args.get_log_level(options),
-                      format='%(asctime)s:%(levelname)s:%(name)s:%(message)s')
-  return options
-
-
 def process_sheets(options):
   config_obj, creds = get_config_and_creds(options.config_dir)
   sheet_ids = config_obj.get_keys(options.key_names, options.all_keys)
-  groups = args.get_groups(options)
-  for sheet_id, group in it.product(sheet_ids, groups):
-    data = fetcher.values(sheet_id, api.sheets(creds))
-    date = args.get_date(options, group)
-    extra_recipients = config_obj.get_extra_recipients_for_group(group)
-    extra_values = config_obj.get_extra_values()
-    messages = get_messages(data, date, group, extra_recipients, extra_values)
-    for _ in sender.send_messages(messages,
-                                  api.gmail(creds),
-                                  skip_send=options.skip_send):
-      # Attempt to avoid 500: Backend Error.
-      # TODO: Add a command-line arg to set this, default to 1 second.
-      # TODO: Consider exponential backoff if it doesn't work, i.e. change this
-      #       to call message.send() in a try/except block.
-      time.sleep(1)
+  for sheet_id in sheet_ids:
+    groups = args.get_groups(options)
+    for group in groups:
+      data = fetcher.values(sheet_id, api.sheets(creds))
+      date = args.get_date(options, group)
+      extra_recipients = config_obj.get_extra_recipients_for_group(group)
+      extra_values = config_obj.get_extra_values()
+      messages = get_messages(data, date, group, extra_recipients, extra_values)
+      sender = GmailSender(api.gmail(creds))
+      for message in messages:
+        send_message(message=message, sender=sender, skip=options.skip_send)
+        time.sleep(1) # Avoids 500: Backend Error.
+
+
+def set_log_level(level):
+  logging.basicConfig(stream=sys.stdout, level=level,
+                      format='%(asctime)s:%(levelname)s:%(name)s:%(message)s')
 
 
 def main():
-  options = get_options()
+  options = args.get_options()
   if options.version:
     print(args.get_version())
   elif options.sample_config:
     print(args.get_sample_config())
   else:
+    set_log_level(args.get_log_level(options))
     process_sheets(options)
 
 

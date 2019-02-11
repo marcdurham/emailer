@@ -1,11 +1,10 @@
-from emailer.send import send_messages
+from emailer.send import send_message
 
 
-def test_sends_all_messages(stub):
-  sender = stub(send=lambda *args: 1)
-  assert send_messages(['a', 'b'], sender) == [1, 1]
+def test_send_sends_message(stub):
+  sender = stub(send=lambda msg: 'b')
+  assert send_message(message='a', sender=sender) == 'b'
 
 
-def test_skips_sending_when_skip_is_true(stub):
-  sender = stub(send=lambda *args: 1)
-  assert send_messages(['a'], sender, skip=True) is None
+def test_skips_sending_when_skip_is_true():
+  assert send_message(message='a', sender=None, skip=True) is None
