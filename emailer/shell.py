@@ -62,18 +62,3 @@ def process_sheets(options):
 def set_log_level(level):
   logging.basicConfig(stream=sys.stdout, level=level,
                       format='%(asctime)s:%(levelname)s:%(name)s:%(message)s')
-
-
-def main():
-  options = args.get_options()
-  if options.version:
-    print(args.get_version())
-  elif options.sample_config:
-    print(args.get_sample_config())
-  else:
-    set_log_level(args.get_log_level(options))
-    process_sheets(options)
-
-
-if __name__ == '__main__':
-  main()

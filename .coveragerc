@@ -3,7 +3,7 @@ source=
   emailer
   tests
 omit=
-  emailer/shell.py
+  emailer/main.py
 
 
 [report]

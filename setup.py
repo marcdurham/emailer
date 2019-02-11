@@ -29,7 +29,7 @@ setuptools.setup(
   ],
   entry_points={
     'console_scripts': [
-      'email = emailer.shell:main',
+      'email = emailer.main:main',
     ],
   },
 )
