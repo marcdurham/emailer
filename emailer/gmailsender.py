@@ -17,4 +17,4 @@ class GmailSender():
 
   @staticmethod
   def convert(msg):
-    return {'raw': base64.urlsafe_b64encode(bytes(msg))}
+    return {'raw': base64.urlsafe_b64encode(bytes(msg)).decode()}

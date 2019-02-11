@@ -30,4 +30,4 @@ def test_send_gmail_message_uses_me_as_user_id(gmail):
 
 def test_convert_converts_messages_to_gmail_body():
   converted = GmailSender.convert(b'hi')
-  assert converted == {'raw': base64.urlsafe_b64encode(b'hi')}
+  assert converted == {'raw': base64.urlsafe_b64encode(b'hi').decode()}
