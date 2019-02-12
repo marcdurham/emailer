@@ -1,8 +1,7 @@
 import logging
-import sys
 import time
 
-from . import api, args, auth, composer, config, fetcher, markdown, parser
+from . import api, auth, composer, config, fetcher, markdown, parser
 from .gmailsender import GmailSender
 from .send import send_message
 from .message import Message
@@ -42,23 +41,15 @@ def get_config_and_creds(config_dir):
   return config_obj, creds
 
 
-def process_sheets(options):
-  config_obj, creds = get_config_and_creds(options.config_dir)
-  sheet_ids = config_obj.get_keys(options.key_names, options.all_keys)
+def process_sheets(group, config_dir, key_names, all_keys, date, skip): # pylint: disable=too-many-arguments,too-many-locals
+  config_obj, creds = get_config_and_creds(config_dir)
+  sheet_ids = config_obj.get_keys(key_names, all_keys)
   for sheet_id in sheet_ids:
-    groups = args.get_groups(options)
-    for group in groups:
-      data = fetcher.values(sheet_id, api.sheets(creds))
-      date = args.get_date(options, group)
-      extra_recipients = config_obj.get_extra_recipients_for_group(group)
-      extra_values = config_obj.get_extra_values()
-      messages = get_messages(data, date, group, extra_recipients, extra_values)
-      sender = GmailSender(api.gmail(creds))
-      for message in messages:
-        send_message(message=message, sender=sender, skip=options.skip_send)
-        time.sleep(1) # Avoids 500: Backend Error.
-
-
-def set_log_level(level):
-  logging.basicConfig(stream=sys.stdout, level=level,
-                      format='%(asctime)s:%(levelname)s:%(name)s:%(message)s')
+    data = fetcher.values(sheet_id, api.sheets(creds))
+    extra_recipients = config_obj.get_extra_recipients_for_group(group)
+    extra_values = config_obj.get_extra_values()
+    messages = get_messages(data, date, group, extra_recipients, extra_values)
+    sender = GmailSender(api.gmail(creds))
+    for message in messages:
+      send_message(message=message, sender=sender, skip=skip)
+      time.sleep(1) # Avoids 500: Backend Error.
