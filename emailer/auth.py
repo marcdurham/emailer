@@ -9,8 +9,8 @@ def fetch_new_creds(config):
       ]).run_console()
 
 
-def serialize(creds):
-  return {k: getattr(creds, k) for k in (
+def serialize(credentials):
+  return {k: getattr(credentials, k) for k in (
       'token', 'refresh_token', 'token_uri', 'client_id', 'client_secret',
       'scopes')}
 
