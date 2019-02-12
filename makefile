@@ -1,15 +1,18 @@
-.PHONY: test_all init test lint cover upload clean travis
+.PHONY: dev test_all init test lint cover upload clean travis
 
-test_all: test lint cover
+dev: test
 
 init:
 	pipenv install --python 3.7 --dev
+
+test_all: test lint cover
 
 test:
 	pipenv run pytest tests
 
 lint:
-	pipenv run pylint emailer tests/*
+	pipenv run pylint emailer --rcfile emailer/.pylintrc
+	#pipenv run pylint tests --rcfile tests/.pylintrc
 
 cover:
 	pipenv run coverage run -m pytest
