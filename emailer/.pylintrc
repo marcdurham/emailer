@@ -4,7 +4,6 @@ indent-string='  '
 
 [MESSAGES CONTROL]
 disable=
-  fixme, # Allow TODOs
   missing-docstring, # Not necessary
   too-few-public-methods, # Thin classes due to dataclasses
   unsubscriptable-object, # Dictionaries initialized to None
