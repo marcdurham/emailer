@@ -28,7 +28,8 @@ def get_messages(data, date, group, extra_recipients, extra_values):
     body = composer.substitute_for_key(BODY, values)
     logging.info(body)
     for recipient in all_recipients:
-      yield get_message_for_recipient(recipient, subject, body, values)
+      if recipient.is_valid():
+        yield get_message_for_recipient(recipient, subject, body, values)
 
 
 def get_config_and_creds(config_dir):
