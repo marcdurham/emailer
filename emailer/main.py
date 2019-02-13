@@ -2,7 +2,8 @@ import logging
 import sys
 
 from . import shell
-from .args import Options, get_parsed_args
+from .args import get_parsed_args
+from .options import Options
 
 def main():
   options = Options(get_parsed_args())
@@ -18,6 +19,8 @@ def main():
                          all_keys=options.all_keys,
                          date=options.send_date,
                          skip=options.skip_send)
+  else:
+    print('No group / key combination provided')
 
 
 def setup_logging(level):
