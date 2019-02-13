@@ -5,6 +5,10 @@ def test_well_formed_email_is_valid():
   assert is_email_valid('a@example.com')
 
 
+def test_email_with_name_is_valid():
+  assert is_email_valid('A B <a@example.com>')
+
+
 def test_email_without_at_sign_is_invalid():
   assert not is_email_valid('a')
 
