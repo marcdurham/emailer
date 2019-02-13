@@ -44,7 +44,10 @@ def get_config_and_creds(config_dir):
 
 def process_sheets(group, config_dir, key_names, all_keys, date, skip): # pylint: disable=too-many-arguments,too-many-locals
   config_obj, creds = get_config_and_creds(config_dir)
-  sheet_ids = config_obj.get_keys(key_names, all_keys)
+  if all_keys:
+    sheet_ids = config_obj.get_all_keys()
+  else:
+    sheet_ids = config_obj.get_keys(key_names)
   for sheet_id in sheet_ids:
     data = fetcher.values(sheet_id, api.sheets(creds))
     extra_recipients = config_obj.get_extra_recipients_for_group(group)

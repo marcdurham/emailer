@@ -33,32 +33,27 @@ def test_load_returns_filled_config_object(tmpdir):
 
 
 def test_load_empty_file_raises_invalid_file_content_error(tmpdir):
-  with pytest.raises(config.InvalidFileContentError, match='config.json'):
+  with pytest.raises(config.InvalidFileError, match='config.json'):
     config_file = tmpdir.join('config.json')
     config_file.write('')
     config.load_from_file(config_file.strpath)
 
 
 def test_validate_fails_without_valid_client_secret_config():
-  with pytest.raises(config.InvalidFileContentError, match='client_secret'):
+  with pytest.raises(config.InvalidFileError, match='client_secret'):
     config.Config().validate()
 
 
 def test_get_keys_returns_only_unique_keys():
-  assert list(Config(keys={'a': 1, 'b': 1}).get_keys(['a', 'b'])) == [1]
-  assert list(Config(keys={'a': 1, 'b': 1}).get_keys(all_keys=True)) == [1]
-
-
-def test_get_keys_with_invalid_key_dict_raises_invalid_file_content_error():
-  with pytest.raises(config.InvalidFileContentError):
-    config.Config().get_keys()
+  assert Config(keys={'a': 1, 'b': 1}).get_keys(['a', 'b']) == {1}
+  assert Config(keys={'a': 1, 'b': 1}).get_all_keys() == {1}
 
 
 def test_get_keys_returns_no_keys_by_default_and_all_keys_if_passed():
   conf = Config(keys={'a': 1, 'b': 2})
-  assert list(conf.get_keys()) == []
+  assert list(conf.get_keys([])) == []
   assert list(conf.get_keys(['a'])) == [1]
-  assert list(conf.get_keys(all_keys=True)) == [1, 2]
+  assert list(conf.get_all_keys()) == [1, 2]
 
 
 def test_get_extra_values_returns_extra_values_if_any():

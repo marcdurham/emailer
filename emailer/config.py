@@ -12,10 +12,6 @@ class InvalidFileError(Exception):
   pass
 
 
-class InvalidFileContentError(Exception):
-  pass
-
-
 @dataclasses.dataclass(frozen=True)
 class Config():
   client_secret: dict = None
@@ -26,8 +22,8 @@ class Config():
 
   def validate(self):
     if self.client_secret is None:
-      raise InvalidFileContentError(
-          'Unable to locate client_secret data: '
+      raise InvalidFileError(
+          'Unable to locate client_secret key in config: '
           'https://developers.google.com/identity/protocols/OAuth2')
 
   def get_extra_recipients_for_group(self, group):
@@ -40,14 +36,11 @@ class Config():
       return {}
     return self.extra_values
 
-  def get_keys(self, names=None, all_keys=False):
-    if self.keys is None:
-      raise InvalidFileContentError('No keys dict in config.')
-    if all_keys:
-      names = self.keys.keys()
-    elif names is None:
-      names = []
-    return set(self.keys[name] for name in names)
+  def get_all_keys(self):
+    return self.get_keys(self.keys.keys())
+
+  def get_keys(self, names):
+    return {self.keys[name] for name in names}
 
   def set_serialized_creds(self, serialized_creds):
     return dataclasses.replace(self, serialized_creds=serialized_creds)
@@ -83,4 +76,4 @@ def load_from_file(config_path):
     try:
       return Config(**json.load(config_file))
     except json.JSONDecodeError:
-      raise InvalidFileContentError(f'{config_path} must be a valid JSON file.')
+      raise InvalidFileError(f'{config_path} must be a valid JSON file.')
