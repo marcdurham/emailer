@@ -20,7 +20,7 @@ def main():
                          date=options.send_date,
                          skip=options.skip_send)
   else:
-    print('No group / key combination provided')
+    print('No group provided')
 
 
 def setup_logging(level):
