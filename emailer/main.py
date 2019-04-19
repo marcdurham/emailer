@@ -2,16 +2,16 @@ import logging
 import sys
 
 from . import shell
-from .args import get_parsed_args
+from .args import get_parsed_args, get_sample_config, get_version
 from .options import Options
 
 def main():
   options = Options(get_parsed_args())
   setup_logging(options.log_level)
   if options.version:
-    print(options.get_version())
+    print(get_version())
   elif options.sample_config:
-    print(options.get_sample_config())
+    print(get_sample_config())
   elif options.group:
     shell.process_sheets(group=options.group,
                          config_dir=options.config_dir,
