@@ -24,7 +24,7 @@ upload: test_all
 	make clean
 
 clean:
-	rm -rf build dist
+	rm -rf build dist .tox
 
 travis:
 	pip install --upgrade pipenv
