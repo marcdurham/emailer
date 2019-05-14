@@ -4,16 +4,28 @@ from .recipient import Recipient
 from .name import DATE, HIGHLIGHT
 
 
-def transpose(lists):
-  return (vals for vals in it.zip_longest(*lists, fillvalue=''))
-
-
 def parse_emails(original_data):
   data = transpose(original_data)
   keys = next(data, '')
   defaults = next(data, '')
-  for row in data:
-    yield {k: r if r else d for k, r, d in zip(keys, row, defaults)}
+  for values in data:
+    yield parse_email(keys=keys, defaults=defaults, values=values)
+
+
+def transpose(lists):
+  return (vals for vals in it.zip_longest(*lists, fillvalue=''))
+
+
+def parse_email(*, keys, defaults, values):
+  email_dict = {}
+  for key, default, value in zip(keys, defaults, values):
+    if not key:
+      continue
+    if value:
+      email_dict[key] = value
+    else:
+      email_dict[key] = default
+  return email_dict
 
 
 def parse_emails_for_date(data, target_date):

@@ -19,6 +19,13 @@ def test_transpose_fills_with_empty_string():
           ('', 4)]
 
 
+def test_parse_email_ignores_empty_keys():
+  res = parser.parse_email(keys=['', 'hi'],
+                           defaults=[1, 2],
+                           values=['', ''])
+  assert res == {'hi': 2}
+
+
 def test_parse_emails_replace_empty_string_with_default():
   res = list(parser.parse_emails([
       [DATE, '', '2018-01-01'],
