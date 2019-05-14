@@ -1,4 +1,4 @@
-import dataclasses  # pylint: disable=wrong-import-order
+import dataclasses
 
 from .emailvalidator import is_email_valid
 

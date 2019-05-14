@@ -1,4 +1,4 @@
-import dataclasses  # pylint: disable=wrong-import-order
+import dataclasses
 import email.message
 
 from .recipient import Recipient

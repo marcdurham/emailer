@@ -1,4 +1,4 @@
-import dataclasses  # pylint: disable=wrong-import-order
+import dataclasses
 import json
 import os.path
 
@@ -37,10 +37,14 @@ class Config():
     return self.extra_values
 
   def get_all_keys(self):
+    if self.keys is None:
+      return {}
     return self.get_keys(self.keys.keys())
 
   def get_keys(self, names):
-    return {self.keys[name] for name in names}
+    if self.keys is None:
+      return {}
+    return {self.keys.get(name) for name in names}
 
   def set_serialized_creds(self, serialized_creds):
     return dataclasses.replace(self, serialized_creds=serialized_creds)

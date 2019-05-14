@@ -1,21 +1,11 @@
 import logging
 import time
 
-from . import api, auth, composer, config, fetcher, markdown, parser
+from . import api, auth, composer, config, fetcher, parser
 from .gmailsender import GmailSender
+from .messagebuilder import create_message_for_recipient
 from .send import send_message
-from .message import Message
-from .name import SUBJECT, BODY, FROM, REPLY_TO, EMAILS, RECIPIENTS
-
-
-def get_message_for_recipient(recipient, subject, body, values):
-  highlighted_body = markdown.mark_text(body, recipient.highlights, values)
-  html_body = markdown.convert(highlighted_body)
-  sender = composer.get_recipient(FROM, values)
-  replyto = composer.get_recipient(REPLY_TO, values)
-  return Message(subject=subject, sender=sender, recipient=recipient,
-                 replyto=replyto, html_body=html_body)
-
+from .name import SUBJECT, BODY, EMAILS, RECIPIENTS
 
 def get_messages(data, date, group, extra_recipients, extra_values):
   emails = parser.parse_emails_for_date(data.get(EMAILS), date)
@@ -29,7 +19,7 @@ def get_messages(data, date, group, extra_recipients, extra_values):
     logging.info(body)
     for recipient in all_recipients:
       if recipient.is_valid():
-        yield get_message_for_recipient(recipient, subject, body, values)
+        yield create_message_for_recipient(recipient, subject, body, values)
 
 
 def get_config_and_creds(config_dir):

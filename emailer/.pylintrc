@@ -6,4 +6,3 @@ indent-string='  '
 disable=
   missing-docstring, # Not necessary
   too-few-public-methods, # Thin classes due to dataclasses
-  unsubscriptable-object, # Dictionaries initialized to None
