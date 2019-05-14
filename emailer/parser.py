@@ -21,10 +21,7 @@ def parse_email(*, keys, defaults, values):
   for key, default, value in zip(keys, defaults, values):
     if not key:
       continue
-    if value:
-      email_dict[key] = value
-    else:
-      email_dict[key] = default
+    email_dict[key] = value if value else default
   return email_dict
 
 
