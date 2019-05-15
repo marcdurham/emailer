@@ -3,6 +3,7 @@ from google_auth_oauthlib.flow import InstalledAppFlow
 from google.oauth2.credentials import Credentials
 
 from emailer import auth
+from emailer.auth import create_or_deserialize_creds
 
 
 @pytest.fixture
@@ -35,12 +36,12 @@ def test_serialize_creds_returns_dict(stub, creds_dict):
 
 def test_creds_fetches_new_creds_when_passed_none_or_empty_dict(monkeypatch):
   monkeypatch.setattr(auth, 'fetch_new_creds', lambda x: 'new' + x)
-  assert auth.creds(None, 'config') == 'newconfig'
-  assert auth.creds({}, 'config') == 'newconfig'
+  assert create_or_deserialize_creds(None, 'config') == 'newconfig'
+  assert create_or_deserialize_creds({}, 'config') == 'newconfig'
 
 
 def test_creds_returns_deserialized_creds_when_passed_dict(creds_dict):
-  creds = auth.creds(creds_dict)
+  creds = create_or_deserialize_creds(creds_dict)
   assert isinstance(creds, Credentials)
   for key, value in creds_dict.items():
     assert getattr(creds, key) == value

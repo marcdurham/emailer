@@ -44,6 +44,11 @@ def test_validate_fails_without_valid_client_secret_config():
     config.Config().validate()
 
 
+def test_get_keys__empty_dict_without_keys():
+  assert Config().get_keys(['a']) == set()
+  assert Config().get_all_keys() == set()
+
+
 def test_get_keys_returns_only_unique_keys():
   assert Config(keys={'a': 1, 'b': 1}).get_keys(['a', 'b']) == {1}
   assert Config(keys={'a': 1, 'b': 1}).get_all_keys() == {1}
@@ -51,9 +56,9 @@ def test_get_keys_returns_only_unique_keys():
 
 def test_get_keys_returns_no_keys_by_default_and_all_keys_if_passed():
   conf = Config(keys={'a': 1, 'b': 2})
-  assert list(conf.get_keys([])) == []
-  assert list(conf.get_keys(['a'])) == [1]
-  assert list(conf.get_all_keys()) == [1, 2]
+  assert conf.get_keys([]) == set()
+  assert conf.get_keys(['a']) == {1}
+  assert conf.get_all_keys() == {1, 2}
 
 
 def test_get_extra_values_returns_extra_values_if_any():

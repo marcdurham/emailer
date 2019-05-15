@@ -15,7 +15,7 @@ def serialize(credentials):
       'scopes')}
 
 
-def creds(serialized_creds, config=None):
+def create_or_deserialize_creds(serialized_creds, config=None):
   if serialized_creds:
     return google.oauth2.credentials.Credentials(**serialized_creds)
   return fetch_new_creds(config)

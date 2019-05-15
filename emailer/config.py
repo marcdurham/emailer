@@ -3,6 +3,7 @@ import json
 import os.path
 
 from .recipient import Recipient
+from .auth import create_or_deserialize_creds
 
 
 CONFIG_FILES = ['.emailer.json', 'emailer.json']
@@ -19,6 +20,11 @@ class Config():
   keys: dict = None
   extra_emails: dict = None
   extra_values: dict = None
+
+  @property
+  def creds(self):
+    return create_or_deserialize_creds(self.serialized_creds,
+                                       self.client_secret)
 
   def validate(self):
     if self.client_secret is None:
@@ -38,12 +44,12 @@ class Config():
 
   def get_all_keys(self):
     if self.keys is None:
-      return {}
+      return set()
     return self.get_keys(self.keys.keys())
 
   def get_keys(self, names):
     if self.keys is None:
-      return {}
+      return set()
     return {self.keys.get(name) for name in names}
 
   def set_serialized_creds(self, serialized_creds):
