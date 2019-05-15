@@ -19,18 +19,18 @@ def test_transpose_fills_with_empty_string():
           ('', 4)]
 
 
-def test_parse_email_ignores_empty_keys():
-  res = parser.parse_email(keys=['', 'hi'],
-                           defaults=[1, 2],
-                           values=['', ''])
-  assert res == {'hi': 2}
-
-
 def test_parse_email_replaces_empty_value_with_default():
   res = parser.parse_email(keys=['key'],
                            defaults=['hi'],
                            values=[''])
   assert res == {'key': 'hi'}
+
+
+def test_parse_email_ignores_empty_keys():
+  res = parser.parse_email(keys=['', 'hi'],
+                           defaults=[1, 2],
+                           values=['', ''])
+  assert res == {'hi': 2}
 
 
 def test_parse_emails_fills_rest_with_default():
@@ -44,7 +44,7 @@ def test_parse_emails_fills_rest_with_default():
       }]
 
 
-def test_parse_email_leaves_empty_for_no_default():
+def test_parse_emails_leaves_empty_for_no_default():
   res = list(parser.parse_emails([
       [DATE, '', '2018-01-01'],
       ['nodefault'],  # Shortened row
