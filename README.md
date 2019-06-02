@@ -47,6 +47,8 @@ Setup
   * Save the result as `emailer.json` in home dir.
   * The spreadsheet key is the long entry in the URL:
     `https://docs.google.com/spreadsheets/<key>/edit`
+* In case of Google API errors, check the
+  [GSuite Dashboard](https://www.google.com/appsstatus#hl=en&v=status).
 
 Development
 -----------
