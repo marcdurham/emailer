@@ -4,17 +4,17 @@ from . import api, auth, composer, config, fetcher, parser
 from .gmailsender import GmailSender
 from .messagebuilder import create_message_for_recipient
 from .send import send_messages
-from .name import SUBJECT, BODY, EMAILS, RECIPIENTS
+from .name import SUBJECT, BODY, EMAILS, RECIPIENTS, PREFIX
 
 
 def get_messages(data, date, group, extra_recipients, extra_values):
   emails = parser.parse_emails_for_date(data.get(EMAILS), date)
   recipients = parser.parse_recipients_in_group(data.get(RECIPIENTS), group)
   all_recipients = [*recipients, *extra_recipients]
-  subject_prefix = composer.get_prefix_for_group(group)
+  prefix = composer.get_prefix_for_group(group)
   for email in emails:
-    values = composer.replace_values({**email, **extra_values})
-    subject = subject_prefix + composer.substitute_for_key(SUBJECT, values)
+    values = composer.replace_values({PREFIX: prefix, **email, **extra_values})
+    subject = prefix + composer.substitute_for_key(SUBJECT, values)
     body = composer.substitute_for_key(BODY, values)
     logging.info(body)
     for recipient in all_recipients:
