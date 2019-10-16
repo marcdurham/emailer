@@ -35,6 +35,16 @@ def get_parser():
                            '.emailer.json and exit.')
   parser.add_argument('--skip-send', action='store_true',
                       help='Avoid actually sending emails, useful for testing.')
+  parser.add_argument('--save-sheet-to',
+                      help='Save the sheet into the following JSON file.')
+  parser.add_argument('--stdin', action='store_true',
+                      help='Use STDIN to get the sheet data, instead of '
+                           'directly from Google Sheets.')
+  parser.add_argument('--stdout-markdown', action='store_true',
+                      help='Print a JSON array of unhighlighted email,'
+                           'still in markdown.')
+  parser.add_argument('--stdout-email', action='store_true',
+                      help='Print a JSON array all highlighted email messages.')
   # Only one group can be specified per-run.
   group = parser.add_mutually_exclusive_group()
   group.add_argument('--active', action='store_true',

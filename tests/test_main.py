@@ -1,3 +1,4 @@
+import sys
 from collections import Counter
 
 import pytest
@@ -19,19 +20,14 @@ def main_spies(monkeypatch):
     counter.update(('get_sample_config', 1))
     return 'testing get sample config'
 
-  # pylint: disable=too-many-arguments, unused-argument
-  def spy_process_sheets(group,
-                         config_dir,
-                         key_names,
-                         all_keys,
-                         date,
-                         skip):
+  # pylint: disable=unused-argument
+  def spy_process(options):
     nonlocal counter
-    counter.update(('process_sheets', 1))
+    counter.update(('process', 1))
 
   monkeypatch.setattr(main, 'get_version', spy_get_version)
   monkeypatch.setattr(main, 'get_sample_config', spy_get_sample_config)
-  monkeypatch.setattr(shell, 'process_sheets', spy_process_sheets)
+  monkeypatch.setattr(shell, 'process', spy_process)
   return counter
 
 
@@ -42,7 +38,7 @@ def test_main_version(main_spies, monkeypatch):
   main.main()
   assert (main_spies['get_version']) == 1
   assert (main_spies['get_sample_config']) == 0
-  assert (main_spies['process_sheets']) == 0
+  assert (main_spies['process']) == 0
 
 
 # pylint: disable=redefined-outer-name
@@ -52,7 +48,7 @@ def test_main_sample_config(main_spies, monkeypatch):
   main.main()
   assert (main_spies['get_version']) == 0
   assert (main_spies['get_sample_config']) == 1
-  assert (main_spies['process_sheets']) == 0
+  assert (main_spies['process']) == 0
 
 
 # pylint: disable=redefined-outer-name
@@ -62,7 +58,7 @@ def test_main(main_spies, monkeypatch, capsys):
   main.main()
   assert (main_spies['get_version']) == 0
   assert (main_spies['get_sample_config']) == 0
-  assert (main_spies['process_sheets']) == 0
+  assert (main_spies['process']) == 0
   out, err = capsys.readouterr()
   assert out == 'No group provided\n'
   assert err == ''
@@ -75,4 +71,15 @@ def test_main_no_group(main_spies, monkeypatch):
   main.main()
   assert (main_spies['get_version']) == 0
   assert (main_spies['get_sample_config']) == 0
-  assert (main_spies['process_sheets']) == 1
+  assert (main_spies['process']) == 1
+
+
+def test_name_main(monkeypatch, capsys):
+  args = args_mod.get_parsed_args(['--skip-send'])
+  monkeypatch.setattr(main, 'get_parsed_args', lambda: args)
+  monkeypatch.setattr(main, '__name__', '__main__')
+  monkeypatch.setattr(sys, 'exit', lambda _code: None)
+  main.init()
+  out, err = capsys.readouterr()
+  assert out == 'No group provided\n'
+  assert err == ''
