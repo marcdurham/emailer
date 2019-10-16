@@ -10,8 +10,7 @@ test:
 
 lint:
 	pipenv run pylint emailer --rcfile emailer/.pylintrc
-	# Travis requires explicit files since tests is not a module.
-	pipenv run pylint tests/* --rcfile tests/.pylintrc
+	pipenv run pylint tests --rcfile tests/.pylintrc
 
 cover:
 	pipenv run coverage run -m pytest
