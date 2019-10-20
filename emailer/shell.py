@@ -33,9 +33,7 @@ def process(options: Options):
 
 
 def decide_input_source(options: Options, config: Config, creds):
-  """
-  :return: a function that returns sheets
-  """
+  """:return: a function that returns sheets"""
   if options.stdin:
     return input_sheet_from_stdin
   return compose_input_google_sheets(options=options,
@@ -44,9 +42,7 @@ def decide_input_source(options: Options, config: Config, creds):
 
 
 def decide_markdown_outputs(options: Options):
-  """
-  :return: a list of functions that output markdown
-  """
+  """:return: a list of functions that output markdown"""
   markdown_senders = []
   if options.stdout_markdown:
     markdown_senders.append(output_stdout_markdown)
@@ -54,9 +50,7 @@ def decide_markdown_outputs(options: Options):
 
 
 def decide_message_outputs(options: Options, creds):
-  """
-  :return: a list of functions that output email messages
-  """
+  """:return: a list of functions that output email messages"""
   message_senders = []
   if options.stdout_email:
     message_senders.append(output_stdout_email)
@@ -82,9 +76,7 @@ def output_sheet(options: Options,
                  markdown_outputs: list,
                  message_outputs: list,
                  sheet):
-  """
-  send the sheet to the output functions
-  """
+  """send the sheet to the output functions"""
   extra_values = config.get_extra_values()
   markdowns = list(markdown_emails_for_date(sheet=sheet,
                                             send_date=options.send_date,
