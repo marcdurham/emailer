@@ -86,11 +86,10 @@ def output_sheet(options: Options,
   send the sheet to the output functions
   """
   extra_values = config.get_extra_values()
-  markdowns = markdown_emails_for_date(sheet=sheet,
-                                       send_date=options.send_date,
-                                       group=options.group,
-                                       extra_values=extra_values)
-  markdowns = list(markdowns)  # take out generator for multiple sends
+  markdowns = list(markdown_emails_for_date(sheet=sheet,
+                                            send_date=options.send_date,
+                                            group=options.group,
+                                            extra_values=extra_values))
   for send_output in markdown_outputs:
     send_output(markdowns)
 
@@ -99,11 +98,10 @@ def output_sheet(options: Options,
     return
 
   extra_recipients = config.get_extra_recipients_for_group(options.group)
-  messages = messages_from_markdown(sheet,
-                                    markdowns,
-                                    options.group,
-                                    extra_recipients)
-  messages = list(messages)  # take out of generator for multiple sends
+  messages = list(messages_from_markdown(sheet,
+                                         markdowns,
+                                         options.group,
+                                         extra_recipients))
 
   for send_output in message_outputs:
     send_output(messages)
