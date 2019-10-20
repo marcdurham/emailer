@@ -24,7 +24,7 @@ def test_process(monkeypatch):
                         markdown_outputs,
                         message_outputs,
                         sheet):
-    nonlocal mock_sheet, output_sheet_called
+    nonlocal output_sheet_called
     output_sheet_called = True
     assert options.group == 'test'
     assert config is not None
@@ -63,7 +63,6 @@ def test_decide_input_from_google(monkeypatch):
 
   def mock_input_google_sheets(options, config, creds):
     """internal function that generates a google sheets fetcher"""
-    nonlocal mock_sheets_fetcher
     assert not options.stdin
     assert config is not None
     assert creds == 'uh... sure'

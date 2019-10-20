@@ -127,13 +127,12 @@ def compose_input_google_sheets(options: Options, config: Config, creds):
   Returns a function `()->Generator(sheet)` to get spreadsheets from Google.
   """
 
-  def _get_google_sheets():
-    nonlocal creds, options, config
+  def get_google_sheets():
     sheet_ids = google_sheet_ids(options, config)
     for sheet_id in sheet_ids:
       yield fetcher.values(sheet_id, api.sheets(creds))
 
-  return _get_google_sheets
+  return get_google_sheets
 
 
 def input_sheet_from_stdin():
@@ -153,11 +152,10 @@ def compose_output_gmail_sender(creds):
   """Returns a function (messages)->Null to send each message via Gmail."""
   sender = GmailSender(api.gmail(creds))
 
-  def _output_gmail_sender(messages):
-    nonlocal sender
+  def output_gmail_sender(messages):
     send_messages(messages, sender)
 
-  return _output_gmail_sender
+  return output_gmail_sender
 
 
 def output_stdout_email(messages):
