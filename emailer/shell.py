@@ -72,10 +72,9 @@ def save_sheet(save_sheet_to: str, sheet):
    as JSON
   :param sheet: data to be dumped into the file
   """
-  if save_sheet_to is None or len(save_sheet_to) == 0:
-    return
-  with open(save_sheet_to, 'w+') as stream:
-    json.dump(sheet, stream, indent=4)
+  if save_sheet_to:
+    with open(save_sheet_to, 'w+') as stream:
+      json.dump(sheet, stream, indent=4)
 
 
 def output_sheet(options: Options,
