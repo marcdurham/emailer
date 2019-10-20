@@ -1,9 +1,9 @@
 import logging
-import sys
 
 from . import shell
 from .args import get_parsed_args, get_sample_config, get_version
 from .options import Options
+
 
 def main():
   options = Options(get_parsed_args())
@@ -24,7 +24,7 @@ def main():
 
 
 def setup_logging(level):
-  logging.basicConfig(stream=sys.stdout, level=level,
+  logging.basicConfig(level=level,
                       format='%(asctime)s:%(levelname)s:%(name)s:%(message)s')
 
 
