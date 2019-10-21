@@ -16,11 +16,10 @@ Data Format
 
 Usage
 -----
-    usage: __main__.py [-h] [-c CONFIG_DIR] [-k [KEY_NAMES [KEY_NAMES ...]]]
-                       [--all-keys] [-d DATE] [-v] [-V] [--sample-config]
-                       [--skip-send] [--save-sheet-to SAVE_SHEET_TO] [--stdin]
-                       [--stdout-markdown] [--stdout-email]
-                       [--active | --dryrun | --test]
+    usage: email [-h] [-c CONFIG_DIR] [-k [KEY_NAMES [KEY_NAMES ...]]]
+                 [--all-keys] [-d DATE] [-v] [-V] [--sample-config] [--skip-send]
+                 [--save-sheet-to SAVE_SHEET_TO] [--stdin] [--stdout-markdown]
+                 [--stdout-email] [--active | --dryrun | --test]
     
     optional arguments:
       -h, --help            show this help message and exit
