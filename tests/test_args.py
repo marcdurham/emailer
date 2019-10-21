@@ -36,6 +36,9 @@ def test_args_defaults():
   assert not options.test
   assert not options.all_keys
   assert not options.skip_send
+  assert not options.save_sheet_to
+  assert not options.stdout_markdown
+  assert not options.stdout_email
 
 
 def test_key_names_collects_values():
@@ -64,6 +67,15 @@ def test_each_group_can_be_set():
   assert args.get_parsed_args(['--active']).active
   assert args.get_parsed_args(['--dryrun']).dryrun
   assert args.get_parsed_args(['--test']).test
+
+
+def test_stdin():
+  assert args.get_parsed_args(['--stdin']).stdin
+
+
+def test_save_sheet_to_gets_value():
+  subject = args.get_parsed_args(['--save-sheet-to', 'b.json']).save_sheet_to
+  assert subject == 'b.json'
 
 
 def test_only_one_group_can_be_set():
