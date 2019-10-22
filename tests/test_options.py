@@ -12,7 +12,7 @@ def test_group_yields_whichever_group_is_passed(stub):
   assert Options(stub(active=1)).group == 'active'
   assert Options(stub(dryrun=1)).group == 'dryrun'
   assert Options(stub(test=1)).group == 'test'
-  assert Options(stub()).group is None # Perhaps an exception is better here.
+  assert Options(stub()).group is None  # Perhaps an exception is better here.
 
 
 def test_send_date_is_the_same_as_date(stub):

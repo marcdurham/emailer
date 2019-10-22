@@ -5,7 +5,6 @@ import os.path
 from .recipient import Recipient
 from .auth import create_or_deserialize_creds
 
-
 CONFIG_FILES = ['.emailer.json', 'emailer.json']
 
 

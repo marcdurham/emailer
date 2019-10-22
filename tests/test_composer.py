@@ -26,5 +26,5 @@ def test_get_prefix_for_group_adds_prefix_for_dryrun_and_test():
 
 def test_get_recipient_returns_none_or_recipient():
   assert composer.get_recipient('key', {}) is None
-  assert (composer.get_recipient('key', {'key': 'a@b.com'})
-          == Recipient('a@b.com'))
+  assert (composer.get_recipient('key',
+                                 {'key': 'a@b.com'}) == Recipient('a@b.com'))

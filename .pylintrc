@@ -7,3 +7,4 @@ disable=
   missing-docstring, # Not necessary
   too-few-public-methods, # Thin classes due to dataclasses
   redefined-outer-name, # Pytest fixtures use the same name
+  fixme, # Allow TODOs

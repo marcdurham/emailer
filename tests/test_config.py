@@ -25,8 +25,11 @@ def test_load_nonexistent_file_raises_invalid_file_error(tmpdir):
 
 def test_load_returns_filled_config_object(tmpdir):
   config_file = tmpdir.join('config.json')
-  config_file.write(json.dumps({'client_secret': 's',
-                                'serialized_creds': 'world'}))
+  config_file.write(
+      json.dumps({
+          'client_secret': 's',
+          'serialized_creds': 'world'
+      }))
   config_data = config.load_from_file(config_file.strpath)
   assert config_data.serialized_creds == 'world'
   assert config_data.client_secret == 's'
@@ -40,12 +43,11 @@ def test_load_empty_file_raises_invalid_file_content_error(tmpdir):
 
 
 def test_creds_calls_create_or_deserialize_creds(monkeypatch):
-  monkeypatch.setattr(config,
-                      'create_or_deserialize_creds',
-                      lambda cred, sec: (cred, sec))
-  assert Config(client_secret={'secret': 'secret'},
-                serialized_creds={'cred': 'cred'}
-                ).creds == ({'cred': 'cred'}, {'secret': 'secret'})
+  monkeypatch.setattr(config, 'create_or_deserialize_creds', lambda cred, sec:
+                      (cred, sec))
+  config_obj = Config(client_secret={'secret': '1'},
+                      serialized_creds={'cred': '2'})
+  assert config_obj.creds == ({'cred': '2'}, {'secret': '1'})
 
 
 def test_validate_fails_without_valid_client_secret_config():
@@ -77,10 +79,12 @@ def test_get_extra_values_returns_extra_values_if_any():
 
 def test_get_extra_recipients_for_group_returns_recipient_if_in_group():
   assert Config(extra_emails=None).get_extra_recipients_for_group('') == []
-  assert (Config(extra_emails={'a': 'b'}).get_extra_recipients_for_group('')
-          == [])
-  assert (Config(extra_emails={'a': 'b'}).get_extra_recipients_for_group('a')
-          == [Recipient('b')])
+  assert (Config(extra_emails={
+      'a': 'b'
+  }).get_extra_recipients_for_group('') == [])
+  assert (Config(extra_emails={
+      'a': 'b'
+  }).get_extra_recipients_for_group('a') == [Recipient('b')])
 
 
 def test_save_updates_config_file_with_data(tmpdir):
@@ -92,15 +96,16 @@ def test_save_updates_config_file_with_data(tmpdir):
 
 def test_files_yields_all_possible_names():
   subject = list(config.files('/test/one'))
-  assert subject == ['/test/one/.emailer.json',
-                     '/test/.emailer.json',
-                     '/.emailer.json',
-                     os.path.expanduser('~/.emailer.json'),
-                     '/test/one/emailer.json',
-                     '/test/emailer.json',
-                     '/emailer.json',
-                     os.path.expanduser('~/emailer.json'),
-                     ]
+  assert subject == [
+      '/test/one/.emailer.json',
+      '/test/.emailer.json',
+      '/.emailer.json',
+      os.path.expanduser('~/.emailer.json'),
+      '/test/one/emailer.json',
+      '/test/emailer.json',
+      '/emailer.json',
+      os.path.expanduser('~/emailer.json'),
+  ]
 
 
 def test_find_returns_first_existing_config_dot(tmpdir):
