@@ -165,11 +165,10 @@ class OutputMock:
 
 
 @pytest.fixture
-def output_fixture():  # pylint: disable=redefined-outer-name
+def output_fixture():
   return OutputMock()
 
 
-# pylint: disable=redefined-outer-name
 def test_output(output_fixture):
   config = Config(keys={'a': 1, 'b': 2})
   options = Options(args.get_parsed_args(['-d', '2019-10-17',
@@ -183,7 +182,6 @@ def test_output(output_fixture):
   assert output_fixture.message_called
 
 
-# pylint: disable=redefined-outer-name
 def test_output_no_message_handlers(output_fixture):
   config = Config(keys={'a': 1, 'b': 2})
   options = Options(args.get_parsed_args(['-d',

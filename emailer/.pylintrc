@@ -1,8 +1,0 @@
-[FORMAT]
-max-line-length=80
-indent-string='  '
-
-[MESSAGES CONTROL]
-disable=
-  missing-docstring, # Not necessary
-  too-few-public-methods, # Thin classes due to dataclasses

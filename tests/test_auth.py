@@ -28,7 +28,6 @@ def test_fetch_new_creds_calls_right_api(monkeypatch, stub):
   assert 'https://www.googleapis.com/auth/spreadsheets.readonly' in scopes
 
 
-# pylint: disable=redefined-outer-name
 def test_serialize_creds_returns_dict(stub, creds_dict):
   creds = stub(**creds_dict)
   assert auth.serialize(creds) == creds_dict
@@ -40,7 +39,6 @@ def test_creds_fetches_new_creds_when_passed_none_or_empty_dict(monkeypatch):
   assert create_or_deserialize_creds({}, 'config') == 'newconfig'
 
 
-# pylint: disable=redefined-outer-name
 def test_creds_returns_deserialized_creds_when_passed_dict(creds_dict):
   creds = create_or_deserialize_creds(creds_dict)
   assert isinstance(creds, Credentials)

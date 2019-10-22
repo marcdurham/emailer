@@ -15,7 +15,6 @@ def sheets(stub):
                   execute=lambda: data[range]))))
 
 
-# pylint: disable=redefined-outer-name
 def test_fetch_correct_sheets_and_data(sheets):
   metadata = {'sheets': [{'properties': {'title': 'Sheet1'}},
                          {'properties': {'title': 'Sheet2'}}]}
