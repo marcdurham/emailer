@@ -101,4 +101,5 @@ Development
     * For packaging, `tox` and `twine` are also necessary.
 * Use `make init` to initialize the dev virtual environment.
 * Use `make` to run all tests, including lint and coverage.
-* If necessary, use `pipenv update` to update `Pipfile.lock`.
+* Use `pipenv update --dev` to update `Pipfile.lock`.
+* Use `make yapf` to automatically fix python formatting.

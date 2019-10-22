@@ -1,4 +1,4 @@
-.PHONY: test_all init test lint cover upload clean travis
+.PHONY: test_all init test yapf lint cover upload clean travis
 
 test_all: test lint cover
 
@@ -8,7 +8,11 @@ init:
 test:
 	pipenv run pytest tests
 
+yapf:
+	pipenv run yapf -ri .
+
 lint:
+	pipenv run yapf -rd .
 	pipenv run pylint emailer --rcfile emailer/.pylintrc
 	pipenv run pylint tests --rcfile tests/.pylintrc
 
