@@ -9,8 +9,7 @@ test:
 	pipenv run pytest tests
 
 lint:
-	pipenv run pylint emailer --rcfile emailer/.pylintrc
-	pipenv run pylint tests --rcfile tests/.pylintrc
+	pipenv run pylint emailer tests
 
 cover:
 	pipenv run coverage run -m pytest
