@@ -7,6 +7,7 @@ name = "pypi"
 coverage = "*"
 pylint = "*"
 pytest = "*"
+yapf = "*"
 
 [packages]
 e1839a8 = {path = ".", editable = true}
