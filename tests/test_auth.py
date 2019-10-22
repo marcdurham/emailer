@@ -8,15 +8,18 @@ from emailer.auth import create_or_deserialize_creds
 
 @pytest.fixture
 def creds_dict():
-  return {'token': '1',
-          'refresh_token': '2',
-          'token_uri': '3',
-          'client_id': '4',
-          'client_secret': '5',
-          'scopes': '6', }
+  return {
+      'token': '1',
+      'refresh_token': '2',
+      'token_uri': '3',
+      'client_id': '4',
+      'client_secret': '5',
+      'scopes': '6',
+  }
 
 
 def test_fetch_new_creds_calls_right_api(monkeypatch, stub):
+
   def myfrom(config, scopes):
     return stub(run_console=lambda: (config, scopes))
 

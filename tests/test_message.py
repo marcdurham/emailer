@@ -12,7 +12,9 @@ def test_message_fields_are_in_email_message():
   sender = Recipient('sender')
   recipient = Recipient('to@example.com')
   replyto = Recipient('replyto@example.com')
-  message = Message(subject='Hi', sender=sender, recipient=recipient,
+  message = Message(subject='Hi',
+                    sender=sender,
+                    recipient=recipient,
                     replyto=replyto)
   assert message.email_message.items() == [
       ('Subject', 'Hi'),
@@ -22,7 +24,7 @@ def test_message_fields_are_in_email_message():
       ('Content-Type', 'text/html; charset="utf-8"'),
       ('Content-Transfer-Encoding', 'quoted-printable'),
       ('MIME-Version', '1.0'),
-      ]
+  ]
 
 
 def test_message_body_is_email_message_content():

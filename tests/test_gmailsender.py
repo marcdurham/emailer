@@ -8,10 +8,8 @@ from emailer.gmailsender import GmailSender
 @pytest.fixture
 def gmail(stub):
   # https://developers.google.com/gmail/api/v1/reference/users/messages/send
-  return stub(
-      users=lambda: stub(
-          messages=lambda: stub(
-              send=lambda **kwargs: stub(execute=lambda: kwargs))))
+  return stub(users=lambda: stub(messages=lambda: stub(
+      send=lambda **kwargs: stub(execute=lambda: kwargs))))
 
 
 # pylint: disable=redefined-outer-name

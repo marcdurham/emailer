@@ -19,10 +19,7 @@ def test_process(monkeypatch):
     assert creds is None
     return lambda: [mock_sheet]
 
-  def mock_output_sheet(options,
-                        config,
-                        markdown_outputs,
-                        message_outputs,
+  def mock_output_sheet(options, config, markdown_outputs, message_outputs,
                         sheet):
     nonlocal output_sheet_called
     output_sheet_called = True
@@ -50,8 +47,7 @@ def test_decide_input_from_stdin():
   config = Config()
   creds = None
   # pylint: disable=comparison-with-callable
-  assert shell.decide_input_source(options,
-                                   config,
+  assert shell.decide_input_source(options, config,
                                    creds) == shell.input_sheet_from_stdin
 
 
@@ -68,15 +64,13 @@ def test_decide_input_from_google(monkeypatch):
     assert creds == 'uh... sure'
     return mock_sheets_fetcher
 
-  monkeypatch.setattr(shell,
-                      "compose_input_google_sheets",
+  monkeypatch.setattr(shell, "compose_input_google_sheets",
                       mock_input_google_sheets)
 
   opts = Options(args.get_parsed_args([]))
   cfg = Config()
   # pylint: disable=comparison-with-callable
-  assert shell.decide_input_source(opts,
-                                   cfg,
+  assert shell.decide_input_source(opts, cfg,
                                    'uh... sure') == mock_sheets_fetcher
   mock_sheets_fetcher()  # 100% coverage
 
@@ -109,6 +103,7 @@ def test_decide_markdown_outputs():
 
 
 def test_decide_message_outputs(monkeypatch):
+
   def mock_compose_output_gmail_sender(creds):
     assert creds == 'sup'
     return 'test gmail sender'
@@ -140,13 +135,20 @@ def test_decide_message_outputs(monkeypatch):
 
 
 class OutputMock:
+
   def __init__(self):
-    self.sheet = {EMAILS: [["email_date", "", "2019-10-17"],
-                           ["email_subject", "", "test subject"],
-                           ["email_body", "", "test body\n$test_var"],
-                           ["test_var", "", "hi"], ],
-                  RECIPIENTS: [["Email", "Active", "Dryrun", "Test"],
-                               ["test@example.com", "", "", "x"], ]}
+    self.sheet = {
+        EMAILS: [
+            ["email_date", "", "2019-10-17"],
+            ["email_subject", "", "test subject"],
+            ["email_body", "", "test body\n$test_var"],
+            ["test_var", "", "hi"],
+        ],
+        RECIPIENTS: [
+            ["Email", "Active", "Dryrun", "Test"],
+            ["test@example.com", "", "", "x"],
+        ]
+    }
     self.markdown_called, self.message_called = False, False
 
   def stub_markdown_output(self, markdowns):
@@ -172,9 +174,8 @@ def output_fixture():  # pylint: disable=redefined-outer-name
 # pylint: disable=redefined-outer-name
 def test_output(output_fixture):
   config = Config(keys={'a': 1, 'b': 2})
-  options = Options(args.get_parsed_args(['-d', '2019-10-17',
-                                          '--all-keys',
-                                          '--test']))
+  options = Options(
+      args.get_parsed_args(['-d', '2019-10-17', '--all-keys', '--test']))
   markdown_outputs = [output_fixture.stub_markdown_output]
   message_outputs = [output_fixture.stub_message_output]
   shell.output_sheet(options, config, markdown_outputs, message_outputs,
@@ -186,10 +187,8 @@ def test_output(output_fixture):
 # pylint: disable=redefined-outer-name
 def test_output_no_message_handlers(output_fixture):
   config = Config(keys={'a': 1, 'b': 2})
-  options = Options(args.get_parsed_args(['-d',
-                                          '2019-10-17',
-                                          '--all-keys',
-                                          '--test']))
+  options = Options(
+      args.get_parsed_args(['-d', '2019-10-17', '--all-keys', '--test']))
   markdown_outputs = [output_fixture.stub_markdown_output]
   message_outputs = []
   shell.output_sheet(options, config, markdown_outputs, message_outputs,
@@ -206,13 +205,16 @@ def test_save_sheet(tmpdir):
 
 
 def test_get_emails_parses_and_composes():
-  sheet = {EMAILS: [["email_date", "", "2019-10-17"],
-                    ["email_subject", "", "test subject"],
-                    ["email_body", "", "test body\n$test_var"],
-                    ["test_var", "", "hi"]]}
+  sheet = {
+      EMAILS: [["email_date", "", "2019-10-17"],
+               ["email_subject", "", "test subject"],
+               ["email_body", "", "test body\n$test_var"],
+               ["test_var", "", "hi"]]
+  }
   markdowns = shell.markdown_emails_for_date(sheet=sheet,
                                              send_date='2019-10-17',
-                                             group='test', extra_values={})
+                                             group='test',
+                                             extra_values={})
   markdowns = list(markdowns)
   assert len(markdowns) == 1, "one markdown should be generated"
   subject, body, values = markdowns[0]
@@ -253,12 +255,16 @@ def test_output_gmail(monkeypatch):
 
 
 def test_get_messages():
-  sheet = {EMAILS: [["email_date", "", "2019-10-17"],
-                    ["email_subject", "", "test subject"],
-                    ["email_body", "", "test body\n$test_var"],
-                    ["test_var", "", "hi"]],
-           RECIPIENTS: [["Email", "Active", "Dryrun", "Test"],
-                        ["test@example.com", "", "x", "x"], ]}
+  sheet = {
+      EMAILS: [["email_date", "", "2019-10-17"],
+               ["email_subject", "", "test subject"],
+               ["email_body", "", "test body\n$test_var"],
+               ["test_var", "", "hi"]],
+      RECIPIENTS: [
+          ["Email", "Active", "Dryrun", "Test"],
+          ["test@example.com", "", "x", "x"],
+      ]
+  }
   emails = [('subject', 'body', {})]
   group = 'test'
   cfg = Config(extra_emails={"test": ["Extra Tester <extra@example.com>"]})

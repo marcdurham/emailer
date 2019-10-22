@@ -44,8 +44,7 @@ def test_args_defaults():
 def test_key_names_collects_values():
   assert args.get_parsed_args(['--key-names', 'a']).key_names == ['a']
   assert args.get_parsed_args(['-k', 'a']).key_names == ['a']
-  assert args.get_parsed_args(
-      ['--key-names', 'a', 'b']).key_names == ['a', 'b']
+  assert args.get_parsed_args(['--key-names', 'a', 'b']).key_names == ['a', 'b']
   assert args.get_parsed_args(['-k', 'a', 'b']).key_names == ['a', 'b']
 
 

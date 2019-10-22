@@ -12,6 +12,7 @@ def test_send_multiple_message(stub):
   def mock_sender(_):
     nonlocal counter
     counter += 1
+
   sender = stub(send=mock_sender)
 
   messages = ['a', 'b', 'c']

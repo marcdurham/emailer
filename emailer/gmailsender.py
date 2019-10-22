@@ -12,8 +12,8 @@ class GmailSender():
     return self.send_gmail_message(gmail_message)
 
   def send_gmail_message(self, message):
-    return self.gmail.users().messages().send(
-        userId='me', body=message).execute()
+    return self.gmail.users().messages().send(userId='me',
+                                              body=message).execute()
 
   @staticmethod
   def convert(msg):

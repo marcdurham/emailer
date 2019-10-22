@@ -71,17 +71,15 @@ def save_sheet(save_sheet_to: str, sheet):
       json.dump(sheet, stream, indent=4)
 
 
-def output_sheet(options: Options,
-                 config: Config,
-                 markdown_outputs: list,
-                 message_outputs: list,
-                 sheet):
+def output_sheet(options: Options, config: Config, markdown_outputs: list,
+                 message_outputs: list, sheet):
   """send the sheet to the output functions"""
   extra_values = config.get_extra_values()
-  markdowns = list(markdown_emails_for_date(sheet=sheet,
-                                            send_date=options.send_date,
-                                            group=options.group,
-                                            extra_values=extra_values))
+  markdowns = list(
+      markdown_emails_for_date(sheet=sheet,
+                               send_date=options.send_date,
+                               group=options.group,
+                               extra_values=extra_values))
   for send_output in markdown_outputs:
     send_output(markdowns)
 
@@ -90,10 +88,8 @@ def output_sheet(options: Options,
     return
 
   extra_recipients = config.get_extra_recipients_for_group(options.group)
-  messages = list(messages_from_markdown(sheet,
-                                         markdowns,
-                                         options.group,
-                                         extra_recipients))
+  messages = list(
+      messages_from_markdown(sheet, markdowns, options.group, extra_recipients))
 
   for send_output in message_outputs:
     send_output(messages)
@@ -143,8 +139,10 @@ def input_sheet_from_stdin():
 
 def output_stdout_markdown(markdowns):
   """Prints the markdown version of the email to the console in JSON."""
-  data = [{'subject': subject, 'body': body}
-          for (subject, body, _) in markdowns]
+  data = [{
+      'subject': subject,
+      'body': body
+  } for (subject, body, _) in markdowns]
   print(json.dumps(data, indent=4))
 
 
