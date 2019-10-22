@@ -2,9 +2,6 @@
 source=
   emailer
   tests
-omit=
-  emailer/main.py
-
 
 [report]
 show_missing=true

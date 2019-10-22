@@ -45,16 +45,9 @@ def test_load_empty_file_raises_invalid_file_content_error(tmpdir):
 def test_creds_calls_create_or_deserialize_creds(monkeypatch):
   monkeypatch.setattr(config, 'create_or_deserialize_creds', lambda cred, sec:
                       (cred, sec))
-  assert Config(client_secret={
-      'secret': 'secret'
-  },
-                serialized_creds={
-                    'cred': 'cred'
-                }).creds == ({
-                    'cred': 'cred'
-                }, {
-                    'secret': 'secret'
-                })
+  config_obj = Config(client_secret={'secret': '1'},
+                      serialized_creds={'cred': '2'})
+  assert config_obj.creds == ({'cred': '2'}, {'secret': '1'})
 
 
 def test_validate_fails_without_valid_client_secret_config():

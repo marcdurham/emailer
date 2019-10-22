@@ -6,6 +6,7 @@ from emailer import fetcher
 @pytest.fixture
 def sheets(stub):
   # https://developers.google.com/sheets/api/reference/rest/v4/spreadsheets/get
+  # TODO: Make this better by introducing named param variables.
   # pylint: disable=bad-continuation
   return lambda metadata, data: stub(spreadsheets=lambda: stub(
       get=lambda spreadsheetId, fields: stub(execute=lambda: metadata),
