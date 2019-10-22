@@ -31,7 +31,6 @@ def main_spies(monkeypatch):
   return counter
 
 
-# pylint: disable=redefined-outer-name
 def test_main_version(main_spies, monkeypatch):
   args = args_mod.get_parsed_args(['--version'])
   monkeypatch.setattr(main, 'get_parsed_args', lambda: args)
@@ -41,7 +40,6 @@ def test_main_version(main_spies, monkeypatch):
   assert (main_spies['process']) == 0
 
 
-# pylint: disable=redefined-outer-name
 def test_main_sample_config(main_spies, monkeypatch):
   args = args_mod.get_parsed_args(['--sample-config'])
   monkeypatch.setattr(main, 'get_parsed_args', lambda: args)
@@ -51,7 +49,6 @@ def test_main_sample_config(main_spies, monkeypatch):
   assert (main_spies['process']) == 0
 
 
-# pylint: disable=redefined-outer-name
 def test_main(main_spies, monkeypatch, capsys):
   args = args_mod.get_parsed_args(['--skip-send'])
   monkeypatch.setattr(main, 'get_parsed_args', lambda: args)
@@ -64,7 +61,6 @@ def test_main(main_spies, monkeypatch, capsys):
   assert err == ''
 
 
-# pylint: disable=redefined-outer-name
 def test_main_no_group(main_spies, monkeypatch):
   args = args_mod.get_parsed_args(['--skip-send', '--test'])
   monkeypatch.setattr(main, 'get_parsed_args', lambda: args)

@@ -15,7 +15,6 @@ def sheets(stub):
                                      )
 
 
-# pylint: disable=redefined-outer-name
 def test_fetch_correct_sheets_and_data(sheets):
   metadata = {
       'sheets': [{

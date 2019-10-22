@@ -12,13 +12,11 @@ def gmail(stub):
       send=lambda **kwargs: stub(execute=lambda: kwargs))))
 
 
-# pylint: disable=redefined-outer-name
 def test_send_converts_message_before_sending(gmail):
   sender = GmailSender(gmail)
   assert 'raw' in sender.send(b'hi')['body']
 
 
-# pylint: disable=redefined-outer-name
 def test_send_gmail_message_uses_me_as_user_id(gmail):
   sender = GmailSender(gmail)
   assert sender.send_gmail_message('hi') == {'userId': 'me', 'body': 'hi'}
